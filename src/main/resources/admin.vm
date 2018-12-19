@@ -1,0 +1,58 @@
+<html>
+  <head>
+    <title>$i18n.getText("lgtm-servlet.admin.label")</title>
+    <meta name="decorator" content="atl.admin" />
+    <meta name="admin.active.section" content="admin_plugins_menu"/>
+  </head>
+  <body>
+  	<h1>LGTM Add-on Configuration</h1>
+  	<h3>Webhook Endpoint</h3>
+  	<p>The webhook URL for entry into issue tracker configuration in LGTM Enterprise.</p>
+  	<p id="webhookUrl"></p>
+  	<h3>Settings</h3>
+	<div id="message-context"></div>
+    <form id="admin" class="aui">
+      <div class="field-group">
+        <label for="secret">$i18n.getText("lgtm-servlet.admin.secret.label")</label>
+        <input type="text" id="secret" name="secret" class="text">
+      </div>
+      <div class="field-group">
+        <label for="user">$i18n.getText("lgtm-servlet.admin.user.label")</label>
+        <input type="text" id="user" name="user" class="text">
+      </div>
+      <div class="field-group">
+        <label for="project">$i18n.getText("lgtm-servlet.admin.project.label")</label>
+        <select id="project">
+        	<option value="none"></option>
+	    </select>
+      </div>
+      <div class="field-group">
+        <label for="issueType">$i18n.getText("lgtm-servlet.admin.issueType.label")</label>
+        <select id="issueType">
+        	<option value="none"></option>
+	    </select>
+      </div>
+      <div class="field-group">
+        <label for="closedStatus">$i18n.getText("lgtm-servlet.admin.closedStatus.label")</label>
+        <select id="closedStatus">
+        	<option value="none"></option>
+	    </select>
+      </div>
+      <div class="field-group">
+        <label for="reopenedStatus">$i18n.getText("lgtm-servlet.admin.reopenedStatus.label")</label>
+        <select id="reopenedStatus">
+        	<option value="none"></option>
+	    </select>
+      </div>
+      <div class="field-group">
+        <label for="priority">$i18n.getText("lgtm-servlet.admin.priority.label")</label>
+        <select id="priority">
+        	<option value="none"></option>
+	    </select>
+      </div>
+      <div class="field-group">
+        <input type="submit" value="$i18n.getText("lgtm-servlet.admin.save.label")" class="button">
+      </div>
+    </form>
+  </body>
+</html>

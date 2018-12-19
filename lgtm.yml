@@ -1,0 +1,8 @@
+extraction:
+  java:
+    before_index:
+      - "curl --fail --silent --show-error --location --output $LGTM_WORKSPACE/atlassian-plugin-sdk.tar.gz https://marketplace.atlassian.com/download/plugins/atlassian-plugin-sdk-tgz"
+      - "tar -xvf $LGTM_WORKSPACE/atlassian-plugin-sdk.tar.gz -C $LGTM_WORKSPACE"
+    index:
+      build_command:
+        - "$LGTM_WORKSPACE/atlassian-plugin-sdk-*/bin/atlas-package -DskipTests -Dmaven.test.skip.exec"
