@@ -18,7 +18,7 @@ public class ProcessedConfig {
   private Status closedStatus;
   private Priority priorityLevel;
 
-  public ProcessedConfig(Config config) throws IllegalStateException {
+  public ProcessedConfig(Config config) throws InvalidConfigurationException {
 
     List<String> configErrors = new ArrayList<>();
 
@@ -53,7 +53,7 @@ public class ProcessedConfig {
     if (!configErrors.isEmpty()) {
       String message =
           configErrors.stream().collect(Collectors.joining(", ", "Invalid configuration – ", "."));
-      throw new IllegalStateException(message);
+      throw new InvalidConfigurationException(message);
     }
   }
 

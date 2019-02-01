@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.opensymphony.workflow.loader.ActionDescriptor;
 import com.semmle.jira.addon.config.Config;
+import com.semmle.jira.addon.config.InvalidConfigurationException;
 import com.semmle.jira.addon.config.ProcessedConfig;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -113,8 +114,8 @@ public class LgtmServlet extends HttpServlet {
     ProcessedConfig processedConfig = null;
     try {
       processedConfig = new ProcessedConfig(config);
-    } catch (IllegalStateException e) {
-      resp.getWriter().write("{\"code\":500,\"error\":\"" + e.getMessage() + "\"}");
+    } catch (InvalidConfigurationException e) {
+      resp.getWriter().write("{\"code\":500,\"error\":\"" + e.getUserMessage() + "\"}");
       resp.setStatus(500);
     }
 
