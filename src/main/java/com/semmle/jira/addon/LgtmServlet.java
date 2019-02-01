@@ -64,14 +64,12 @@ public class LgtmServlet extends HttpServlet {
       request = new Gson().fromJson(new String(bytes, StandardCharsets.UTF_8), Request.class);
     } catch (JsonSyntaxException e) {
       String message = e.getCause() != null ? " - " + e.getCause().getMessage() : "";
-      resp.getWriter().write("{\"code\":400,\"error\":\"Error in JSON Syntax" + message + "\"}");
-      resp.setStatus(400);
+      sendError(resp, 400, "Syntax error in request body: " + message);
       return;
     }
 
     if (!request.isValid()) {
-      resp.getWriter().write("{\"code\":400,\"error\":\"Invalid request.\"}");
-      resp.setStatus(400);
+      sendError(resp, 400, "Invalid request.");
       return;
     }
 
@@ -99,15 +97,12 @@ public class LgtmServlet extends HttpServlet {
 
     // check that plugin has been configured at all
     if (config.getLgtmSecret() == null) {
-      resp.getWriter()
-          .write("{\"code\":500,\"error\":\"Configuration needed – see documentation.\"}");
-      resp.setStatus(500);
+      sendError(resp, 500, "Configuration needed – see documentation.");
       return null;
     }
 
     if (!Util.signatureIsValid(config.getLgtmSecret(), bytes, lgtmSignature)) {
-      resp.getWriter().write("{\"code\":403,\"error\":\"Forbidden.\"}");
-      resp.setStatus(403);
+      sendError(resp, 403, "Forbidden.");
       return null;
     }
 
@@ -115,8 +110,8 @@ public class LgtmServlet extends HttpServlet {
     try {
       processedConfig = new ProcessedConfig(config);
     } catch (InvalidConfigurationException e) {
-      resp.getWriter().write("{\"code\":500,\"error\":\"" + e.getUserMessage() + "\"}");
-      resp.setStatus(500);
+      log(e.getMessage(), e);
+      sendError(resp, 500, "Invalid configuration");
     }
 
     return processedConfig;
@@ -165,8 +160,7 @@ public class LgtmServlet extends HttpServlet {
         ComponentAccessor.getIssueService().getIssue(config.getUser(), issueId).getIssue();
 
     if (issue == null) {
-      resp.getWriter().write("{\"code\":404,\"error\":\"Issue " + issueId + " not found.\"}");
-      resp.setStatus(404);
+      sendError(resp, 404, "Issue " + issueId + " not found.");
       return;
     }
 
@@ -196,8 +190,7 @@ public class LgtmServlet extends HttpServlet {
       }
     }
     if (actionId == -1) {
-      resp.getWriter().write("{\"code\":404,\"error\":\"No valid transition found.\"}");
-      resp.setStatus(404);
+      sendError(resp, 404, "No valid transition found.");
       return;
     }
 
@@ -225,8 +218,22 @@ public class LgtmServlet extends HttpServlet {
         result.getErrorCollection().getErrors().entrySet().stream()
             .map(x -> x.getKey() + " : " + x.getValue())
             .collect(Collectors.joining(", ", "Invalid configuration – ", ""));
+    sendError(resp, 500, message);
+  }
 
-    resp.getWriter().write("{\"code\":500,\"error\":\"" + message + "\"}");
-    resp.setStatus(500);
+  private void sendError(HttpServletResponse resp, int code, String message) throws IOException {
+    resp.setContentType("application/json");
+    resp.setStatus(code);
+    resp.getWriter().write(new Gson().toJson(new JsonError(code, message)));
+  }
+
+  public class JsonError {
+    public int code;
+    public String error;
+
+    public JsonError(int code, String error) {
+      this.code = code;
+      this.error = error;
+    }
   }
 }
