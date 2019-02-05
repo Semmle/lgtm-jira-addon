@@ -26,3 +26,4 @@ We welcome contributions to our LGTM Jira Add-on, got an idea for a new feature,
 ## License
 
 The LGTM Jira Add-on is licensed under [Apache License 2.0](LICENSE) by [Semmle](https://semmle.com).
+
