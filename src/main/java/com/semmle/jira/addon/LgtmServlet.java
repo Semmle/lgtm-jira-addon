@@ -64,12 +64,13 @@ public class LgtmServlet extends HttpServlet {
       request = new Gson().fromJson(new String(bytes, StandardCharsets.UTF_8), Request.class);
     } catch (JsonSyntaxException e) {
       String message = e.getCause() != null ? " - " + e.getCause().getMessage() : "";
-      sendError(resp, 400, "Syntax error in request body: " + message);
+      sendError(
+          resp, HttpServletResponse.SC_BAD_REQUEST, "Syntax error in request body: " + message);
       return;
     }
 
     if (!request.isValid()) {
-      sendError(resp, 400, "Invalid request.");
+      sendError(resp, HttpServletResponse.SC_BAD_REQUEST, "Invalid request.");
       return;
     }
 
@@ -97,12 +98,15 @@ public class LgtmServlet extends HttpServlet {
 
     // check that plugin has been configured at all
     if (config.getLgtmSecret() == null) {
-      sendError(resp, 500, "Configuration needed – see documentation.");
+      sendError(
+          resp,
+          HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+          "Configuration needed – see documentation.");
       return null;
     }
 
     if (!Util.signatureIsValid(config.getLgtmSecret(), bytes, lgtmSignature)) {
-      sendError(resp, 403, "Forbidden.");
+      sendError(resp, HttpServletResponse.SC_FORBIDDEN, "Forbidden.");
       return null;
     }
 
@@ -111,7 +115,7 @@ public class LgtmServlet extends HttpServlet {
       processedConfig = new ProcessedConfig(config);
     } catch (InvalidConfigurationException e) {
       log(e.getMessage(), e);
-      sendError(resp, 500, "Invalid configuration");
+      sendError(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Invalid configuration");
     }
 
     return processedConfig;
@@ -145,10 +149,7 @@ public class LgtmServlet extends HttpServlet {
       mgr.addLabel(config.getUser(), issueResult.getIssue().getId(), request.project.name, false);
 
       Response response = new Response(issueResult.getIssue().getId());
-
-      resp.setContentType("application/json");
-      resp.getWriter().write(new Gson().toJson(response));
-      resp.setStatus(201);
+      sendJSON(resp, HttpServletResponse.SC_CREATED, response);
     }
   }
 
@@ -160,7 +161,7 @@ public class LgtmServlet extends HttpServlet {
         ComponentAccessor.getIssueService().getIssue(config.getUser(), issueId).getIssue();
 
     if (issue == null) {
-      sendError(resp, 404, "Issue " + issueId + " not found.");
+      sendError(resp, HttpServletResponse.SC_NOT_FOUND, "Issue " + issueId + " not found.");
       return;
     }
 
@@ -169,9 +170,7 @@ public class LgtmServlet extends HttpServlet {
     int currentStepId = workflow.getLinkedStep(issue.getStatus()).getId();
 
     if (currentStepId == workflow.getLinkedStep(targetStatus).getId()) {
-      resp.setContentType("application/json");
-      resp.getWriter().write(new Gson().toJson(new Response(issueId)));
-      resp.setStatus(200);
+      sendJSON(resp, HttpServletResponse.SC_OK, new Response(issueId));
       return;
     }
 
@@ -190,7 +189,7 @@ public class LgtmServlet extends HttpServlet {
       }
     }
     if (actionId == -1) {
-      sendError(resp, 404, "No valid transition found.");
+      sendError(resp, HttpServletResponse.SC_NOT_FOUND, "No valid transition found.");
       return;
     }
 
@@ -206,10 +205,7 @@ public class LgtmServlet extends HttpServlet {
               .transition(config.getUser(), transitionValidationResult);
 
       Response response = new Response(issueResult.getIssue().getId());
-
-      resp.setContentType("application/json");
-      resp.getWriter().write(new Gson().toJson(response));
-      resp.setStatus(200);
+      sendJSON(resp, HttpServletResponse.SC_OK, response);
     }
   }
 
@@ -218,13 +214,18 @@ public class LgtmServlet extends HttpServlet {
         result.getErrorCollection().getErrors().entrySet().stream()
             .map(x -> x.getKey() + " : " + x.getValue())
             .collect(Collectors.joining(", ", "Invalid configuration – ", ""));
-    sendError(resp, 500, message);
+    sendError(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
   }
 
   private void sendError(HttpServletResponse resp, int code, String message) throws IOException {
+    sendJSON(resp, code, new JsonError(code, message));
+  }
+
+  private void sendJSON(HttpServletResponse resp, int code, Object value) throws IOException {
     resp.setContentType("application/json");
+    resp.setCharacterEncoding("UTF-8");
     resp.setStatus(code);
-    resp.getWriter().write(new Gson().toJson(new JsonError(code, message)));
+    resp.getWriter().write(new Gson().toJson(value));
   }
 
   public class JsonError {

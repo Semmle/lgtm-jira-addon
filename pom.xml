@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.semmle</groupId>
@@ -125,6 +124,15 @@
 			<artifactId>jira-func-tests</artifactId>
 			<version>${jira.version}</version>
 			<scope>test</scope>
+		</dependency>
+		<!-- Workaround for missing dependency jta:1.0.1 which
+		is not available on any maven repository. However, the slightly
+		newer 1.0.1b patched version does still exist. -->
+		<dependency>
+			<groupId>jta</groupId>
+			<artifactId>jta</artifactId>
+			<version>1.0.1b</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 	<build>
@@ -266,4 +274,36 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
+	<repositories>
+		<repository>
+			<id>atlassian-3rdparty</id>
+			<name>Atlassian 3rd-P Old Repository</name>
+			<url>https://maven.atlassian.com/3rdparty/</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>atlassian-packages-public</id>
+			<name>Atlassian Packages Repository</name>
+			<url>https://packages.atlassian.com/maven-public/</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>springio-libs-release</id>
+			<name>Spring Lib Release Repository</name>
+			<url>https://repo.spring.io/libs-release/</url>
+			<layout>default</layout>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>atlassian-public</id>
+			<url>https://m2proxy.atlassian.com/repository/public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 </project>
