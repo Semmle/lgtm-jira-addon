@@ -1,0 +1,33 @@
+trigger:
+- refs/tags/*
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+steps:
+- template: build-steps.yml
+
+- task: CopyFiles@2
+  inputs:
+    sourceFolder: 'target'
+    contents: 'lgtm-jira-addon-*.jar'
+    targetFolder: '$(Build.ArtifactStagingDirectory)'
+
+- task: GitHubRelease@0
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+  inputs:
+    gitHubConnection: github
+    repositoryName: Semmle/lgtm-jira-addon
+    action: 'edit' # Options: create, edit, delete
+    target: '$(Build.SourceVersion)' # Required when action == Create || Action == Edit
+    tagSource: 'auto' # Required when action == Create# Options: auto, manual
+    tag: $(Build.SourceBranchName) # Required when action == Edit || Action == Delete || TagSource == Manual
+    #title: # Optional
+    #releaseNotesSource: 'file' # Optional. Options: file, input
+    #releaseNotesFile: # Optional
+    #releaseNotes: # Optional
+    assets: '$(Build.ArtifactStagingDirectory)/*' # Optional
+    #assetUploadMode: 'delete' # Optional. Options: delete, replace
+    #isDraft: false # Optional
+    #isPreRelease: false # Optional
+    addChangeLog: false # Optional
