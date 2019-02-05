@@ -22,27 +22,52 @@ public class ProcessedConfig {
 
     List<String> configErrors = new ArrayList<>();
 
-    user = ComponentAccessor.getUserManager().getUserByName(config.getUsername());
-    if (user == null) configErrors.add(String.format("user '%s' not found", config.getUsername()));
-    project = ComponentAccessor.getProjectManager().getProjectByCurrentKey(config.getProjectKey());
-    if (project == null)
-      configErrors.add(String.format("project id '%s' not found", config.getProjectKey()));
-    taskIssueType = ComponentAccessor.getConstantsManager().getIssueType(config.getIssueTypeId());
-    if (taskIssueType == null)
-      configErrors.add(String.format("issue type id '%s' not found", config.getIssueTypeId()));
+    if (config.getUsername() != null) {
+      user = ComponentAccessor.getUserManager().getUserByName(config.getUsername());
+      if (user == null)
+        configErrors.add(String.format("user '%s' not found", config.getUsername()));
+    } else {
+      configErrors.add("username was null");
+    }
 
-    reopenedStatus =
-        ComponentAccessor.getConstantsManager().getStatus(config.getReopenedStatusId());
-    if (reopenedStatus == null)
-      configErrors.add(
-          String.format("reopened status id '%s' not found", config.getReopenedStatusId()));
-    closedStatus = ComponentAccessor.getConstantsManager().getStatus(config.getClosedStatusId());
-    if (closedStatus == null)
-      configErrors.add(
-          String.format("closed status id '%s' not found", config.getClosedStatusId()));
+    if (config.getProjectKey() != null) {
+      project =
+          ComponentAccessor.getProjectManager().getProjectByCurrentKey(config.getProjectKey());
+      if (project == null)
+        configErrors.add(String.format("project key '%s' not found", config.getProjectKey()));
+    } else {
+      configErrors.add("projectKey was null");
+    }
+
+    if (config.getIssueTypeId() != null) {
+      taskIssueType = ComponentAccessor.getConstantsManager().getIssueType(config.getIssueTypeId());
+      if (taskIssueType == null)
+        configErrors.add(String.format("issue type id '%s' not found", config.getIssueTypeId()));
+    } else {
+      configErrors.add("issueTypeId was null");
+    }
+
+    if (config.getReopenedStatusId() != null) {
+      reopenedStatus =
+          ComponentAccessor.getConstantsManager().getStatus(config.getReopenedStatusId());
+      if (reopenedStatus == null)
+        configErrors.add(
+            String.format("reopened status id '%s' not found", config.getReopenedStatusId()));
+    } else {
+      configErrors.add("reopenedStatusId was null");
+    }
+
+    if (config.getClosedStatusId() != null) {
+      closedStatus = ComponentAccessor.getConstantsManager().getStatus(config.getClosedStatusId());
+      if (closedStatus == null)
+        configErrors.add(
+            String.format("closed status id '%s' not found", config.getClosedStatusId()));
+    } else {
+      configErrors.add("closedStatusId was null");
+    }
 
     priorityLevel = null;
-    if (!config.getPriorityLevelId().isEmpty()) {
+    if (config.getPriorityLevelId() == null || !config.getPriorityLevelId().isEmpty()) {
       priorityLevel =
           ComponentAccessor.getConstantsManager().getPriorityObject(config.getPriorityLevelId());
       if (priorityLevel == null)
