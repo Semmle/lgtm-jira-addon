@@ -145,39 +145,43 @@ function handleIssueTypeChange(issueTypes) {
 }
 
 function loadPriorities(projectKey) {
-	var a1 = AJS.$.ajax({
-		url : AJS.contextPath() + "/rest/api/2/project/" + projectKey
-				+ "/priorityscheme"
-	})
-	var a2 = AJS.$.ajax({
+	AJS.$.ajax({
 		url : AJS.contextPath() + "/rest/api/2/priority"
-	});
-
-	$.when(a1, a2).done(function(r1, r2) {
-		var priorityIds = r1[0].optionIds;
-		priorityIds.sort();
-
-		var allPriorities = r2[0];
+	}).done(function(allPriorities) {
 		var idToName = new Map();
 		for (var j = 0; j < allPriorities.length; j++) {
 			idToName.set(allPriorities[j].id, allPriorities[j].name);
 		}
 		
-		var fieldContent = priorityIds.map(function(priorityId) {
-			return {
-				value : priorityId,
-				text : idToName.get(priorityId)
+		var priorityIds = new Array();
+		AJS.$.ajax({
+			url : AJS.contextPath() + "/rest/api/2/project/" + projectKey
+					+ "/priorityscheme"
+		}).done(function(schemes) {
+			priorityIds = schemes.optionIds;
+		}).fail(function() {
+			priorityIds = allPriorities.map(function(priority) {
+				return priority.id;
+			});
+		}).always(function() {
+			priorityIds.sort();
+			
+			var fieldContent = priorityIds.map(function(priorityId) {
+				return {
+					value : priorityId,
+					text : idToName.get(priorityId)
+				}
+			});
+			
+			fieldContent.unshift({value : "", text : "--Default--"});
+			
+			renderSelect2Field(priorityFieldId, fieldContent);
+			
+			if (config !== null) {
+				changeSelect2Value(priorityFieldId, config.priorityLevelId);
 			}
 		});
-		fieldContent.unshift({value : "", text : "--Default--"});
-		
-		renderSelect2Field(priorityFieldId, fieldContent);
-		
-		if (config !== null) {
-			changeSelect2Value(priorityFieldId, config.priorityLevelId);
-		}
 	});
-
 };
 
 function clearSelect2Field(fieldId) {
@@ -288,21 +292,20 @@ function updateConfig() {
 			closeable : true,
 			fadeout : true
 		});
-	}).fail(
-			function(jqXHR, textStatus, errorThrown) {
-				if (jqXHR.getResponseHeader("Error") === "username") {
-					AJS.messages.error("#message-context", {
-						title : 'The user ' + AJS.$(userFieldId).attr("value")
-								+ ' does not exist.',
-						closeable : true,
-						fadeout : true
-					});
-					return;
-				}
-				AJS.messages.error("#message-context", {
-					title : 'An error happened.',
-					closeable : true,
-					fadeout : true
-				});
+	}).fail(function(jqXHR, textStatus, errorThrown) {
+		if (jqXHR.getResponseHeader("Error") === "username") {
+			AJS.messages.error("#message-context", {
+				title : 'The user ' + AJS.$(userFieldId).attr("value")
+						+ ' does not exist.',
+				closeable : true,
+				fadeout : true
 			});
+			return;
+		}
+		AJS.messages.error("#message-context", {
+			title : 'An error happened.',
+			closeable : true,
+			fadeout : true
+		});
+	});
 };
