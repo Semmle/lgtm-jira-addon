@@ -1,7 +1,7 @@
 package com.semmle.jira.addon;
 
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -35,20 +35,20 @@ public class TestValidateRequest extends TestLgtmServletBase {
     // UserManager
     ApplicationUser user = mock(ApplicationUser.class);
     when(user.getName()).thenReturn("UserName");
-    when(userManager.getUserByName(anyString())).thenReturn(user);
+    when(userManager.getUserByName(any(String.class))).thenReturn(user);
 
     // Project Manager
     com.atlassian.jira.project.Project project = mock(com.atlassian.jira.project.Project.class);
     when(project.getId()).thenReturn(1l);
-    when(projectManager.getProjectByCurrentKey(anyString())).thenReturn(project);
+    when(projectManager.getProjectByCurrentKey(any(String.class))).thenReturn(project);
 
     // Constants Manager
     IssueType issueType = mock(IssueType.class);
-    when(constantsManager.getIssueType(anyString())).thenReturn(issueType);
+    when(constantsManager.getIssueType(any(String.class))).thenReturn(issueType);
     Status status = mock(Status.class);
-    when(constantsManager.getStatus(anyString())).thenReturn(status);
+    when(constantsManager.getStatus(any(String.class))).thenReturn(status);
     Priority priority = mock(Priority.class);
-    when(constantsManager.getPriorityObject(anyString())).thenReturn(priority);
+    when(constantsManager.getPriorityObject(any(String.class))).thenReturn(priority);
 
     // Config
     setupConfig();
