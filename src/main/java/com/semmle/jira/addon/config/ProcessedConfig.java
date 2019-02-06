@@ -67,7 +67,7 @@ public class ProcessedConfig {
     }
 
     priorityLevel = null;
-    if (config.getPriorityLevelId() == null || !config.getPriorityLevelId().isEmpty()) {
+    if (config.getPriorityLevelId() != null && !config.getPriorityLevelId().isEmpty()) {
       priorityLevel =
           ComponentAccessor.getConstantsManager().getPriorityObject(config.getPriorityLevelId());
       if (priorityLevel == null)
