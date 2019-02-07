@@ -41,6 +41,12 @@
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
 		<dependency>
 			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>5.1.4.RELEASE</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 			<version>5.1.4.RELEASE</version>
 			<scope>test</scope>
