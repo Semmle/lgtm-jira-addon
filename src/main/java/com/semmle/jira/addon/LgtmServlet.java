@@ -1,5 +1,18 @@
 package com.semmle.jira.addon;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
+
 import com.atlassian.jira.bc.ServiceResult;
 import com.atlassian.jira.bc.issue.IssueService;
 import com.atlassian.jira.component.ComponentAccessor;
@@ -17,16 +30,6 @@ import com.opensymphony.workflow.loader.ActionDescriptor;
 import com.semmle.jira.addon.config.Config;
 import com.semmle.jira.addon.config.InvalidConfigurationException;
 import com.semmle.jira.addon.config.ProcessedConfig;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.stream.Collectors;
-import javax.inject.Inject;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.io.IOUtils;
 
 public class LgtmServlet extends HttpServlet {
   /** */
@@ -165,48 +168,40 @@ public class LgtmServlet extends HttpServlet {
       return;
     }
 
-    JiraWorkflow workflow = ComponentAccessor.getWorkflowManager().getWorkflow(issue);
-
-    int currentStepId = workflow.getLinkedStep(issue.getStatus()).getId();
-
-    if (currentStepId == workflow.getLinkedStep(targetStatus).getId()) {
-      sendJSON(resp, HttpServletResponse.SC_OK, new Response(issueId));
+    if (issue.getStatus().getId() == targetStatus.getId()) {
+      Response response = new Response(issue.getId());
+      sendJSON(resp, HttpServletResponse.SC_OK, response);
       return;
     }
+
+    JiraWorkflow workflow = ComponentAccessor.getWorkflowManager().getWorkflow(issue);
+
+    Collection<ActionDescriptor> candidateActions =
+        workflow.getActionsWithResult(workflow.getLinkedStep(targetStatus));
 
     IssueInputParameters issueInputParameters =
         ComponentAccessor.getIssueService().newIssueInputParameters();
     issueInputParameters.setRetainExistingValuesWhenParameterNotProvided(true, true);
 
-    Collection<ActionDescriptor> candidateActions =
-        workflow.getActionsWithResult(workflow.getLinkedStep(targetStatus));
-
-    int actionId = -1;
     for (ActionDescriptor action : candidateActions) {
-      if (currentStepId == action.getParent().getId()) {
-        actionId = action.getId();
-        break;
+      IssueService.TransitionValidationResult transitionValidationResult =
+          ComponentAccessor.getIssueService()
+              .validateTransition(config.getUser(), issueId, action.getId(), issueInputParameters);
+      if (transitionValidationResult.isValid()) {
+        IssueService.IssueResult issueResult =
+            ComponentAccessor.getIssueService()
+                .transition(config.getUser(), transitionValidationResult);
+
+        if (!issueResult.isValid()) {
+          writeErrors(issueResult, resp);
+          return;
+        }
+        Response response = new Response(issueResult.getIssue().getId());
+        sendJSON(resp, HttpServletResponse.SC_OK, response);
+        return;
       }
     }
-    if (actionId == -1) {
-      sendError(resp, HttpServletResponse.SC_NOT_FOUND, "No valid transition found.");
-      return;
-    }
-
-    IssueService.TransitionValidationResult transitionValidationResult =
-        ComponentAccessor.getIssueService()
-            .validateTransition(config.getUser(), issueId, actionId, issueInputParameters);
-
-    if (transitionValidationResult.getErrorCollection().hasAnyErrors()) {
-      writeErrors(transitionValidationResult, resp);
-    } else {
-      IssueService.IssueResult issueResult =
-          ComponentAccessor.getIssueService()
-              .transition(config.getUser(), transitionValidationResult);
-
-      Response response = new Response(issueResult.getIssue().getId());
-      sendJSON(resp, HttpServletResponse.SC_OK, response);
-    }
+    sendError(resp, HttpServletResponse.SC_NOT_FOUND, "No valid transition found.");
   }
 
   private void writeErrors(ServiceResult result, HttpServletResponse resp) throws IOException {

@@ -7,6 +7,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import com.atlassian.jira.bc.issue.IssueService.IssueResult;
 import com.atlassian.jira.bc.issue.IssueService.TransitionValidationResult;
 import com.atlassian.jira.issue.IssueInputParameters;
@@ -15,18 +24,13 @@ import com.atlassian.jira.issue.status.Status;
 import com.atlassian.jira.junit.rules.AvailableInContainer;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.util.ErrorCollection;
+import com.atlassian.jira.util.SimpleErrorCollection;
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.WorkflowManager;
 import com.opensymphony.workflow.loader.AbstractDescriptor;
 import com.opensymphony.workflow.loader.ActionDescriptor;
 import com.opensymphony.workflow.loader.StepDescriptor;
 import com.semmle.jira.addon.config.ProcessedConfig;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import javax.servlet.http.HttpServletResponse;
-import org.junit.Before;
-import org.junit.Test;
 
 public class TestApplyTransition extends TestCreateAndTransitionBase {
 
@@ -116,7 +120,10 @@ public class TestApplyTransition extends TestCreateAndTransitionBase {
     Long issueId = 1l;
     HttpServletResponse resp = mockResponse();
 
-    when(action.getParent().getId()).thenReturn(0); // Mock there is no valid transition
+    when(transitionValidationResult.isValid())
+        .thenReturn(false); // Mock there is no valid transition
+    when(currentStatus.getId()).thenReturn("1");
+    when(targetStatus.getId()).thenReturn("2");
 
     servlet.applyTransition(issueId, resp, targetStatus, config);
 
@@ -129,7 +136,14 @@ public class TestApplyTransition extends TestCreateAndTransitionBase {
     Long issueId = 1l;
     HttpServletResponse resp = mockResponse();
 
-    when(transitionValidationResult.getErrorCollection().hasAnyErrors()).thenReturn(true);
+    when(transitionValidationResult.isValid()).thenReturn(true);
+    when(currentStatus.getId()).thenReturn("1");
+    when(targetStatus.getId()).thenReturn("2");
+
+    IssueResult issueResult = mock(IssueResult.class);
+    when(issueService.transition(any(), any())).thenReturn(issueResult);
+    when(issueResult.isValid()).thenReturn(false);
+    when(issueResult.getErrorCollection()).thenReturn(new SimpleErrorCollection());
 
     servlet.applyTransition(issueId, resp, targetStatus, config);
 
