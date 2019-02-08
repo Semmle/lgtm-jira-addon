@@ -27,12 +27,6 @@
 	    </select>
       </div>
       <div class="field-group">
-        <label for="issueType">$i18n.getText("lgtm-servlet.admin.issueType.label")</label>
-        <select id="issueType">
-        	<option value="none"></option>
-	    </select>
-      </div>
-      <div class="field-group">
         <label for="closedStatus">$i18n.getText("lgtm-servlet.admin.closedStatus.label")</label>
         <select id="closedStatus">
         	<option value="none"></option>

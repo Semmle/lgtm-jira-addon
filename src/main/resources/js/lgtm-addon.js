@@ -14,6 +14,7 @@ var priorityFieldId = "#priority";
 var webhookUrlFieldId = "#webhookUrl";
 var urlCodeId = "urlCode";
 var key = "webhook";
+var lgtmIssueTypeId = null;
 
 (function() { // this closure helps us keep our variables to ourselves.
 // This pattern is known as an "iife" - immediately invoked function expression
@@ -78,69 +79,68 @@ function loadProjects() {
 }
 
 function handleProjectChange(event) {
-	clearSelect2Field(issueTypeFieldId);
+	lgtmIssueTypeId = null;
 	clearSelect2Field(priorityFieldId);
 	clearSelect2Field(closedStatusFieldId);
 	clearSelect2Field(reopenedStatusFieldId);
 	
 	if (AJS.$(projectFieldId).select2('val') !== "none") {
-		loadIssueTypes(AJS.$(projectFieldId).select2('val'));
+		loadIssueType(AJS.$(projectFieldId).select2('val'));
 		loadPriorities(AJS.$(projectFieldId).select2('val'));
 	}
 }
 
-function loadIssueTypes(projectKey) {
+function loadIssueType(projectKey) {
 	$.ajax({
 		url : AJS.contextPath() + "/rest/api/2/project/" + projectKey + "/statuses"
 	}).done(
 	function(issueTypes) {
-		var fieldContent = issueTypes.map(function(issueType) {
-			return {
-				value : issueType.id,
-				text : issueType.name
-			}
+		var lgtmIssueType = issueTypes.find(function (element) {
+			return element.name === "LGTM Alert";
 		});
-		fieldContent.unshift({value : "none", text : ""});
 		
-		renderSelect2Field(issueTypeFieldId, fieldContent);
-		AJS.$(issueTypeFieldId).on('change', function(e) {
-			handleIssueTypeChange(issueTypes);
-		});
-	
-		if (config !== null) {
-			changeSelect2Value(issueTypeFieldId, config.issueTypeId);
+		if (lgtmIssueType === undefined) {
+			AJS.messages.error("#message-context", {
+				title : 'The project ' + projectKey + ' uses an issue type scheme that does not contain the "LGTM alert" issue type.', 
+				closeable : true,
+				fadeout : false
+			});
+			
+			var messageContent = document.createElement('p');
+			messageContent.textContent = 'Please go to the project configuration and add it:';
+			
+			var link = document.createElement('a');
+			var configUrl = AJS.params.baseURL + '/plugins/servlet/project-config/' + projectKey + '/issuetypes';
+			link.href = configUrl
+			link.textContent = configUrl;
+			
+			AJS.$("#message-context").children()[0].append(messageContent);
+			AJS.$("#message-context").children()[0].append(link);
+		} else {
+			lgtmIssueTypeId = lgtmIssueType.id;
+			loadStatuses(lgtmIssueType);
 		}
 	});
 };
 
-function handleIssueTypeChange(issueTypes) {
-	clearSelect2Field(closedStatusFieldId);
-	clearSelect2Field(reopenedStatusFieldId);
-	
-	if (AJS.$(issueTypeFieldId).select2('val') !== "none") {
-		for (var i = 0; i < issueTypes.length; i++) {
-			if (issueTypes[i].id === AJS.$(issueTypeFieldId).select2('val')) {
-				var statuses = issueTypes[i].statuses.map(function(status) {
-					return {
-						value : status.id,
-						text : status.name
-					}
-				});
-				statuses.unshift({value : "none", text : ""});
-				
-				renderSelect2Field(closedStatusFieldId, statuses);
-				renderSelect2Field(reopenedStatusFieldId, statuses);
-
-				if (config !== null) {
-					var closedStatusList = AJS.$(closedStatusFieldId);
-					var reopenedStatusList = AJS.$(reopenedStatusFieldId);
-
-					closedStatusList.select2('val', config.closedStatusId);
-					reopenedStatusList.select2('val', config.reopenedStatusId);
-				}
-				break;
-			}
+function loadStatuses(lgtmIssueType) {
+	var statuses = lgtmIssueType.statuses.map(function(status) {
+		return {
+			value : status.id,
+			text : status.name
 		}
+	});
+	statuses.unshift({value : "none", text : ""});
+	
+	renderSelect2Field(closedStatusFieldId, statuses);
+	renderSelect2Field(reopenedStatusFieldId, statuses);
+
+	if (config !== null) {
+		var closedStatusList = AJS.$(closedStatusFieldId);
+		var reopenedStatusList = AJS.$(reopenedStatusFieldId);
+
+		closedStatusList.select2('val', config.closedStatusId);
+		reopenedStatusList.select2('val', config.reopenedStatusId);
 	}
 }
 
@@ -242,12 +242,8 @@ function updateConfig() {
 		return;
 	}
 
-	if (AJS.$(issueTypeFieldId).select2('val') === "none") {
-		AJS.messages.error("#message-context", {
-			title : 'Please select an IssueType.',
-			closeable : true,
-			fadeout : true
-		});
+	if (lgtmIssueTypeId === null) {
+		// Error message handled above
 		return;
 	}
 
@@ -274,7 +270,7 @@ function updateConfig() {
 		'lgtmSecret' : AJS.$('#secret').attr('value'),
 		'username' : AJS.$('#user').attr('value'),
 		'projectKey' : AJS.$('#project').select2('val'),
-		'issueTypeId' : AJS.$('#issueType').select2('val'),
+		'issueTypeId' : lgtmIssueTypeId,
 		'closedStatusId' : AJS.$('#closedStatus').select2('val'),
 		'reopenedStatusId' : AJS.$('#reopenedStatus').select2('val'),
 		'priorityLevelId' : AJS.$('#priority').select2('val')
