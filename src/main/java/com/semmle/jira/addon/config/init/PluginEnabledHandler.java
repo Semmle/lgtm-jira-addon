@@ -19,7 +19,7 @@ import org.springframework.beans.factory.InitializingBean;
 public class PluginEnabledHandler implements InitializingBean, DisposableBean {
 
   private static final String LGTM_PLUGIN_KEY = "com.semmle.lgtm-jira-addon";
-  private static final String ISSUE_TYPE_NAME = "LGTM Alert";
+  private static final String ISSUE_TYPE_NAME = "LGTM alert";
 
   @ComponentImport private final EventPublisher eventPublisher;
   @ComponentImport private final IssueTypeManager issueTypeManager;
