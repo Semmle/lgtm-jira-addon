@@ -6,7 +6,6 @@ var userFieldId = "#user";
 var secretFieldId = "#secret";
 
 var projectFieldId = "#project";
-var issueTypeFieldId = "#issueType";
 var closedStatusFieldId = "#closedStatus";
 var reopenedStatusFieldId = "#reopenedStatus";
 var priorityFieldId = "#priority";
@@ -24,7 +23,6 @@ var lgtmIssueTypeId = null;
 
 		// Init select2 fields
 		AJS.$(projectFieldId).auiSelect2();
-		AJS.$(issueTypeFieldId).auiSelect2();
 		AJS.$(closedStatusFieldId).auiSelect2();
 		AJS.$(reopenedStatusFieldId).auiSelect2();
 		AJS.$(priorityFieldId).auiSelect2();
@@ -85,34 +83,43 @@ function handleProjectChange(event) {
 	clearSelect2Field(reopenedStatusFieldId);
 	
 	if (AJS.$(projectFieldId).select2('val') !== "none") {
-		loadIssueType(AJS.$(projectFieldId).select2('val'));
+		loadIssueType(AJS.$(projectFieldId).select2('val'), AJS.$(projectFieldId).select2('data').text);
 		loadPriorities(AJS.$(projectFieldId).select2('val'));
 	}
 }
-
-function loadIssueType(projectKey) {
+	
+function loadIssueType(projectKey, projectName) {
 	$.ajax({
 		url : AJS.contextPath() + "/rest/api/2/project/" + projectKey + "/statuses"
 	}).done(
 	function(issueTypes) {
 		var lgtmIssueType = issueTypes.find(function (element) {
-			return element.name === "LGTM Alert";
+			return element.name.toLowerCase() === "LGTM alert".toLowerCase();
 		});
+		
+		var children = AJS.$("#message-context").children();
+		
+		for (var i = 0; i < children.length; i++) {
+			children[i].remove();
+		}
 		
 		if (lgtmIssueType === undefined) {
 			AJS.messages.error("#message-context", {
-				title : 'The project ' + projectKey + ' uses an issue type scheme that does not contain the "LGTM alert" issue type.', 
+				title : 'The "LGTM alert" issue type is not included in the issue type scheme of '
+					+ projectName + '.', 
 				closeable : true,
 				fadeout : false
 			});
 			
-			var messageContent = document.createElement('p');
-			messageContent.textContent = 'Please go to the project configuration and add it:';
+			var messageContent = document.createElement('span');
+			messageContent.textContent = 'It can be added using the "Edit issue types" action in ' 
+				+ projectName + "'s ";
 			
 			var link = document.createElement('a');
-			var configUrl = AJS.params.baseURL + '/plugins/servlet/project-config/' + projectKey + '/issuetypes';
-			link.href = configUrl
-			link.textContent = configUrl;
+			var configUrl = AJS.params.baseURL + '/plugins/servlet/project-config/' + encodeURIComponent(projectKey) + '/issuetypes';
+			link.href = configUrl;
+			link.target = "_blank";
+			link.textContent = "issue type settings";
 			
 			AJS.$("#message-context").children()[0].append(messageContent);
 			AJS.$("#message-context").children()[0].append(link);
@@ -243,7 +250,7 @@ function updateConfig() {
 	}
 
 	if (lgtmIssueTypeId === null) {
-		// Error message handled above
+		// Error message is handled in loadIssueType() when lgtmIssueType is undefined
 		return;
 	}
 
