@@ -7,15 +7,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.atlassian.jira.bc.issue.IssueService.IssueResult;
 import com.atlassian.jira.bc.issue.IssueService.TransitionValidationResult;
 import com.atlassian.jira.issue.IssueInputParameters;
@@ -31,6 +22,12 @@ import com.opensymphony.workflow.loader.AbstractDescriptor;
 import com.opensymphony.workflow.loader.ActionDescriptor;
 import com.opensymphony.workflow.loader.StepDescriptor;
 import com.semmle.jira.addon.config.ProcessedConfig;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import javax.servlet.http.HttpServletResponse;
+import org.junit.Before;
+import org.junit.Test;
 
 public class TestApplyTransition extends TestCreateAndTransitionBase {
 
