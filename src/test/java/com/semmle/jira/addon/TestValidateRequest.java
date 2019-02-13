@@ -18,6 +18,7 @@ import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.semmle.jira.addon.config.Config;
 import com.semmle.jira.addon.config.ProcessedConfig;
 import java.io.IOException;
+import java.util.Arrays;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,6 +46,8 @@ public class TestValidateRequest extends TestLgtmServletBase {
     // Issue Type
     IssueType issueType = mock(IssueType.class);
     when(issueType.getName()).thenReturn("LGTM alert");
+
+    when(project.getIssueTypes()).thenReturn(Arrays.asList(issueType));
 
     // Constants Manager
     when(constantsManager.getIssueType(any(String.class))).thenReturn(issueType);
