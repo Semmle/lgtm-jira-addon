@@ -124,8 +124,8 @@ public class TestApplyTransition extends TestCreateAndTransitionBase {
 
     servlet.applyTransition(issueId, resp, targetStatus, config);
 
-    verify(resp.getWriter()).write("{\"code\":404,\"error\":\"No valid transition found.\"}");
-    verify(resp).setStatus(404);
+    verify(resp.getWriter()).write("{\"code\":500,\"error\":\"No valid transition found.\"}");
+    verify(resp).setStatus(500);
   }
 
   @Test

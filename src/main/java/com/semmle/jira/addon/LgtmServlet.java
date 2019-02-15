@@ -198,7 +198,7 @@ public class LgtmServlet extends HttpServlet {
         return;
       }
     }
-    sendError(resp, HttpServletResponse.SC_NOT_FOUND, "No valid transition found.");
+    sendError(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "No valid transition found.");
   }
 
   private void writeErrors(ServiceResult result, HttpServletResponse resp) throws IOException {
