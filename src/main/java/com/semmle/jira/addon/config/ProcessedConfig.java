@@ -41,8 +41,14 @@ public class ProcessedConfig {
 
     if (config.getIssueTypeId() != null) {
       taskIssueType = ComponentAccessor.getConstantsManager().getIssueType(config.getIssueTypeId());
-      if (taskIssueType == null)
+      if (taskIssueType == null) {
         configErrors.add(String.format("issue type id '%s' not found", config.getIssueTypeId()));
+      } else if (!taskIssueType.getName().toLowerCase().equals("LGTM alert".toLowerCase())) {
+        configErrors.add("issue type is not 'LGTM alert'");
+      } else if (project != null
+          && !project.getIssueTypes().stream().anyMatch(taskIssueType::equals)) {
+        configErrors.add("\"LGTM alert\" issue type is not included in the scheme of the project.");
+      }
     } else {
       configErrors.add("issueTypeId was null");
     }

@@ -45,7 +45,8 @@ public class IntegrationTest {
     baseUrl = testKit.generalConfiguration().getEnvironmentData().getBaseUrl().toString();
     httpClient = HttpClientBuilder.create().build();
 
-    createTestProject();
+    // manually create `LGTM alert` due to issues with plugin lifecycle
+    createIssueType();
 
     config = configurePlugin();
   }
@@ -114,8 +115,9 @@ public class IntegrationTest {
     assertEquals(description, issueA.fields.description);
   }
 
-  private void createTestProject() throws UnsupportedEncodingException, IOException, JSONException {
-    HttpPost httpPost = new HttpPost(baseUrl + "/rest/api/2/project");
+  private void createIssueType() throws UnsupportedEncodingException, IOException, JSONException {
+
+    HttpPost httpPost = new HttpPost(baseUrl + "/rest/api/2/issuetype");
     httpPost.setHeader("Content-type", "application/json");
     httpPost.setHeader(
         "Authorization",
@@ -124,21 +126,16 @@ public class IntegrationTest {
 
     String jsonString =
         new JSONObject()
-            .put("key", "EX")
-            .put("name", "EX")
-            .put("projectTypeKey", "business")
-            .put(
-                "projectTemplateKey",
-                "com.atlassian.jira-core-project-templates:jira-core-project-management")
-            .put("description", "Example Project description")
-            .put("lead", "admin")
+            .put("name", "LGTM alert")
+            .put("description", "Issue type for managing LGTM alerts")
+            .put("type", "standard")
             .toString();
 
     httpPost.setEntity(new StringEntity(jsonString));
 
     HttpResponse httpResponse = httpClient.execute(httpPost);
 
-    assertEquals("Failed to create project", 201, httpResponse.getStatusLine().getStatusCode());
+    assertEquals("Failed to create issue type", 201, httpResponse.getStatusLine().getStatusCode());
   }
 
   private Config configurePlugin() throws ClientProtocolException, IOException {
@@ -147,11 +144,11 @@ public class IntegrationTest {
     config.setKey("webhook");
     config.setLgtmSecret("12345678");
     config.setUsername("admin");
-    config.setProjectKey("EX");
-    config.setIssueTypeId("3");
-    config.setClosedStatusId("10001");
-    config.setReopenedStatusId("10000");
-    config.setPriorityLevelId("");
+    config.setProjectKey("MKY");
+    config.setIssueTypeId("10000");
+    config.setClosedStatusId("6");
+    config.setReopenedStatusId("4");
+    config.setPriorityLevelId("3");
 
     HttpPut httpPut = new HttpPut(baseUrl + "/rest/lgtm-config/1.0/");
     httpPut.setHeader("Content-type", "application/json");
