@@ -4,10 +4,14 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.fields.config.FieldConfigScheme;
 import com.atlassian.jira.issue.fields.config.manager.IssueTypeSchemeManager;
 import com.atlassian.jira.issue.issuetype.IssueType;
+import com.atlassian.jira.issue.status.Status;
 import com.atlassian.jira.project.Project;
+import com.atlassian.jira.workflow.JiraWorkflow;
+import com.atlassian.jira.workflow.WorkflowManager;
 import com.atlassian.jira.workflow.WorkflowSchemeManager;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.ofbiz.core.entity.GenericEntityException;
 import org.ofbiz.core.entity.GenericValue;
@@ -49,7 +53,8 @@ public class JiraUtils {
     return null;
   }
 
-  public static void addWorkflowToProject(String projectKey, String workflowName, String issueTypeName)
+  public static void addWorkflowToProject(
+      String projectKey, String workflowName, String issueTypeName)
       throws GenericEntityException, ProjectNotFoundException, IssueTypeNotFoundException {
     WorkflowSchemeManager workflowSchemeManager = ComponentAccessor.getWorkflowSchemeManager();
     Project project = ComponentAccessor.getProjectManager().getProjectByCurrentKey(projectKey);
@@ -62,7 +67,34 @@ public class JiraUtils {
     if (lgtmIssueType == null) {
       throw new IssueTypeNotFoundException();
     }
-    workflowSchemeManager.addWorkflowToScheme(
-        workflowScheme, workflowName, lgtmIssueType.getId());
+    workflowSchemeManager.addWorkflowToScheme(workflowScheme, workflowName, lgtmIssueType.getId());
+  }
+
+  public static Status getLgtmWorkflowOpenStatus() throws StatusNotFoundException {
+    WorkflowManager workflowManager = ComponentAccessor.getWorkflowManager();
+    JiraWorkflow workflow = workflowManager.getWorkflow(Constants.workflowName);
+
+    List<Status> allStatuses = workflow.getLinkedStatusObjects();
+    for (Status status : allStatuses) {
+      if (status.getName().equals(Constants.workflowOpenStatusName)) {
+        return status;
+      }
+    }
+
+    throw new StatusNotFoundException();
+  }
+
+  public static Status getLgtmWorkflowClosedStatus() throws StatusNotFoundException {
+    WorkflowManager workflowManager = ComponentAccessor.getWorkflowManager();
+    JiraWorkflow workflow = workflowManager.getWorkflow(Constants.workflowName);
+
+    List<Status> allStatuses = workflow.getLinkedStatusObjects();
+    for (Status status : allStatuses) {
+      if (status.getName().equals(Constants.workflowClosedStatusName)) {
+        return status;
+      }
+    }
+
+    throw new StatusNotFoundException();
   }
 }
