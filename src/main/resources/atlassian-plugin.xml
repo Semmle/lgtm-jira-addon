@@ -1,37 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" plugins-version="2">
-  <plugin-info>
-    <description>${project.description}</description>
-    <version>${project.version}</version>
-    <vendor name="${project.organization.name}" url="${project.organization.url}"/>
-    <param name="plugin-icon">images/pluginIcon.png</param>
-    <param name="plugin-logo">images/pluginLogo.png</param>
-    <param name="configure.url">/plugins/servlet/lgtm</param>
-  </plugin-info>
-  <!-- add our i18n resource -->
-  <resource type="i18n" name="i18n" location="lgtm-addon"/>
-  <!-- add our web resources -->
-  <web-resource key="lgtm-addon-resources" name="lgtm-addon Web Resources">
-    <dependency>com.atlassian.auiplugin:ajs</dependency>
-	<dependency>com.atlassian.auiplugin:aui-select2</dependency>
-    <resource type="download" name="lgtm-addon.css" location="/css/lgtm-addon.css"/>
-    <resource type="download" name="lgtm-addon.js" location="/js/lgtm-addon.js"/>
-    <resource type="download" name="images/" location="/images"/>
-    <context>lgtm-addon</context>
-  </web-resource>
-  <servlet name="Lgtm Servlet" i18n-name-key="lgtm-servlet.name" key="lgtm-servlet" 
-  		class="com.semmle.jira.addon.LgtmServlet">
-    <description key="lgtm-servlet.description">The LGTM Add-on</description>
-    <url-pattern>/lgtm/*</url-pattern>
-  </servlet>
-  <servlet name="Lgtm Config Servlet" key="admin-servlet"
+<atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}"
+	plugins-version="2">
+	<plugin-info>
+		<description>${project.description}</description>
+		<version>${project.version}</version>
+		<vendor name="${project.organization.name}" url="${project.organization.url}" />
+		<param name="plugin-icon">images/pluginIcon.png</param>
+		<param name="plugin-logo">images/pluginLogo.png</param>
+		<param name="configure.url">/plugins/servlet/lgtm</param>
+	</plugin-info>
+	<!-- add our i18n resource -->
+	<resource type="i18n" name="i18n" location="lgtm-addon" />
+	<!-- add our web resources -->
+	<web-resource key="lgtm-addon-resources" name="lgtm-addon Web Resources">
+		<dependency>com.atlassian.auiplugin:ajs</dependency>
+		<dependency>com.atlassian.auiplugin:aui-select2</dependency>
+		<resource type="download" name="lgtm-addon.css" location="/css/lgtm-addon.css" />
+		<resource type="download" name="lgtm-addon.js" location="/js/lgtm-addon.js" />
+		<resource type="download" name="images/" location="/images" />
+		<context>lgtm-addon</context>
+	</web-resource>
+	<servlet name="Lgtm Servlet" i18n-name-key="lgtm-servlet.name"
+		key="lgtm-servlet" class="com.semmle.jira.addon.LgtmServlet">
+		<description key="lgtm-servlet.description">The LGTM Add-on</description>
+		<url-pattern>/lgtm/*</url-pattern>
+	</servlet>
+	<servlet name="Lgtm Config Servlet" key="admin-servlet"
 		class="com.semmle.jira.addon.config.AdminServlet">
-	<url-pattern>/lgtm</url-pattern>
-  </servlet>
-  
-  <rest key="rest" path="/lgtm-config" version="1.0">
+		<url-pattern>/lgtm</url-pattern>
+	</servlet>
+
+	<rest key="rest" path="/lgtm-config" version="1.0">
 		<description>Provides REST resources for the admin UI.</description>
 	</rest>
-	
+
 </atlassian-plugin>
