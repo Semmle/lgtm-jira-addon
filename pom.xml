@@ -132,9 +132,9 @@
 			<version>${jira.version}</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- Workaround for missing dependency jta:1.0.1 which
-		is not available on any maven repository. However, the slightly
-		newer 1.0.1b patched version does still exist. -->
+		<!-- Workaround for missing dependency jta:1.0.1 which is not available 
+			on any maven repository. However, the slightly newer 1.0.1b patched version 
+			does still exist. -->
 		<dependency>
 			<groupId>jta</groupId>
 			<artifactId>jta</artifactId>
@@ -211,53 +211,31 @@
 							<pluginExecutions>
 								<pluginExecution>
 									<pluginExecutionFilter>
-										<groupId>
-											com.atlassian.plugin
-										</groupId>
-										<artifactId>
-											atlassian-spring-scanner-maven-plugin
-										</artifactId>
-										<versionRange>
-											[1.2.13,)
-										</versionRange>
+										<groupId>com.atlassian.plugin</groupId>
+										<artifactId>atlassian-spring-scanner-maven-plugin</artifactId>
+										<versionRange>[1.2.13,)</versionRange>
 										<goals>
-											<goal>
-												atlassian-spring-scanner
-											</goal>
+											<goal>atlassian-spring-scanner</goal>
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<ignore />
 									</action>
 								</pluginExecution>
 								<pluginExecution>
 									<pluginExecutionFilter>
-										<groupId>
-											com.atlassian.maven.plugins
-										</groupId>
-										<artifactId>
-											maven-jira-plugin
-										</artifactId>
-										<versionRange>
-											[6.3.21,)
-										</versionRange>
+										<groupId>com.atlassian.maven.plugins</groupId>
+										<artifactId>maven-jira-plugin</artifactId>
+										<versionRange>[6.3.21,)</versionRange>
 										<goals>
-											<goal>
-												generate-rest-docs
-											</goal>
-											<goal>
-												filter-plugin-descriptor
-											</goal>
-											<goal>
-												compress-resources
-											</goal>
-											<goal>
-												filter-test-plugin-descriptor
-											</goal>
+											<goal>generate-rest-docs</goal>
+											<goal>filter-plugin-descriptor</goal>
+											<goal>compress-resources</goal>
+											<goal>filter-test-plugin-descriptor</goal>
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<ignore />
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
