@@ -12,8 +12,6 @@ var webhookUrlFieldId = "#webhookUrl";
 var urlCodeId = "urlCode";
 var key = "webhook";
 
-var lgtmIssueTypeId = null;
-
 (function() { // this closure helps us keep our variables to ourselves.
 // This pattern is known as an "iife" - immediately invoked function expression
 	AJS.$(document).ready(function() {
@@ -74,7 +72,6 @@ function loadProjects() {
 }
 
 function handleProjectChange(event) {
-	lgtmIssueTypeId = null;
 	clearSelect2Field(priorityFieldId);
 	
 	if (AJS.$(projectFieldId).select2('val') !== "none") {
@@ -185,7 +182,6 @@ function updateConfig() {
 		'lgtmSecret' : AJS.$('#secret').attr('value'),
 		'username' : AJS.$('#user').attr('value'),
 		'projectKey' : AJS.$('#project').select2('val'),
-		'issueTypeId' : lgtmIssueTypeId,
 		'priorityLevelId' : AJS.$('#priority').select2('val')
 	};
 

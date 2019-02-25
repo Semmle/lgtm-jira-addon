@@ -17,6 +17,8 @@ import com.opensymphony.workflow.loader.ActionDescriptor;
 import com.semmle.jira.addon.config.Config;
 import com.semmle.jira.addon.config.InvalidConfigurationException;
 import com.semmle.jira.addon.config.ProcessedConfig;
+import com.semmle.jira.addon.util.JiraUtils;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
@@ -130,7 +132,7 @@ public class LgtmServlet extends HttpServlet {
     issueInputParameters.setDescription(request.getDescription());
     issueInputParameters.setReporterId(config.getUser().getName());
     issueInputParameters.setProjectId(config.getProject().getId());
-    issueInputParameters.setIssueTypeId(config.getTaskIssueType().getId());
+    issueInputParameters.setIssueTypeId(JiraUtils.getLgtmIssueType().getId());
 
     if (config.getPriorityLevel() != null)
       issueInputParameters.setPriorityId(config.getPriorityLevel().getId());

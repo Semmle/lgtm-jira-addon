@@ -51,6 +51,17 @@ public class JiraUtils {
     GenericValue workflowScheme = workflowSchemeManager.getWorkflowScheme(project);
     workflowSchemeManager.addWorkflowToScheme(workflowScheme, workflowName, issueType.getId());
   }
+  
+  public static IssueType getLgtmIssueType() {
+	    Collection<IssueType> allIssueTypes =
+	        ComponentAccessor.getConstantsManager().getAllIssueTypeObjects();
+	    for (IssueType issueType : allIssueTypes) {
+	      if (issueType.getName().equalsIgnoreCase(Constants.ISSUE_TYPE_NAME)) {
+	        return issueType;
+	      }
+	    }
+	    return null;
+	  }
 
   public static Status getLgtmWorkflowStatus(String statusName)
       throws StatusNotFoundException, WorkflowNotFoundException {

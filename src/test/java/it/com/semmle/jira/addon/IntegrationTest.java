@@ -145,7 +145,6 @@ public class IntegrationTest {
     config.setLgtmSecret("12345678");
     config.setUsername("admin");
     config.setProjectKey("MKY");
-    config.setIssueTypeId("10000");
     config.setClosedStatusId("6");
     config.setReopenedStatusId("4");
     config.setPriorityLevelId("3");

@@ -118,7 +118,6 @@ public class TestValidateRequest extends TestLgtmServletBase {
     config.setLgtmSecret("secret");
     config.setUsername("username");
     config.setProjectKey("projectKey");
-    config.setIssueTypeId("issueTypeId");
     config.setClosedStatusId("closedStatusId");
     config.setReopenedStatusId("reopenedStatusId");
     config.setPriorityLevelId("priorityLevelId");
