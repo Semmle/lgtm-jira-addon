@@ -14,4 +14,4 @@ steps:
     publishJUnitResults: false
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
     options: '-B'
-    goals: 'package integration-test'
+    goals: 'package'
