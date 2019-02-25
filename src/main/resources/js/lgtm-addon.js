@@ -213,22 +213,22 @@ function updateConfig() {
 		} else if (jqXHR.getResponseHeader("Error") === "project") {
 			// This should not happen
 			AJS.messages.error("#message-context", {
-				title : 'The project ' + AJS.$(projectFieldId).select2('data').text
-						+ ' does not exist.',
+				title : 'The project "' + AJS.$(projectFieldId).select2('data').text
+						+ '" does not exist.',
 				closeable : true,
 				fadeout : true
 			});
 			return;
 		} else if (jqXHR.getResponseHeader("Error") === "issueType") {
 			AJS.messages.error("#message-context", {
-				title : 'The LGTM alert issue type doe not exist.',
+				title : 'The "LGTM alert" issue type could not be found.',
 				closeable : true,
 				fadeout : true
 			});
 			return;
 		} else if (jqXHR.getResponseHeader("Error") === "workflow") {
 			AJS.messages.error("#message-context", {
-				title : 'A problem happened when adding the LGTM alert workflow to the project.',
+				title : 'A problem occurred when adding the LGTM alert workflow to the project.',
 				closeable : true,
 				fadeout : true
 			});
