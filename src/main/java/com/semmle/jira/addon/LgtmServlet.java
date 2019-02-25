@@ -5,7 +5,6 @@ import com.atlassian.jira.bc.issue.IssueService;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.IssueInputParameters;
 import com.atlassian.jira.issue.MutableIssue;
-import com.atlassian.jira.issue.label.LabelManager;
 import com.atlassian.jira.issue.status.Status;
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
@@ -146,9 +145,6 @@ public class LgtmServlet extends HttpServlet {
     } else {
       IssueService.IssueResult issueResult =
           ComponentAccessor.getIssueService().create(config.getUser(), createValidationResult);
-      LabelManager mgr = ComponentAccessor.getComponent(LabelManager.class);
-      mgr.addLabel(config.getUser(), issueResult.getIssue().getId(), "LGTM", false);
-      mgr.addLabel(config.getUser(), issueResult.getIssue().getId(), request.project.name, false);
 
       Response response = new Response(issueResult.getIssue().getId());
       sendJSON(resp, HttpServletResponse.SC_CREATED, response);
