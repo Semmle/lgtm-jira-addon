@@ -7,6 +7,12 @@ import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.sal.api.user.UserManager;
+import com.semmle.jira.addon.util.Constants;
+import com.semmle.jira.addon.util.IssueTypeNotFoundException;
+import com.semmle.jira.addon.util.JiraUtils;
+import com.semmle.jira.addon.util.ProjectNotFoundException;
+import com.semmle.jira.addon.util.StatusNotFoundException;
+import com.semmle.jira.addon.util.WorkflowNotFoundException;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -18,6 +24,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import org.ofbiz.core.entity.GenericEntityException;
 
 @Path("/")
 @Scanned
@@ -67,6 +74,27 @@ public class ConfigResource {
 
     if (!UserUtils.userExists(config.getUsername())) {
       return Response.status(Status.BAD_REQUEST).header("Error", "username").build();
+    }
+
+    try {
+      JiraUtils.addIssueTypeToProject(config.getProjectKey(), Constants.issueTypeName);
+      JiraUtils.addWorkflowToProject(
+          config.getProjectKey(), Constants.workflowName, Constants.issueTypeName);
+    } catch (ProjectNotFoundException e) {
+      return Response.status(Status.BAD_REQUEST).header("Error", "project").build();
+    } catch (IssueTypeNotFoundException e) {
+      return Response.status(Status.BAD_REQUEST).header("Error", "issueType").build();
+    } catch (GenericEntityException e) {
+      return Response.status(Status.BAD_REQUEST).header("Error", "workflow").build();
+    }
+
+    try {
+      config.setReopenedStatusId(JiraUtils.getLgtmWorkflowOpenStatus().getId());
+      config.setClosedStatusId(JiraUtils.getLgtmWorkflowClosedStatus().getId());
+    } catch (StatusNotFoundException e) {
+      return Response.status(Status.BAD_REQUEST).header("Error", "status").build();
+    } catch (WorkflowNotFoundException e) {
+      return Response.status(Status.BAD_REQUEST).header("Error", "workflow-not-found").build();
     }
 
     Config.put(config, transactionTemplate, pluginSettingsFactory);

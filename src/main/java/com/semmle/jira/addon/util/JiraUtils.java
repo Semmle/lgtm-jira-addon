@@ -70,9 +70,13 @@ public class JiraUtils {
     workflowSchemeManager.addWorkflowToScheme(workflowScheme, workflowName, lgtmIssueType.getId());
   }
 
-  public static Status getLgtmWorkflowOpenStatus() throws StatusNotFoundException {
+  public static Status getLgtmWorkflowOpenStatus()
+      throws StatusNotFoundException, WorkflowNotFoundException {
     WorkflowManager workflowManager = ComponentAccessor.getWorkflowManager();
     JiraWorkflow workflow = workflowManager.getWorkflow(Constants.workflowName);
+    if (workflow == null) {
+      throw new WorkflowNotFoundException();
+    }
 
     List<Status> allStatuses = workflow.getLinkedStatusObjects();
     for (Status status : allStatuses) {
@@ -84,9 +88,13 @@ public class JiraUtils {
     throw new StatusNotFoundException();
   }
 
-  public static Status getLgtmWorkflowClosedStatus() throws StatusNotFoundException {
+  public static Status getLgtmWorkflowClosedStatus()
+      throws StatusNotFoundException, WorkflowNotFoundException {
     WorkflowManager workflowManager = ComponentAccessor.getWorkflowManager();
     JiraWorkflow workflow = workflowManager.getWorkflow(Constants.workflowName);
+    if (workflow == null) {
+      throw new WorkflowNotFoundException();
+    }
 
     List<Status> allStatuses = workflow.getLinkedStatusObjects();
     for (Status status : allStatuses) {
