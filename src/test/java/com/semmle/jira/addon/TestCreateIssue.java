@@ -5,15 +5,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.atlassian.jira.bc.issue.IssueService.CreateValidationResult;
 import com.atlassian.jira.bc.issue.IssueService.IssueResult;
 import com.atlassian.jira.config.ConstantsManager;
@@ -26,6 +17,12 @@ import com.atlassian.jira.util.ErrorCollection;
 import com.semmle.jira.addon.Utils.Util;
 import com.semmle.jira.addon.config.ProcessedConfig;
 import com.semmle.jira.addon.util.Constants;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import javax.servlet.http.HttpServletResponse;
+import org.junit.Before;
+import org.junit.Test;
 
 public class TestCreateIssue extends TestCreateAndTransitionBase {
 
@@ -37,12 +34,12 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
   @Before
   public void initTests() {
     super.initTests();
-    
+
     List<IssueType> allIssueTypes = new ArrayList<IssueType>();
     IssueType lgtmIssueType = mock(IssueType.class);
-    when(lgtmIssueType.getName()).thenReturn(Constants.issueTypeName);
+    when(lgtmIssueType.getName()).thenReturn(Constants.ISSUE_TYPE_NAME);
     when(lgtmIssueType.getId()).thenReturn("1");
-	allIssueTypes.add(lgtmIssueType );
+    allIssueTypes.add(lgtmIssueType);
     when(constantsManager.getAllIssueTypeObjects()).thenReturn(allIssueTypes);
 
     when(issueService.validateCreate(any(ApplicationUser.class), any(IssueInputParameters.class)))
