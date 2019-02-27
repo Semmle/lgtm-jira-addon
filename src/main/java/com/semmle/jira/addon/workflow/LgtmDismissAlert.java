@@ -1,14 +1,5 @@
 package com.semmle.jira.addon.workflow;
 
-import com.atlassian.jira.issue.MutableIssue;
-import com.atlassian.jira.workflow.function.issue.AbstractJiraFunctionProvider;
-import com.google.gson.Gson;
-import com.opensymphony.module.propertyset.PropertySet;
-import com.opensymphony.workflow.InvalidInputException;
-import com.opensymphony.workflow.WorkflowException;
-import com.semmle.jira.addon.JsonError;
-import com.semmle.jira.addon.Request;
-import com.semmle.jira.addon.Request.Transition;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -19,7 +10,24 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map;
+
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
+
+import com.atlassian.jira.issue.MutableIssue;
+import com.atlassian.jira.workflow.function.issue.AbstractJiraFunctionProvider;
+import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
+import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
+import com.atlassian.sal.api.transaction.TransactionTemplate;
+import com.google.gson.Gson;
+import com.opensymphony.module.propertyset.PropertySet;
+import com.opensymphony.workflow.InvalidInputException;
+import com.opensymphony.workflow.WorkflowException;
+import com.semmle.jira.addon.JsonError;
+import com.semmle.jira.addon.Request;
+import com.semmle.jira.addon.Request.Transition;
+import com.semmle.jira.addon.Util;
+import com.semmle.jira.addon.config.Config;
 
 /**
  * This is the post-function class that gets executed at the end of the transition. Any parameters
@@ -29,6 +37,16 @@ public class LgtmDismissAlert extends AbstractJiraFunctionProvider {
   public static final String FIELD_URL = "urlField";
   public static final String FIELD_TRANSITION = "transitionField";
 
+  @ComponentImport private final PluginSettingsFactory pluginSettingsFactory;
+  @ComponentImport private final TransactionTemplate transactionTemplate;
+
+  @Inject
+  LgtmDismissAlert(
+      PluginSettingsFactory pluginSettingsFactory, TransactionTemplate transactionTemplate) {
+    this.pluginSettingsFactory = pluginSettingsFactory;
+    this.transactionTemplate = transactionTemplate;
+  }
+
   @SuppressWarnings("rawtypes")
   public void execute(Map transientVars, Map args, PropertySet ps) throws WorkflowException {
 
@@ -37,10 +55,13 @@ public class LgtmDismissAlert extends AbstractJiraFunctionProvider {
     MutableIssue issue = getIssue(transientVars);
     Request message = new Request(transition, issue.getId());
 
-    postMessage(url, message);
+    String configKey = "webhook"; // TODO get config key from custom field
+    Config config = Config.get(configKey, transactionTemplate, pluginSettingsFactory);
+
+    postMessage(config.getLgtmSecret(), url, message);
   }
 
-  protected void postMessage(URL url, Request message) throws WorkflowException {
+  protected void postMessage(String secret, URL url, Request message) throws WorkflowException {
     Gson gson = new Gson();
     byte[] body = gson.toJson(message).getBytes(StandardCharsets.UTF_8);
     try {
@@ -49,6 +70,8 @@ public class LgtmDismissAlert extends AbstractJiraFunctionProvider {
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setRequestProperty("Content-Length", Integer.toString(body.length));
+        String signature = Util.calculateHmac(secret, body);
+        connection.setRequestProperty("X-LGTM-Signature", signature);
         connection.setInstanceFollowRedirects(true);
         connection.setDoInput(true);
         connection.setDoOutput(true);
