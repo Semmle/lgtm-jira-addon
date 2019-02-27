@@ -1,21 +1,25 @@
 package com.semmle.jira.addon.workflow;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Map;
-
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.workflow.function.issue.AbstractJiraFunctionProvider;
 import com.google.gson.Gson;
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.workflow.InvalidInputException;
 import com.opensymphony.workflow.WorkflowException;
+import com.semmle.jira.addon.JsonError;
 import com.semmle.jira.addon.Request;
 import com.semmle.jira.addon.Request.Transition;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * This is the post-function class that gets executed at the end of the transition. Any parameters
@@ -37,7 +41,8 @@ public class LgtmDismissAlert extends AbstractJiraFunctionProvider {
   }
 
   protected void postMessage(URL url, Request message) throws WorkflowException {
-    byte[] body = new Gson().toJson(message).getBytes(StandardCharsets.UTF_8);
+    Gson gson = new Gson();
+    byte[] body = gson.toJson(message).getBytes(StandardCharsets.UTF_8);
     try {
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       try {
@@ -45,10 +50,25 @@ public class LgtmDismissAlert extends AbstractJiraFunctionProvider {
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setRequestProperty("Content-Length", Integer.toString(body.length));
         connection.setInstanceFollowRedirects(true);
+        connection.setDoInput(true);
         connection.setDoOutput(true);
         connection.connect();
         connection.getOutputStream().write(body);
-        connection.getResponseCode();
+        if (connection.getResponseCode() != HttpServletResponse.SC_OK) {
+          String error;
+          if ("application/json".equals(connection.getContentType())) {
+            try (InputStream input = connection.getInputStream();
+                Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8)) {
+              gson.fromJson(reader, JsonError.class);
+            }
+          } else {
+            error = connection.getResponseMessage();
+            if (error == null) {
+              error = "An error occurred";
+            }
+          }
+          throw new WorkflowException("Failed to send update to LGTM: " + message);
+        }
       } finally {
         connection.disconnect();
       }
