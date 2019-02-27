@@ -1,14 +1,13 @@
 package com.semmle.jira.addon.workflow;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import com.atlassian.jira.plugin.workflow.AbstractWorkflowPluginFactory;
 import com.atlassian.jira.plugin.workflow.WorkflowPluginFunctionFactory;
-import com.atlassian.jira.workflow.JiraWorkflow;
-import com.atlassian.jira.workflow.WorkflowManager;
 import com.opensymphony.workflow.loader.AbstractDescriptor;
 import com.opensymphony.workflow.loader.FunctionDescriptor;
-import java.util.HashMap;
-import java.util.Map;
-import webwork.action.ActionContext;
+import com.semmle.jira.addon.Request.Transition;
 
 /**
  * This is the factory class responsible for dealing with the UI for the post-function. This is
@@ -16,22 +15,15 @@ import webwork.action.ActionContext;
  */
 public class LgtmDismissAlertFactory extends AbstractWorkflowPluginFactory
     implements WorkflowPluginFunctionFactory {
-  public static final String FIELD_MESSAGE = "messageField";
 
-  private WorkflowManager workflowManager;
+  private static final Transition DEFAULT_TRANSITION = Transition.SUPPRESS;
 
-  public LgtmDismissAlertFactory(WorkflowManager workflowManager) {
-    this.workflowManager = workflowManager;
-  }
+  public LgtmDismissAlertFactory() {}
 
   @Override
   protected void getVelocityParamsForInput(Map<String, Object> velocityParams) {
-    Map<String, String[]> myParams = ActionContext.getParameters();
-    final JiraWorkflow jiraWorkflow = workflowManager.getWorkflow(myParams.get("workflowName")[0]);
-
-    // the default message
-    velocityParams.put(
-        FIELD_MESSAGE, "Workflow Last Edited By " + jiraWorkflow.getUpdateAuthorName());
+    velocityParams.put(LgtmDismissAlert.FIELD_URL, "");
+    velocityParams.put(LgtmDismissAlert.FIELD_TRANSITION, DEFAULT_TRANSITION.value);
   }
 
   @Override
@@ -48,22 +40,25 @@ public class LgtmDismissAlertFactory extends AbstractWorkflowPluginFactory
       throw new IllegalArgumentException("Descriptor must be a FunctionDescriptor.");
     }
 
-    FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
-    String message = (String) functionDescriptor.getArgs().get(FIELD_MESSAGE);
+    FunctionDescriptor function = (FunctionDescriptor) descriptor;
 
-    if (message == null) {
-      message = "No Message";
-    }
+    String url = (String) function.getArgs().get(LgtmDismissAlert.FIELD_URL);
+    if (url == null) url = "unknown URL";
+    velocityParams.put(LgtmDismissAlert.FIELD_URL, url);
 
-    velocityParams.put(FIELD_MESSAGE, message);
+    String transition = (String) function.getArgs().get(LgtmDismissAlert.FIELD_TRANSITION);
+    if (transition == null) transition = DEFAULT_TRANSITION.value;
+    velocityParams.put(LgtmDismissAlert.FIELD_TRANSITION, transition);
   }
 
   public Map<String, ?> getDescriptorParams(Map<String, Object> formParams) {
-    Map params = new HashMap();
+    Map<String, String> params = new LinkedHashMap<>();
 
-    // Process The map
-    String message = extractSingleParam(formParams, FIELD_MESSAGE);
-    params.put(FIELD_MESSAGE, message);
+    String url = extractSingleParam(formParams, LgtmDismissAlert.FIELD_URL);
+    params.put(LgtmDismissAlert.FIELD_URL, url);
+    String transition = extractSingleParam(formParams, LgtmDismissAlert.FIELD_TRANSITION);
+    if (transition == null) transition = DEFAULT_TRANSITION.value;
+    params.put(LgtmDismissAlert.FIELD_TRANSITION, transition);
 
     return params;
   }

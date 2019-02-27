@@ -1,1 +1,1 @@
-Logs the message '$messageField'
+Post a <strong>$transitionField</strong> event to <strong>$urlField</strong>
