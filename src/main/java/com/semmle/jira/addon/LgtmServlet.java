@@ -118,7 +118,7 @@ public class LgtmServlet extends HttpServlet {
         }
         break;
       case UNSUPPRESS:
-        applyTransition(issue, Constants.WORKFLOW_UNSUPPRESS_TRANSITION_NAME, resp, config);
+        applyTransition(issue, Constants.WORKFLOW_REOPEN_TRANSITION_NAME, resp, config);
         break;
     }
   }

@@ -13,5 +13,4 @@ public class Constants {
   public static final String WORKFLOW_CLOSE_TRANSITION_NAME = "LGTM.Close";
 
   public static final String WORKFLOW_SUPPRESS_TRANSITION_NAME = "LGTM.Suppress";
-  public static final String WORKFLOW_UNSUPPRESS_TRANSITION_NAME = "LGTM.Unsuppress";
 }
