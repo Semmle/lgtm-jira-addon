@@ -1,6 +1,7 @@
 package com.semmle.jira.addon.util;
 
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.config.ConstantsManager;
 import com.atlassian.jira.issue.fields.config.FieldConfigScheme;
 import com.atlassian.jira.issue.fields.config.manager.IssueTypeSchemeManager;
 import com.atlassian.jira.issue.issuetype.IssueType;
@@ -35,14 +36,11 @@ public class JiraUtils {
   }
 
   public static IssueType getIssueTypeByName(String issueTypeName) {
-    Collection<IssueType> allIssueTypes =
-        ComponentAccessor.getConstantsManager().getAllIssueTypeObjects();
-    for (IssueType issueType : allIssueTypes) {
-      if (issueType.getName().equalsIgnoreCase(issueTypeName)) {
-        return issueType;
-      }
-    }
-    return null;
+    ComponentAccessor.getConstantsManager();
+    return (IssueType)
+        ComponentAccessor.getConstantsManager()
+            .getIssueConstantByName(
+                ConstantsManager.CONSTANT_TYPE.ISSUE_TYPE.getType(), issueTypeName);
   }
 
   public static void addWorkflowToProject(
@@ -54,14 +52,7 @@ public class JiraUtils {
   }
 
   public static IssueType getLgtmIssueType() {
-    Collection<IssueType> allIssueTypes =
-        ComponentAccessor.getConstantsManager().getAllIssueTypeObjects();
-    for (IssueType issueType : allIssueTypes) {
-      if (issueType.getName().equalsIgnoreCase(Constants.ISSUE_TYPE_NAME)) {
-        return issueType;
-      }
-    }
-    return null;
+    return getIssueTypeByName(Constants.ISSUE_TYPE_NAME);
   }
 
   public static Status getLgtmWorkflowStatus(String statusName)
