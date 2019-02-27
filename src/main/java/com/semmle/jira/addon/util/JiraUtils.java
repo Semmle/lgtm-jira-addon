@@ -45,11 +45,12 @@ public class JiraUtils {
     return null;
   }
 
-  public static void addWorkflowToProject(Project project, String workflowName, IssueType issueType)
-      throws GenericEntityException {
+  public static void addWorkflowToProject(
+      Project project, JiraWorkflow workflow, IssueType issueType) throws GenericEntityException {
     WorkflowSchemeManager workflowSchemeManager = ComponentAccessor.getWorkflowSchemeManager();
     GenericValue workflowScheme = workflowSchemeManager.getWorkflowScheme(project);
-    workflowSchemeManager.addWorkflowToScheme(workflowScheme, workflowName, issueType.getId());
+    workflowSchemeManager.addWorkflowToScheme(
+        workflowScheme, workflow.getName(), issueType.getId());
   }
 
   public static IssueType getLgtmIssueType() {
@@ -65,11 +66,7 @@ public class JiraUtils {
 
   public static Status getLgtmWorkflowStatus(String statusName)
       throws StatusNotFoundException, WorkflowNotFoundException {
-    WorkflowManager workflowManager = ComponentAccessor.getWorkflowManager();
-    JiraWorkflow workflow = workflowManager.getWorkflow(Constants.WORKFLOW_NAME);
-    if (workflow == null) {
-      throw new WorkflowNotFoundException();
-    }
+    JiraWorkflow workflow = getLgtmWorkflow();
 
     List<Status> allStatuses = workflow.getLinkedStatusObjects();
     for (Status status : allStatuses) {
@@ -79,5 +76,14 @@ public class JiraUtils {
     }
 
     throw new StatusNotFoundException();
+  }
+
+  public static JiraWorkflow getLgtmWorkflow() throws WorkflowNotFoundException {
+    WorkflowManager workflowManager = ComponentAccessor.getWorkflowManager();
+    JiraWorkflow workflow = workflowManager.getWorkflow(Constants.WORKFLOW_NAME);
+    if (workflow == null) {
+      throw new WorkflowNotFoundException();
+    }
+    return workflow;
   }
 }

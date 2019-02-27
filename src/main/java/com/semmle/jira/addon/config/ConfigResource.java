@@ -4,6 +4,7 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.user.UserUtils;
+import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
@@ -92,9 +93,16 @@ public class ConfigResource {
       return Response.status(Status.BAD_REQUEST).header("Error", "issueType").build();
     }
 
+    JiraWorkflow lgtmWorkflow = null;
+    try {
+      lgtmWorkflow = JiraUtils.getLgtmWorkflow();
+    } catch (WorkflowNotFoundException e1) {
+      return Response.status(Status.BAD_REQUEST).header("Error", "workflow-not-found").build();
+    }
+
     JiraUtils.addIssueTypeToProject(project, lgtmIssueType);
     try {
-      JiraUtils.addWorkflowToProject(project, Constants.WORKFLOW_NAME, lgtmIssueType);
+      JiraUtils.addWorkflowToProject(project, lgtmWorkflow, lgtmIssueType);
     } catch (GenericEntityException e) {
       log.error("Error while adding the LGTM workflow to the project", e);
       return Response.status(Status.BAD_REQUEST).header("Error", "workflow").build();
