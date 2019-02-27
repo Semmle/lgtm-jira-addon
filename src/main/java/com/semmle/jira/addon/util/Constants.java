@@ -9,9 +9,9 @@ public class Constants {
   public static final String WORKFLOW_SUPPRESSED_STATUS_NAME = "Suppressed";
   public static final String WORKFLOW_FALSE_POSITIVE_STATUS_NAME = "False Positive";
 
-  public static final String WORKFLOW_REOPEN_TRANSITION_NAME = "Reopen";
-  public static final String WORKFLOW_CLOSE_TRANSITION_NAME = "Close";
+  public static final String WORKFLOW_REOPEN_TRANSITION_NAME = "LGTM.Reopen";
+  public static final String WORKFLOW_CLOSE_TRANSITION_NAME = "LGTM.Close";
 
-  public static final String WORKFLOW_SUPPRESS_TRANSITION_NAME = "Suppress";
-  public static final String WORKFLOW_UNSUPPRESS_TRANSITION_NAME = "Unsuppress";
+  public static final String WORKFLOW_SUPPRESS_TRANSITION_NAME = "LGTM.Suppress";
+  public static final String WORKFLOW_UNSUPPRESS_TRANSITION_NAME = "LGTM.Unsuppress";
 }

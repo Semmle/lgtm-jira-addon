@@ -5,13 +5,16 @@ import com.atlassian.jira.bc.issue.IssueService;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.IssueInputParameters;
 import com.atlassian.jira.issue.MutableIssue;
+import com.atlassian.jira.issue.status.Status;
 import com.atlassian.jira.workflow.JiraWorkflow;
+import com.atlassian.jira.workflow.TransitionOptions;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.opensymphony.workflow.loader.ActionDescriptor;
+import com.semmle.jira.addon.Request.Transition;
 import com.semmle.jira.addon.config.Config;
 import com.semmle.jira.addon.config.InvalidConfigurationException;
 import com.semmle.jira.addon.config.ProcessedConfig;
@@ -78,13 +81,25 @@ public class LgtmServlet extends HttpServlet {
 
     ComponentAccessor.getJiraAuthenticationContext().setLoggedInUser(config.getUser());
 
+    Status falsePositiveStatus = null;
+    try {
+      falsePositiveStatus =
+          JiraUtils.getLgtmWorkflowStatus(Constants.WORKFLOW_FALSE_POSITIVE_STATUS_NAME);
+    } catch (StatusNotFoundException | WorkflowNotFoundException e) {
+      sendError(
+          resp,
+          HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+          "Configuration needed – see documentation.");
+      return;
+    }
+
     MutableIssue issue =
         ComponentAccessor.getIssueService().getIssue(config.getUser(), request.issueId).getIssue();
-
-    if (issue == null) {
+    if (issue == null && request.transition != Transition.CREATE) {
       sendError(resp, HttpServletResponse.SC_GONE, "Issue " + request.issueId + " not found.");
       return;
     }
+
     switch (request.transition) {
       case CREATE:
         createIssue(request, resp, config);
@@ -96,39 +111,14 @@ public class LgtmServlet extends HttpServlet {
         applyTransition(issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, resp, config);
         break;
       case SUPPRESS:
-        boolean applicable = false;
-        try {
-          applicable =
-              issue.getStatusId()
-                  == JiraUtils.getLgtmWorkflowStatus(Constants.WORKFLOW_OPEN_STATUS_NAME).getId();
-        } catch (StatusNotFoundException | WorkflowNotFoundException e) {
-          sendError(
-              resp,
-              HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-              "Configuration needed – see documentation.");
-          return;
-        }
-        if (applicable)
+        if (!issue.getStatusId().equals(falsePositiveStatus.getId())) {
           applyTransition(issue, Constants.WORKFLOW_SUPPRESS_TRANSITION_NAME, resp, config);
+        } else {
+          sendJSON(resp, HttpServletResponse.SC_OK, resp);
+        }
         break;
       case UNSUPPRESS:
-        try {
-          if (issue.getStatusId()
-              == JiraUtils.getLgtmWorkflowStatus(Constants.WORKFLOW_SUPPRESSED_STATUS_NAME)
-                  .getId()) {
-            applyTransition(issue, Constants.WORKFLOW_UNSUPPRESS_TRANSITION_NAME, resp, config);
-          } else if (issue.getStatusId()
-              == JiraUtils.getLgtmWorkflowStatus(Constants.WORKFLOW_FALSE_POSITIVE_STATUS_NAME)
-                  .getId()) {
-            applyTransition(issue, Constants.WORKFLOW_REOPEN_TRANSITION_NAME, resp, config);
-          }
-        } catch (StatusNotFoundException | WorkflowNotFoundException e) {
-          sendError(
-              resp,
-              HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-              "Configuration needed – see documentation.");
-          return;
-        }
+        applyTransition(issue, Constants.WORKFLOW_UNSUPPRESS_TRANSITION_NAME, resp, config);
         break;
     }
   }
@@ -194,20 +184,27 @@ public class LgtmServlet extends HttpServlet {
   }
 
   void applyTransition(
-      MutableIssue issue, String transition, HttpServletResponse resp, ProcessedConfig config)
+      MutableIssue issue, String transitionName, HttpServletResponse resp, ProcessedConfig config)
       throws IOException {
-
     IssueInputParameters issueInputParameters =
         ComponentAccessor.getIssueService().newIssueInputParameters();
     issueInputParameters.setRetainExistingValuesWhenParameterNotProvided(true, true);
 
     JiraWorkflow workflow = ComponentAccessor.getWorkflowManager().getWorkflow(issue);
-    Collection<ActionDescriptor> candidateActions = workflow.getActionsByName(transition);
+    Collection<ActionDescriptor> candidateActions = workflow.getActionsByName(transitionName);
     for (ActionDescriptor action : candidateActions) {
+      TransitionOptions transitionOptions =
+          new TransitionOptions.Builder().skipConditions().build();
+
       IssueService.TransitionValidationResult transitionValidationResult =
           ComponentAccessor.getIssueService()
               .validateTransition(
-                  config.getUser(), issue.getId(), action.getId(), issueInputParameters);
+                  config.getUser(),
+                  issue.getId(),
+                  action.getId(),
+                  issueInputParameters,
+                  transitionOptions);
+
       if (transitionValidationResult.isValid()) {
         IssueService.IssueResult issueResult =
             ComponentAccessor.getIssueService()
