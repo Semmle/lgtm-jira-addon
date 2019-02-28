@@ -16,8 +16,6 @@ public class Config {
   @XmlElement private String lgtmSecret;
   @XmlElement private String username;
   @XmlElement private String projectKey;
-  @XmlElement private String closedStatusId;
-  @XmlElement private String reopenedStatusId;
   @XmlElement private String priorityLevelId;
 
   public String getKey() {
@@ -52,22 +50,6 @@ public class Config {
     this.projectKey = projectKey;
   }
 
-  public String getClosedStatusId() {
-    return closedStatusId;
-  }
-
-  public void setClosedStatusId(String closedStatusId) {
-    this.closedStatusId = closedStatusId;
-  }
-
-  public String getReopenedStatusId() {
-    return reopenedStatusId;
-  }
-
-  public void setReopenedStatusId(String reopenedStatusId) {
-    this.reopenedStatusId = reopenedStatusId;
-  }
-
   public String getPriorityLevelId() {
     return priorityLevelId;
   }
@@ -92,10 +74,6 @@ public class Config {
                 (String) settings.get("com.lgtm.addon.config." + configKey + ".username"));
             config.setProjectKey(
                 (String) settings.get("com.lgtm.addon.config." + configKey + ".projectKey"));
-            config.setClosedStatusId(
-                (String) settings.get("com.lgtm.addon.config." + configKey + ".closedStatusId"));
-            config.setReopenedStatusId(
-                (String) settings.get("com.lgtm.addon.config." + configKey + ".reopenedStatusId"));
             config.setPriorityLevelId(
                 (String) settings.get("com.lgtm.addon.config." + configKey + ".priorityLevelId"));
             return config;
@@ -117,12 +95,6 @@ public class Config {
                 "com.lgtm.addon.config." + config.getKey() + ".username", config.getUsername());
             settings.put(
                 "com.lgtm.addon.config." + config.getKey() + ".projectKey", config.getProjectKey());
-            settings.put(
-                "com.lgtm.addon.config." + config.getKey() + ".closedStatusId",
-                config.getClosedStatusId());
-            settings.put(
-                "com.lgtm.addon.config." + config.getKey() + ".reopenedStatusId",
-                config.getReopenedStatusId());
             settings.put(
                 "com.lgtm.addon.config." + config.getKey() + ".priorityLevelId",
                 config.getPriorityLevelId());

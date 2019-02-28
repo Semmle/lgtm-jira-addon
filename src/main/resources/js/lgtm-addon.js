@@ -229,13 +229,6 @@ function updateConfig() {
 				fadeout : true
 			});
 			return;
-		} else if (jqXHR.getResponseHeader("Error") === "status") {
-			AJS.messages.error("#message-context", {
-				title : 'There is a problem with the LGTM workflow',
-				closeable : true,
-				fadeout : true
-			});
-			return;
 		} else if (jqXHR.getResponseHeader("Error") === "workflow-not-found") {
 			AJS.messages.error("#message-context", {
 				title : 'The LGTM alert workflow does not exists. Please install it',
