@@ -111,7 +111,9 @@ public class LgtmServlet extends HttpServlet {
         applyTransition(issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, resp, config);
         break;
       case SUPPRESS:
-        if (!issue.getStatusId().equals(falsePositiveStatus.getId())) { // lgtm [java/dereferenced-value-may-be-null]
+        if (!issue
+            .getStatusId() // lgtm [java/dereferenced-value-may-be-null]
+            .equals(falsePositiveStatus.getId())) {
           applyTransition(issue, Constants.WORKFLOW_SUPPRESS_TRANSITION_NAME, resp, config);
         } else {
           sendJSON(resp, HttpServletResponse.SC_OK, new Response(issue.getId()));

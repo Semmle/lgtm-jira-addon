@@ -19,13 +19,10 @@ import com.atlassian.jira.workflow.WorkflowManager;
 import com.opensymphony.workflow.loader.ActionDescriptor;
 import com.semmle.jira.addon.config.ProcessedConfig;
 import com.semmle.jira.addon.util.Constants;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
-
 import javax.servlet.http.HttpServletResponse;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,9 +39,13 @@ public class TestApplyTransition extends TestCreateAndTransitionBase {
     super.initTests();
 
     when(issueService.validateTransition(
-            any(ApplicationUser.class), any(Long.class), anyInt(), any(IssueInputParameters.class), any(TransitionOptions.class)))
+            any(ApplicationUser.class),
+            any(Long.class),
+            anyInt(),
+            any(IssueInputParameters.class),
+            any(TransitionOptions.class)))
         .thenReturn(transitionValidationResult);
-    
+
     JiraWorkflow workflow = mock(JiraWorkflow.class);
     when(workflowManager.getWorkflow(any(MutableIssue.class))).thenReturn(workflow);
 
@@ -55,53 +56,53 @@ public class TestApplyTransition extends TestCreateAndTransitionBase {
     when(config.getUser()).thenReturn(user);
   }
 
-    @Test
-    public void testApplyTransitionTransitionNotFound() throws IOException {
-      HttpServletResponse resp = mockResponse();
-  
-      when(transitionValidationResult.isValid()).thenReturn(false);
-      
-      MutableIssue issue = mock(MutableIssue.class);
-  
-      servlet.applyTransition(issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, resp, config);
-  
-      verify(resp.getWriter()).write("{\"code\":500,\"error\":\"No valid transition found.\"}");
-      verify(resp).setStatus(500);
-    }
-  
-    @Test
-    public void testApplyTransitionFailure() throws IOException {
-      HttpServletResponse resp = mockResponse();
-  
-      when(transitionValidationResult.isValid()).thenReturn(true);
-  
-      IssueResult issueResult = mock(IssueResult.class);
-      when(issueService.transition(any(), any())).thenReturn(issueResult);
-      when(issueResult.isValid()).thenReturn(false);
-      when(issueResult.getErrorCollection()).thenReturn(new SimpleErrorCollection());
-      
-      MutableIssue issue = mock(MutableIssue.class);
-  
-      servlet.applyTransition(issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, resp, config);
-  
-      verify(resp).setStatus(500);
-    }
-  
-    @Test
-    public void testApplyTransitionSuccess() throws IOException {
-      HttpServletResponse resp = mockResponse();
-  
-      when(transitionValidationResult.isValid()).thenReturn(true);
-  
-      IssueResult issueResult = mock(IssueResult.class);
-      when(issueService.transition(any(), any())).thenReturn(issueResult);
-      when(issueResult.isValid()).thenReturn(true);
-      
-      MutableIssue issue = mock(MutableIssue.class);
-      when(issueResult.getIssue()).thenReturn(issue);
-  
-      servlet.applyTransition(issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, resp, config);
-  
-      verify(resp).setStatus(200);
-    }
+  @Test
+  public void testApplyTransitionTransitionNotFound() throws IOException {
+    HttpServletResponse resp = mockResponse();
+
+    when(transitionValidationResult.isValid()).thenReturn(false);
+
+    MutableIssue issue = mock(MutableIssue.class);
+
+    servlet.applyTransition(issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, resp, config);
+
+    verify(resp.getWriter()).write("{\"code\":500,\"error\":\"No valid transition found.\"}");
+    verify(resp).setStatus(500);
+  }
+
+  @Test
+  public void testApplyTransitionFailure() throws IOException {
+    HttpServletResponse resp = mockResponse();
+
+    when(transitionValidationResult.isValid()).thenReturn(true);
+
+    IssueResult issueResult = mock(IssueResult.class);
+    when(issueService.transition(any(), any())).thenReturn(issueResult);
+    when(issueResult.isValid()).thenReturn(false);
+    when(issueResult.getErrorCollection()).thenReturn(new SimpleErrorCollection());
+
+    MutableIssue issue = mock(MutableIssue.class);
+
+    servlet.applyTransition(issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, resp, config);
+
+    verify(resp).setStatus(500);
+  }
+
+  @Test
+  public void testApplyTransitionSuccess() throws IOException {
+    HttpServletResponse resp = mockResponse();
+
+    when(transitionValidationResult.isValid()).thenReturn(true);
+
+    IssueResult issueResult = mock(IssueResult.class);
+    when(issueService.transition(any(), any())).thenReturn(issueResult);
+    when(issueResult.isValid()).thenReturn(true);
+
+    MutableIssue issue = mock(MutableIssue.class);
+    when(issueResult.getIssue()).thenReturn(issue);
+
+    servlet.applyTransition(issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, resp, config);
+
+    verify(resp).setStatus(200);
+  }
 }
