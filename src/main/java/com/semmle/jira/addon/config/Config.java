@@ -4,6 +4,7 @@ import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
+import java.net.URI;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -17,6 +18,8 @@ public class Config {
   @XmlElement private String username;
   @XmlElement private String projectKey;
   @XmlElement private String priorityLevelId;
+  @XmlElement private URI externalHookUrl;
+  @XmlElement private String trackerKey;
 
   public String getKey() {
     return key;
@@ -58,6 +61,22 @@ public class Config {
     this.priorityLevelId = priorityLevelId;
   }
 
+  public URI getExternalHookUrl() {
+    return externalHookUrl;
+  }
+
+  public void setExternalHookUrl(URI url) {
+    this.externalHookUrl = url;
+  }
+
+  public String getTrackerKey() {
+    return trackerKey;
+  }
+
+  public void setTrackerKey(String trackerKey) {
+    this.trackerKey = trackerKey;
+  }
+
   public static Config get(
       String configKey,
       TransactionTemplate transactionTemplate,
@@ -76,6 +95,11 @@ public class Config {
                 (String) settings.get("com.lgtm.addon.config." + configKey + ".projectKey"));
             config.setPriorityLevelId(
                 (String) settings.get("com.lgtm.addon.config." + configKey + ".priorityLevelId"));
+            String externalHook =
+                (String) settings.get("com.lgtm.addon.config." + configKey + ".externalHookUrl");
+            config.setExternalHookUrl(externalHook == null ? null : URI.create(externalHook));
+            config.setTrackerKey(
+                (String) settings.get("com.lgtm.addon.config." + configKey + ".trackerKey"));
             return config;
           }
         });
@@ -98,6 +122,12 @@ public class Config {
             settings.put(
                 "com.lgtm.addon.config." + config.getKey() + ".priorityLevelId",
                 config.getPriorityLevelId());
+            URI externalHook = config.getExternalHookUrl();
+            settings.put(
+                "com.lgtm.addon.config." + config.getKey() + ".externalHookUrl",
+                externalHook == null ? null : externalHook.toString());
+            settings.put(
+                "com.lgtm.addon.config." + config.getKey() + ".trackerKey", config.getTrackerKey());
             return null;
           }
         });

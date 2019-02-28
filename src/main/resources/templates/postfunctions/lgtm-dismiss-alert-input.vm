@@ -1,13 +1,5 @@
 <tr>
     <td class="fieldLabelArea">
-        URL:
-    </td>
-    <td nowrap>
-        <input name="urlField" id="urlField" value="$urlField" placeholder="https://lgtm.com/external-hooks/issue-trackers/tracker-key"/>
-    </td>
-</tr>
-<tr>
-    <td class="fieldLabelArea">
         Transition:
     </td>
     <td nowrap>

@@ -4,7 +4,7 @@ var adminFormId = "#admin";
 
 var userFieldId = "#user";
 var secretFieldId = "#secret";
-
+var externalHookUrlFieldId = "#externalHookUrl";
 var projectFieldId = "#project";
 var priorityFieldId = "#priority";
 
@@ -35,7 +35,7 @@ var key = "webhook";
 			config = current_config;
 			AJS.$(userFieldId).val(config.username);
 			AJS.$(secretFieldId).val(config.lgtmSecret);
-			
+			AJS.$(externalHookUrlFieldId).val(config.externalHookUrl);
 			loadProjects();
 		});
 	});
@@ -159,6 +159,11 @@ function updateConfig() {
 		return;
 	}
 
+	var externalHookUrl = AJS.$(externalHookUrlFieldId).attr("value");
+	if (externalHookUrl === "") {
+		externalHookUrl = null;
+	}
+
 	if (AJS.$(userFieldId).attr("value") === "") {
 		AJS.messages.error("#message-context", {
 			title : 'Please enter a valid user.',
@@ -180,6 +185,7 @@ function updateConfig() {
 	var data = {
 		'key' : key,
 		'lgtmSecret' : AJS.$('#secret').attr('value'),
+		'externalHookUrl' : externalHookUrl,
 		'username' : AJS.$('#user').attr('value'),
 		'projectKey' : AJS.$('#project').select2('val'),
 		'priorityLevelId' : AJS.$('#priority').select2('val')

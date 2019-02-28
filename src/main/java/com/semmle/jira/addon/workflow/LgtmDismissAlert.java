@@ -1,19 +1,5 @@
 package com.semmle.jira.addon.workflow;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
-
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.workflow.function.issue.AbstractJiraFunctionProvider;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
@@ -28,13 +14,23 @@ import com.semmle.jira.addon.Request;
 import com.semmle.jira.addon.Request.Transition;
 import com.semmle.jira.addon.Util;
 import com.semmle.jira.addon.config.Config;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Map;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * This is the post-function class that gets executed at the end of the transition. Any parameters
  * that were saved in your factory class will be available in the transientVars Map.
  */
 public class LgtmDismissAlert extends AbstractJiraFunctionProvider {
-  public static final String FIELD_URL = "urlField";
   public static final String FIELD_TRANSITION = "transitionField";
 
   @ComponentImport private final PluginSettingsFactory pluginSettingsFactory;
@@ -50,22 +46,32 @@ public class LgtmDismissAlert extends AbstractJiraFunctionProvider {
   @SuppressWarnings("rawtypes")
   public void execute(Map transientVars, Map args, PropertySet ps) throws WorkflowException {
 
-    URL url = getUrlParam(args);
+    String configKey = "webhook"; // TODO get config key from custom field
+    Config config = Config.get(configKey, transactionTemplate, pluginSettingsFactory);
+    URI url = config.getExternalHookUrl();
+    // There is no external hook URL configured
+    if (url == null) return;
+
     Transition transition = getTransitionParam(args);
     MutableIssue issue = getIssue(transientVars);
     Request message = new Request(transition, issue.getId());
-
-    String configKey = "webhook"; // TODO get config key from custom field
-    Config config = Config.get(configKey, transactionTemplate, pluginSettingsFactory);
-
-    postMessage(config.getLgtmSecret(), url, message);
+    WorkflowException exception = null;
+    for (int retries = 0; retries < 3; retries++) {
+      try {
+        postMessage(config.getLgtmSecret(), url, message);
+        break;
+      } catch (WorkflowException e) {
+        if (exception == null) exception = e;
+      }
+    }
+    if (exception != null) throw exception;
   }
 
-  protected void postMessage(String secret, URL url, Request message) throws WorkflowException {
+  protected void postMessage(String secret, URI url, Request message) throws WorkflowException {
     Gson gson = new Gson();
     byte[] body = gson.toJson(message).getBytes(StandardCharsets.UTF_8);
     try {
-      HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+      HttpURLConnection connection = (HttpURLConnection) url.toURL().openConnection();
       try {
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json");
@@ -78,19 +84,28 @@ public class LgtmDismissAlert extends AbstractJiraFunctionProvider {
         connection.connect();
         connection.getOutputStream().write(body);
         if (connection.getResponseCode() != HttpServletResponse.SC_OK) {
-          String error;
+          String error = null;
           if ("application/json".equals(connection.getContentType())) {
-            try (InputStream input = connection.getInputStream();
-                Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8)) {
-              gson.fromJson(reader, JsonError.class);
+            InputStream input = connection.getErrorStream();
+            if (input == null) {
+              error = connection.getResponseMessage();
+            } else {
+              try (Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8)) {
+                JsonError jsonError = gson.fromJson(reader, JsonError.class);
+                if (jsonError.error != null) {
+                  error = jsonError.error;
+                }
+              } finally {
+                input.close();
+              }
             }
           } else {
             error = connection.getResponseMessage();
-            if (error == null) {
-              error = "An error occurred";
-            }
           }
-          throw new WorkflowException("Failed to send update to LGTM: " + message);
+          if (error == null || error.isEmpty()) {
+            error = "An error occurred";
+          }
+          throw new WorkflowException("Failed to send update to LGTM: " + error);
         }
       } finally {
         connection.disconnect();
@@ -98,21 +113,6 @@ public class LgtmDismissAlert extends AbstractJiraFunctionProvider {
     } catch (IOException e) {
       throw new WorkflowException("Failed to send update to LGTM", e);
     }
-  }
-
-  private URL getUrlParam(Map<?, ?> args) throws InvalidInputException {
-    String urlArg = (String) args.get(FIELD_URL);
-    URL url;
-    if (urlArg == null) {
-      throw new InvalidInputException("Missing value for 'url' parameter");
-    }
-    try {
-      url = new URL(urlArg.toString());
-    } catch (MalformedURLException e) {
-      throw new InvalidInputException("Invalid value for 'url' parameter: " + urlArg);
-    }
-
-    return url;
   }
 
   private Transition getTransitionParam(Map<?, ?> args) throws InvalidInputException {

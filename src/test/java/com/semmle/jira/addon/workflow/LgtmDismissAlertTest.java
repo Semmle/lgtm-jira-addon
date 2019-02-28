@@ -3,14 +3,6 @@ package com.semmle.jira.addon.workflow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.net.URL;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
@@ -20,14 +12,19 @@ import com.opensymphony.workflow.InvalidInputException;
 import com.semmle.jira.addon.Request;
 import com.semmle.jira.addon.Request.Transition;
 import com.semmle.jira.addon.config.Config;
-
+import java.net.URI;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import junit.framework.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class LgtmDismissAlertTest {
   private LgtmDismissAlert function;
   private MutableIssue issue;
   private Request requestBody;
-  private URL requestURL;
+  private URI requestURL;
   private String secret;
 
   private static class MockPluginSettings implements PluginSettings {
@@ -68,6 +65,7 @@ public class LgtmDismissAlertTest {
     Config config = new Config();
     config.setKey("webhook");
     config.setLgtmSecret("secret");
+    config.setExternalHookUrl(URI.create("https://localhost:8080"));
     Config.put(config, transaction, settingsFactory);
 
     function =
@@ -78,7 +76,7 @@ public class LgtmDismissAlertTest {
           }
 
           @Override
-          protected void postMessage(String secret, URL url, Request request) {
+          protected void postMessage(String secret, URI url, Request request) {
             LgtmDismissAlertTest.this.secret = secret;
             LgtmDismissAlertTest.this.requestURL = url;
             LgtmDismissAlertTest.this.requestBody = request;
@@ -94,7 +92,6 @@ public class LgtmDismissAlertTest {
   @Test
   public void testValidParameters() throws Exception {
     Map<String, String> args = new LinkedHashMap<>();
-    args.put(LgtmDismissAlert.FIELD_URL, "https://localhost:8080");
     args.put(LgtmDismissAlert.FIELD_TRANSITION, Transition.SUPPRESS.value);
     function.execute(Collections.emptyMap(), args, null);
     Assert.assertEquals("secret", secret);
