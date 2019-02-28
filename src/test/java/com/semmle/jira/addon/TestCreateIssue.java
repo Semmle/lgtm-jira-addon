@@ -39,7 +39,8 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
     when(lgtmIssueType.getName()).thenReturn(Constants.ISSUE_TYPE_NAME);
     when(lgtmIssueType.getId()).thenReturn("1");
     when(constantsManager.getIssueConstantByName(
-            eq(ConstantsManager.CONSTANT_TYPE.ISSUE_TYPE.getType()), anyString())).thenReturn(lgtmIssueType);
+            eq(ConstantsManager.CONSTANT_TYPE.ISSUE_TYPE.getType()), anyString()))
+        .thenReturn(lgtmIssueType);
 
     when(issueService.validateCreate(any(ApplicationUser.class), any(IssueInputParameters.class)))
         .thenReturn(createValidationResult);
