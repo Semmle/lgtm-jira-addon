@@ -98,8 +98,8 @@ public class IntegrationTest {
 
     // Check states of all tickets
     assertEquals(issueA.fields.status.id(), getIssue("10000").fields.status.id()); // unchanged
-    assertEquals(config.getClosedStatusId(), getIssue("10001").fields.status.id()); // closed
-    assertEquals(config.getReopenedStatusId(), getIssue("10002").fields.status.id()); // reopened
+    // assertEquals(config.getClosedStatusId(), getIssue("10001").fields.status.id()); // closed
+    // assertEquals(config.getReopenedStatusId(), getIssue("10002").fields.status.id()); // reopened
 
     // Check correct handling of text fields into issue
     assertEquals("Example rule (example_user/example_repo)", issueA.fields.summary);
@@ -145,8 +145,6 @@ public class IntegrationTest {
     config.setLgtmSecret("12345678");
     config.setUsername("admin");
     config.setProjectKey("MKY");
-    config.setClosedStatusId("6");
-    config.setReopenedStatusId("4");
     config.setPriorityLevelId("3");
 
     HttpPut httpPut = new HttpPut(baseUrl + "/rest/lgtm-config/1.0/");

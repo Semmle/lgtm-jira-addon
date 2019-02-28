@@ -2,7 +2,6 @@ package com.semmle.jira.addon.config;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.priority.Priority;
-import com.atlassian.jira.issue.status.Status;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.user.ApplicationUser;
 import java.util.ArrayList;
@@ -12,8 +11,6 @@ import java.util.stream.Collectors;
 public class ProcessedConfig {
   private ApplicationUser user;
   private Project project;
-  private Status reopenedStatus;
-  private Status closedStatus;
   private Priority priorityLevel;
 
   public ProcessedConfig(Config config) throws InvalidConfigurationException {
@@ -35,25 +32,6 @@ public class ProcessedConfig {
         configErrors.add(String.format("project key '%s' not found", config.getProjectKey()));
     } else {
       configErrors.add("projectKey was null");
-    }
-
-    if (config.getReopenedStatusId() != null) {
-      reopenedStatus =
-          ComponentAccessor.getConstantsManager().getStatus(config.getReopenedStatusId());
-      if (reopenedStatus == null)
-        configErrors.add(
-            String.format("reopened status id '%s' not found", config.getReopenedStatusId()));
-    } else {
-      configErrors.add("reopenedStatusId was null");
-    }
-
-    if (config.getClosedStatusId() != null) {
-      closedStatus = ComponentAccessor.getConstantsManager().getStatus(config.getClosedStatusId());
-      if (closedStatus == null)
-        configErrors.add(
-            String.format("closed status id '%s' not found", config.getClosedStatusId()));
-    } else {
-      configErrors.add("closedStatusId was null");
     }
 
     priorityLevel = null;
@@ -78,14 +56,6 @@ public class ProcessedConfig {
 
   public Project getProject() {
     return project;
-  }
-
-  public Status getReopenedStatus() {
-    return reopenedStatus;
-  }
-
-  public Status getClosedStatus() {
-    return closedStatus;
   }
 
   public Priority getPriorityLevel() {
