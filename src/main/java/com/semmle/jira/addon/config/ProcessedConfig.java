@@ -1,7 +1,6 @@
 package com.semmle.jira.addon.config;
 
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.issue.priority.Priority;
 import com.atlassian.jira.issue.status.Status;
 import com.atlassian.jira.project.Project;
@@ -13,7 +12,6 @@ import java.util.stream.Collectors;
 public class ProcessedConfig {
   private ApplicationUser user;
   private Project project;
-  private IssueType taskIssueType;
   private Status reopenedStatus;
   private Status closedStatus;
   private Priority priorityLevel;
@@ -37,20 +35,6 @@ public class ProcessedConfig {
         configErrors.add(String.format("project key '%s' not found", config.getProjectKey()));
     } else {
       configErrors.add("projectKey was null");
-    }
-
-    if (config.getIssueTypeId() != null) {
-      taskIssueType = ComponentAccessor.getConstantsManager().getIssueType(config.getIssueTypeId());
-      if (taskIssueType == null) {
-        configErrors.add(String.format("issue type id '%s' not found", config.getIssueTypeId()));
-      } else if (!taskIssueType.getName().toLowerCase().equals("LGTM alert".toLowerCase())) {
-        configErrors.add("issue type is not 'LGTM alert'");
-      } else if (project != null
-          && !project.getIssueTypes().stream().anyMatch(taskIssueType::equals)) {
-        configErrors.add("\"LGTM alert\" issue type is not included in the scheme of the project.");
-      }
-    } else {
-      configErrors.add("issueTypeId was null");
     }
 
     if (config.getReopenedStatusId() != null) {
@@ -94,10 +78,6 @@ public class ProcessedConfig {
 
   public Project getProject() {
     return project;
-  }
-
-  public IssueType getTaskIssueType() {
-    return taskIssueType;
   }
 
   public Status getReopenedStatus() {

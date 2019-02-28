@@ -71,7 +71,11 @@ public class Request {
     @SerializedName("reopen")
     REOPEN("reopen"),
     @SerializedName("close")
-    CLOSE("close");
+    CLOSE("close"),
+    @SerializedName("suppress")
+    SUPPRESS("suppress"),
+    @SerializedName("unsuppress")
+    UNSUPPRESS("unsuppress");
 
     public final String value;
 

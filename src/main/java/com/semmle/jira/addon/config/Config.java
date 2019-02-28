@@ -16,7 +16,6 @@ public class Config {
   @XmlElement private String lgtmSecret;
   @XmlElement private String username;
   @XmlElement private String projectKey;
-  @XmlElement private String issueTypeId;
   @XmlElement private String closedStatusId;
   @XmlElement private String reopenedStatusId;
   @XmlElement private String priorityLevelId;
@@ -51,14 +50,6 @@ public class Config {
 
   public void setProjectKey(String projectKey) {
     this.projectKey = projectKey;
-  }
-
-  public String getIssueTypeId() {
-    return issueTypeId;
-  }
-
-  public void setIssueTypeId(String issueTypeId) {
-    this.issueTypeId = issueTypeId;
   }
 
   public String getClosedStatusId() {
@@ -101,8 +92,6 @@ public class Config {
                 (String) settings.get("com.lgtm.addon.config." + configKey + ".username"));
             config.setProjectKey(
                 (String) settings.get("com.lgtm.addon.config." + configKey + ".projectKey"));
-            config.setIssueTypeId(
-                (String) settings.get("com.lgtm.addon.config." + configKey + ".issueTypeId"));
             config.setClosedStatusId(
                 (String) settings.get("com.lgtm.addon.config." + configKey + ".closedStatusId"));
             config.setReopenedStatusId(
@@ -128,9 +117,6 @@ public class Config {
                 "com.lgtm.addon.config." + config.getKey() + ".username", config.getUsername());
             settings.put(
                 "com.lgtm.addon.config." + config.getKey() + ".projectKey", config.getProjectKey());
-            settings.put(
-                "com.lgtm.addon.config." + config.getKey() + ".issueTypeId",
-                config.getIssueTypeId());
             settings.put(
                 "com.lgtm.addon.config." + config.getKey() + ".closedStatusId",
                 config.getClosedStatusId());
