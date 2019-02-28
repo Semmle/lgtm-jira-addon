@@ -114,7 +114,7 @@ public class LgtmServlet extends HttpServlet {
         if (!issue.getStatusId().equals(falsePositiveStatus.getId())) {
           applyTransition(issue, Constants.WORKFLOW_SUPPRESS_TRANSITION_NAME, resp, config);
         } else {
-          sendJSON(resp, HttpServletResponse.SC_OK, resp);
+          sendJSON(resp, HttpServletResponse.SC_OK, new Response(issue.getId()));
         }
         break;
       case UNSUPPRESS:
