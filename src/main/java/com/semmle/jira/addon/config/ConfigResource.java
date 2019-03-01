@@ -13,6 +13,7 @@ import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.sal.api.user.UserManager;
 import com.semmle.jira.addon.util.Constants;
 import com.semmle.jira.addon.util.JiraUtils;
+import com.semmle.jira.addon.util.UsedIssueTypeException;
 import com.semmle.jira.addon.util.WorkflowNotFoundException;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -105,6 +106,8 @@ public class ConfigResource {
     } catch (GenericEntityException e) {
       log.error("Error while adding the LGTM workflow to the project", e);
       return Response.status(Status.BAD_REQUEST).header("Error", "workflow").build();
+    } catch (UsedIssueTypeException e) {
+      return Response.status(Status.BAD_REQUEST).header("Error", "manual-migration-needed").build();
     }
 
     Config.put(config, transactionTemplate, pluginSettingsFactory);

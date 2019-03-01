@@ -236,6 +236,13 @@ function updateConfig() {
 				fadeout : true
 			});
 			return;
+		} else if (jqXHR.getResponseHeader("Error") === "manual-migration-needed") {
+			AJS.messages.error("#message-context", {
+				title : 'A manual workflow migration is needed',
+				closeable : true,
+				fadeout : true
+			});
+			return;
 		}
 		AJS.messages.error("#message-context", {
 			title : 'An error happened.',

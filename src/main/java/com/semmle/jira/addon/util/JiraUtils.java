@@ -14,6 +14,7 @@ import com.atlassian.jira.workflow.WorkflowSchemeManager;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.ofbiz.core.entity.GenericEntityException;
 import org.ofbiz.core.entity.GenericValue;
@@ -44,16 +45,25 @@ public class JiraUtils {
                 ConstantsManager.CONSTANT_TYPE.ISSUE_TYPE.getType(), issueTypeName);
   }
 
-  public static void addWorkflowToProject(
-      Project project, JiraWorkflow workflow, IssueType issueType) throws GenericEntityException {
-    WorkflowSchemeManager workflowSchemeManager = ComponentAccessor.getWorkflowSchemeManager();
-    GenericValue workflowScheme = workflowSchemeManager.getWorkflowScheme(project);
-    workflowSchemeManager.addWorkflowToScheme(
-        workflowScheme, workflow.getName(), issueType.getId());
-  }
-
   public static IssueType getLgtmIssueType() {
     return getIssueTypeByName(Constants.ISSUE_TYPE_NAME);
+  }
+
+  public static void addWorkflowToProject(
+      Project project, JiraWorkflow workflow, IssueType issueType)
+      throws GenericEntityException, UsedIssueTypeException {
+    WorkflowSchemeManager workflowSchemeManager = ComponentAccessor.getWorkflowSchemeManager();
+    GenericValue workflowScheme = workflowSchemeManager.getWorkflowScheme(project);
+    Map<String, String> workflowMap = workflowSchemeManager.getWorkflowMap(project);
+    if (workflowMap.containsKey(issueType.getId())) {
+      if (!workflowMap.get(issueType.getId()).equals(workflow.getName())) {
+        // Issue type already associated with another workflow
+        throw new UsedIssueTypeException();
+      }
+    } else {
+      workflowSchemeManager.addWorkflowToScheme(
+          workflowScheme, workflow.getName(), issueType.getId());
+    }
   }
 
   public static Status getLgtmWorkflowStatus(String statusName)
