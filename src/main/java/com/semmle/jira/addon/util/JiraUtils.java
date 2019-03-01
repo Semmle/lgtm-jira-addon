@@ -2,6 +2,7 @@ package com.semmle.jira.addon.util;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.ConstantsManager;
+import com.atlassian.jira.config.IssueTypeManager;
 import com.atlassian.jira.issue.fields.config.FieldConfigScheme;
 import com.atlassian.jira.issue.fields.config.manager.IssueTypeSchemeManager;
 import com.atlassian.jira.issue.issuetype.IssueType;
@@ -76,5 +77,14 @@ public class JiraUtils {
       throw new WorkflowNotFoundException();
     }
     return workflow;
+  }
+
+  public static void createLgtmIssueType() {
+    try {
+      ComponentAccessor.getComponent(IssueTypeManager.class)
+          .createIssueType(Constants.ISSUE_TYPE_NAME, "Issue type for managing LGTM alerts", 0l);
+    } catch (IllegalStateException e) {
+      // Issue Type already created
+    }
   }
 }
