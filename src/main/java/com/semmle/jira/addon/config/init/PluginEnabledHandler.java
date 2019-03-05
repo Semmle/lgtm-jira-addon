@@ -54,16 +54,22 @@ public class PluginEnabledHandler implements InitializingBean, DisposableBean {
 
   private static void createLgtmWorkflow() throws IOException, FactoryException {
     ClassLoader classLoader = PluginEnabledHandler.class.getClassLoader();
-    InputStream is = classLoader.getResourceAsStream("workflow/workflow.xml");
-    String workflowXml = IOUtils.toString(is);
+    String workflowXml;
+    try (InputStream is = classLoader.getResourceAsStream("workflow/workflow.xml")) {
+     workflowXml = IOUtils.toString(is, "UTF-8");
+    }
 
-    is = classLoader.getResourceAsStream("workflow/statuses.json");
-    String statusesJson = IOUtils.toString(is);
+    String statusesJson;
+    try (InputStream is = classLoader.getResourceAsStream("workflow/statuses.json")) {
+    	statusesJson = IOUtils.toString(is, "UTF-8");
+       }
 
     WorkflowUtils.createWorkflow(Constants.WORKFLOW_NAME, workflowXml, statusesJson);
 
-    is = classLoader.getResourceAsStream("workflow/layout.v2.json");
-    String layoutJson = IOUtils.toString(is);
+    String layoutJson;
+    try (InputStream is = classLoader.getResourceAsStream("workflow/layout.v2.json")) {
+    	layoutJson = IOUtils.toString(is, "UTF-8");
+       }
     WorkflowUtils.addLayoutToWorkflow(Constants.WORKFLOW_NAME, layoutJson);
   }
 }

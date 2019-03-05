@@ -59,12 +59,11 @@ public class WorkflowUtils {
     }
 
     JiraWorkflow workflow = new ConfigurableJiraWorkflow(workflowName, descriptor, workflowManager);
-    workflowManager.createWorkflow(
-        (ApplicationUser) null, workflow); // User is not needed for creating
+    workflowManager.createWorkflow( // User is not needed for creating
+        (ApplicationUser) null, workflow);
   }
 
   static void addLayoutToWorkflow(String workflowName, String layoutJson) {
-    ComponentAccessor.getComponent(OfBizDelegator.class);
     OfBizDelegator ofBizDelegator = ComponentAccessor.getComponent(OfBizDelegator.class);
     String layoutKey = DigestUtils.md5Hex(workflowName);
     final Map<String, Object> entryFields =
@@ -103,8 +102,7 @@ public class WorkflowUtils {
   }
 
   private static Map<String, WorkflowStatus> mapStatuses(String statusesJson) {
-    Type collectionType = new TypeToken<Collection<WorkflowStatus>>() {}.getType();
-    Collection<WorkflowStatus> statuses = new Gson().fromJson(statusesJson, collectionType);
+    WorkflowStatus[] statuses = new Gson().fromJson(statusesJson, WorkflowStatus[].class);
 
     Map<String, WorkflowStatus> statusesMap = new LinkedHashMap<String, WorkflowStatus>();
     for (WorkflowStatus status : statuses) {
