@@ -12,6 +12,10 @@ public class Request {
   public final Project project;
   public final Alert alert;
 
+  public Request(Transition transition, Long issueId) {
+    this(transition, issueId, null, null);
+  }
+
   public Request(Transition transition, Long issueId, Project project, Alert alert) {
     this.transition = transition;
     this.issueId = issueId;

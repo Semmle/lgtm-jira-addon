@@ -17,6 +17,10 @@
         <input type="text" id="secret" name="secret" class="text">
       </div>
       <div class="field-group">
+        <label for="externalHookUrl">$i18n.getText("lgtm-servlet.admin.externalHookUrl.label")</label>
+        <input type="text" id="externalHookUrl" name="externalHookUrl" class="text">
+      </div>
+      <div class="field-group">
         <label for="user">$i18n.getText("lgtm-servlet.admin.user.label")</label>
         <input type="text" id="user" name="user" class="text">
       </div>
