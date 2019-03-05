@@ -1,15 +1,5 @@
 package com.semmle.jira.addon.config.init;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
-
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jira.config.IssueTypeManager;
@@ -21,6 +11,13 @@ import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.opensymphony.workflow.FactoryException;
 import com.semmle.jira.addon.util.Constants;
 import com.semmle.jira.addon.util.WorkflowUtils;
+import java.io.IOException;
+import java.io.InputStream;
+import javax.inject.Inject;
+import javax.inject.Named;
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 
 @ExportAsService({PluginEnabledHandler.class})
 @Named("pluginEnabledHandler")
@@ -65,5 +62,9 @@ public class PluginEnabledHandler implements InitializingBean, DisposableBean {
     String statusesJson = IOUtils.toString(is);
 
     WorkflowUtils.createWorkflow(Constants.WORKFLOW_NAME, workflowXml, statusesJson);
+
+    is = classLoader.getResourceAsStream("workflow/layout.v2.json");
+    String layoutJson = IOUtils.toString(is);
+    WorkflowUtils.addLayoutToWorkflow(Constants.WORKFLOW_NAME, layoutJson);
   }
 }

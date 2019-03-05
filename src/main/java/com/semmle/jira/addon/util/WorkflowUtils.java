@@ -6,11 +6,13 @@ import com.atlassian.jira.config.StatusManager;
 import com.atlassian.jira.issue.status.Status;
 import com.atlassian.jira.issue.status.category.StatusCategory;
 import com.atlassian.jira.issue.status.category.StatusCategoryImpl;
+import com.atlassian.jira.ofbiz.OfBizDelegator;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.workflow.ConfigurableJiraWorkflow;
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.WorkflowManager;
 import com.atlassian.jira.workflow.WorkflowUtil;
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.opensymphony.workflow.FactoryException;
@@ -21,6 +23,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.codec.digest.DigestUtils;
 
 public class WorkflowUtils {
   public static void createWorkflow(String workflowName, String workflowXml, String statusesJson)
@@ -86,5 +89,27 @@ public class WorkflowUtils {
     }
 
     return statusesMap;
+  }
+
+  public static void addLayoutToWorkflow(String workflowName, String layoutJson) {
+    ComponentAccessor.getComponent(OfBizDelegator.class);
+    OfBizDelegator ofBizDelegator = ComponentAccessor.getComponent(OfBizDelegator.class);
+    String layoutKey = DigestUtils.md5Hex(workflowName);
+    final Map<String, Object> entryFields =
+        ImmutableMap.of(
+            "entityName",
+            "com.atlassian.jira.plugins.jira-workflow-designer",
+            "entityId",
+            1,
+            "propertyKey",
+            "jira.workflow.layout.v5:" + layoutKey,
+            "type",
+            6);
+    final Long layoutId = ofBizDelegator.createValue("OSPropertyEntry", entryFields).getLong("id");
+    final Map<String, Object> textFields =
+        ImmutableMap.of(
+            "id", layoutId,
+            "value", layoutJson);
+    ofBizDelegator.createValue("OSPropertyText", textFields);
   }
 }
