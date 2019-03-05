@@ -1,4 +1,4 @@
-package com.semmle.jira.addon.util;
+package com.semmle.jira.addon.config.init;
 
 public class WorkflowStatus {
   public final String originalId;

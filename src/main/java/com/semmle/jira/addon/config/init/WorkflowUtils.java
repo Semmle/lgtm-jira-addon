@@ -1,4 +1,4 @@
-package com.semmle.jira.addon.util;
+package com.semmle.jira.addon.config.init;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.ConstantsManager;
@@ -26,7 +26,8 @@ import java.util.Map;
 import org.apache.commons.codec.digest.DigestUtils;
 
 public class WorkflowUtils {
-  public static void createWorkflow(String workflowName, String workflowXml, String statusesJson)
+
+  static void createWorkflow(String workflowName, String workflowXml, String statusesJson)
       throws FactoryException {
     WorkflowManager workflowManager = ComponentAccessor.getWorkflowManager();
     if (workflowManager.workflowExists(workflowName)) {
@@ -62,36 +63,7 @@ public class WorkflowUtils {
         (ApplicationUser) null, workflow); // User is not needed for creating
   }
 
-  public static Status getOrCreateStatus(
-      String statusName, String description, long statusCategoryId) {
-    Status status =
-        (Status)
-            ComponentAccessor.getConstantsManager()
-                .getIssueConstantByName(
-                    ConstantsManager.CONSTANT_TYPE.STATUS.getType(), statusName);
-    if (status != null) {
-      return status;
-    }
-
-    StatusManager statusManager = ComponentAccessor.getComponent(StatusManager.class);
-    StatusCategory category = StatusCategoryImpl.findById(statusCategoryId);
-
-    return statusManager.createStatus(statusName, description, "status.png", category);
-  }
-
-  public static Map<String, WorkflowStatus> mapStatuses(String statusesJson) {
-    Type collectionType = new TypeToken<Collection<WorkflowStatus>>() {}.getType();
-    Collection<WorkflowStatus> statuses = new Gson().fromJson(statusesJson, collectionType);
-
-    Map<String, WorkflowStatus> statusesMap = new LinkedHashMap<String, WorkflowStatus>();
-    for (WorkflowStatus status : statuses) {
-      statusesMap.put(status.name, status);
-    }
-
-    return statusesMap;
-  }
-
-  public static void addLayoutToWorkflow(String workflowName, String layoutJson) {
+  static void addLayoutToWorkflow(String workflowName, String layoutJson) {
     ComponentAccessor.getComponent(OfBizDelegator.class);
     OfBizDelegator ofBizDelegator = ComponentAccessor.getComponent(OfBizDelegator.class);
     String layoutKey = DigestUtils.md5Hex(workflowName);
@@ -111,5 +83,34 @@ public class WorkflowUtils {
             "id", layoutId,
             "value", layoutJson);
     ofBizDelegator.createValue("OSPropertyText", textFields);
+  }
+
+  private static Status getOrCreateStatus(
+      String statusName, String description, long statusCategoryId) {
+    Status status =
+        (Status)
+            ComponentAccessor.getConstantsManager()
+                .getIssueConstantByName(
+                    ConstantsManager.CONSTANT_TYPE.STATUS.getType(), statusName);
+    if (status != null) {
+      return status;
+    }
+
+    StatusManager statusManager = ComponentAccessor.getComponent(StatusManager.class);
+    StatusCategory category = StatusCategoryImpl.findById(statusCategoryId);
+
+    return statusManager.createStatus(statusName, description, "status.png", category);
+  }
+
+  private static Map<String, WorkflowStatus> mapStatuses(String statusesJson) {
+    Type collectionType = new TypeToken<Collection<WorkflowStatus>>() {}.getType();
+    Collection<WorkflowStatus> statuses = new Gson().fromJson(statusesJson, collectionType);
+
+    Map<String, WorkflowStatus> statusesMap = new LinkedHashMap<String, WorkflowStatus>();
+    for (WorkflowStatus status : statuses) {
+      statusesMap.put(status.name, status);
+    }
+
+    return statusesMap;
   }
 }

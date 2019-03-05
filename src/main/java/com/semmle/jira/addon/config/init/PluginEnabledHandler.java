@@ -10,7 +10,6 @@ import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.opensymphony.workflow.FactoryException;
 import com.semmle.jira.addon.util.Constants;
-import com.semmle.jira.addon.util.WorkflowUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.inject.Inject;
