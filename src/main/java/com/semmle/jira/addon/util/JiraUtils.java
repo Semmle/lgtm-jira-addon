@@ -1,25 +1,33 @@
 package com.semmle.jira.addon.util;
 
+import com.atlassian.jira.bc.issue.search.SearchService;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.ConstantsManager;
 import com.atlassian.jira.config.IssueTypeManager;
 import com.atlassian.jira.issue.fields.config.FieldConfigScheme;
 import com.atlassian.jira.issue.fields.config.manager.IssueTypeSchemeManager;
 import com.atlassian.jira.issue.issuetype.IssueType;
+import com.atlassian.jira.issue.search.SearchException;
+import com.atlassian.jira.issue.search.SearchResults;
 import com.atlassian.jira.issue.status.Status;
+import com.atlassian.jira.jql.builder.JqlQueryBuilder;
 import com.atlassian.jira.project.Project;
+import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.jira.web.bean.PagerFilter;
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.WorkflowManager;
 import com.atlassian.jira.workflow.WorkflowSchemeManager;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.ofbiz.core.entity.GenericEntityException;
 import org.ofbiz.core.entity.GenericValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JiraUtils {
+  private static final Logger log = LoggerFactory.getLogger(JiraUtils.class);
 
   public static void addIssueTypeToProject(Project project, IssueType newIssueType) {
     IssueTypeSchemeManager issueTypeSchemeManager = ComponentAccessor.getIssueTypeSchemeManager();
@@ -50,20 +58,29 @@ public class JiraUtils {
   }
 
   public static void addWorkflowToProject(
-      Project project, JiraWorkflow workflow, IssueType issueType)
+      Project project, JiraWorkflow workflow, IssueType issueType, ApplicationUser user)
       throws GenericEntityException, UsedIssueTypeException {
-    WorkflowSchemeManager workflowSchemeManager = ComponentAccessor.getWorkflowSchemeManager();
-    GenericValue workflowScheme = workflowSchemeManager.getWorkflowScheme(project);
-    Map<String, String> workflowMap = workflowSchemeManager.getWorkflowMap(project);
-    if (workflowMap.containsKey(issueType.getId())) {
-      if (!workflowMap.get(issueType.getId()).equals(workflow.getName())) {
-        // Issue type already associated with another workflow
+    JqlQueryBuilder builder = JqlQueryBuilder.newBuilder();
+    builder.where().project(project.getId()).and().issueType(issueType.getName());
+    try {
+      SearchResults results =
+          ComponentAccessor.getComponent(SearchService.class)
+              .searchOverrideSecurity(
+                  user, builder.buildQuery(), PagerFilter.newPageAlignedFilter(0, 3));
+      if (results.getTotal() != 0) {
+        // Issue type already has issues
         throw new UsedIssueTypeException();
       }
-    } else {
-      workflowSchemeManager.addWorkflowToScheme(
-          workflowScheme, workflow.getName(), issueType.getId());
+    } catch (SearchException e) {
+      log.warn("Issue search failed", e);
+      // Something failed, better do a manual migration
+      throw new UsedIssueTypeException();
     }
+
+    WorkflowSchemeManager workflowSchemeManager = ComponentAccessor.getWorkflowSchemeManager();
+    GenericValue workflowScheme = workflowSchemeManager.getWorkflowScheme(project);
+    workflowSchemeManager.addWorkflowToScheme(
+        workflowScheme, workflow.getName(), issueType.getId());
   }
 
   public static Status getLgtmWorkflowStatus(String statusName)

@@ -231,14 +231,14 @@ function updateConfig() {
 			return;
 		} else if (jqXHR.getResponseHeader("Error") === "workflow-not-found") {
 			AJS.messages.error("#message-context", {
-				title : 'The LGTM alert workflow does not exists. Please install it',
+				title : 'The LGTM alert workflow does not exists. Please install it.',
 				closeable : true,
 				fadeout : true
 			});
 			return;
 		} else if (jqXHR.getResponseHeader("Error") === "manual-migration-needed") {
 			AJS.messages.error("#message-context", {
-				title : 'A manual workflow migration is needed',
+				title : 'A manual workflow migration is needed.',
 				closeable : true,
 				fadeout : true
 			});

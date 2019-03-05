@@ -102,7 +102,8 @@ public class ConfigResource {
 
     JiraUtils.addIssueTypeToProject(project, lgtmIssueType);
     try {
-      JiraUtils.addWorkflowToProject(project, lgtmWorkflow, lgtmIssueType);
+      JiraUtils.addWorkflowToProject(
+          project, lgtmWorkflow, lgtmIssueType, UserUtils.getUser(config.getUsername()));
     } catch (GenericEntityException e) {
       log.error("Error while adding the LGTM workflow to the project", e);
       return Response.status(Status.BAD_REQUEST).header("Error", "workflow").build();
