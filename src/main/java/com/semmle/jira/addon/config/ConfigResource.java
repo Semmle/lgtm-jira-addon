@@ -73,6 +73,11 @@ public class ConfigResource {
   @PUT
   @Consumes(MediaType.APPLICATION_JSON)
   public Response put(final Config config, @Context HttpServletRequest request) {
+
+    String configKey = (String) pluginSettingsFactory.createGlobalSettings().get(KEY_SETTINGS_NAME);
+
+    Config oldConfig = (Config) Config.get(configKey, transactionTemplate, pluginSettingsFactory);
+
     String username = userManager.getRemoteUsername(request);
     if (username == null || !userManager.isSystemAdmin(username)) {
       return Response.status(Status.UNAUTHORIZED).build();
@@ -108,8 +113,14 @@ public class ConfigResource {
       log.error("Error while adding the LGTM workflow to the project", e);
       return Response.status(Status.BAD_REQUEST).header("Error", "workflow").build();
     } catch (UsedIssueTypeException e) {
-      return Response.status(Status.BAD_REQUEST).header("Error", "manual-migration-needed").build();
+      if (oldConfig.getConfigVersion() == null) {
+        return Response.status(Status.BAD_REQUEST)
+            .header("Error", "manual-migration-needed")
+            .build();
+      }
     }
+
+    config.setConfigVersion("foobar"); // TODO retrieve version number of the plugin
 
     Config.put(config, transactionTemplate, pluginSettingsFactory);
     PluginSettings settings = pluginSettingsFactory.createGlobalSettings();

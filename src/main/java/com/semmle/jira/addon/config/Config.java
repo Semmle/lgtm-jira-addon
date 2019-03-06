@@ -20,6 +20,7 @@ public class Config {
   @XmlElement private String priorityLevelId;
   @XmlElement private URI externalHookUrl;
   @XmlElement private String trackerKey;
+  @XmlElement private String configVersion;
 
   public String getKey() {
     return key;
@@ -77,6 +78,14 @@ public class Config {
     this.trackerKey = trackerKey;
   }
 
+  public String getConfigVersion() {
+    return configVersion;
+  }
+
+  public void setConfigVersion(String configVersion) {
+    this.configVersion = configVersion;
+  }
+
   public static Config get(
       String configKey,
       TransactionTemplate transactionTemplate,
@@ -100,6 +109,8 @@ public class Config {
             config.setExternalHookUrl(externalHook == null ? null : URI.create(externalHook));
             config.setTrackerKey(
                 (String) settings.get("com.lgtm.addon.config." + configKey + ".trackerKey"));
+            config.setConfigVersion(
+                (String) settings.get("com.lgtm.addon.config." + configKey + ".configVersion"));
             return config;
           }
         });
@@ -128,6 +139,9 @@ public class Config {
                 externalHook == null ? null : externalHook.toString());
             settings.put(
                 "com.lgtm.addon.config." + config.getKey() + ".trackerKey", config.getTrackerKey());
+            settings.put(
+                "com.lgtm.addon.config." + config.getKey() + ".configVersion",
+                config.getConfigVersion());
             return null;
           }
         });
