@@ -64,7 +64,13 @@ public class PluginEnabledHandler implements InitializingBean, DisposableBean {
       statusesJson = IOUtils.toString(is, "UTF-8");
     }
 
-    WorkflowUtils.createWorkflow(Constants.WORKFLOW_NAME, workflowXml, statusesJson);
+    String resolutionsJson;
+    try (InputStream is = classLoader.getResourceAsStream("workflow/resolutions.json")) {
+      resolutionsJson = IOUtils.toString(is, "UTF-8");
+    }
+
+    WorkflowUtils.createWorkflow(
+        Constants.WORKFLOW_NAME, workflowXml, statusesJson, resolutionsJson);
 
     String layoutJson;
     try (InputStream is = classLoader.getResourceAsStream("workflow/layout.v2.json")) {

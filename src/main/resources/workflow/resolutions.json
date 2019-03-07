@@ -1,0 +1,12 @@
+[
+  {
+    "originalId": "10000",
+    "name": "Done",
+    "description": "Work has been completed on this issue."
+  },
+  {
+    "originalId": "10001",
+    "name": "Won't Do",
+    "description": "This issue won't be actioned."
+  }
+]
