@@ -166,9 +166,9 @@
                   <arg name="class.name">com.atlassian.jira.workflow.function.issue.UpdateIssueFieldFunction</arg>
                 </function>
                 <function type="class">
-                  <arg name="full.module.key">com.semmle.lgtm-jira-addonlgtm-dismiss-alert</arg>
-                  <arg name="class.name">com.semmle.jira.addon.workflow.LgtmDismissAlert</arg>
-                  <arg name="transitionField">suppress</arg>
+                  <arg name="full.module.key">com.semmle.lgtm-jira-addonlgtm-transition-notification</arg>
+                  <arg name="class.name">com.semmle.jira.addon.workflow.LgtmTransitionNotificationFunction</arg>
+                  <arg name="transition">SUPPRESS</arg>
                 </function>
                 <function type="class">
                   <arg name="class.name">com.atlassian.jira.workflow.function.issue.UpdateIssueStatusFunction</arg>
@@ -211,9 +211,9 @@
                   <arg name="class.name">com.atlassian.jira.workflow.function.issue.UpdateIssueFieldFunction</arg>
                 </function>
                 <function type="class">
-                  <arg name="full.module.key">com.semmle.lgtm-jira-addonlgtm-dismiss-alert</arg>
-                  <arg name="class.name">com.semmle.jira.addon.workflow.LgtmDismissAlert</arg>
-                  <arg name="transitionField">unsuppress</arg>
+                  <arg name="full.module.key">com.semmle.lgtm-jira-addonlgtm-transition-notification</arg>
+                  <arg name="class.name">com.semmle.jira.addon.workflow.LgtmTransitionNotificationFunction</arg>
+                  <arg name="transition">UNSUPPRESS</arg>
                 </function>
                 <function type="class">
                   <arg name="class.name">com.atlassian.jira.workflow.function.issue.UpdateIssueStatusFunction</arg>
@@ -279,9 +279,9 @@
                   <arg name="class.name">com.atlassian.jira.workflow.function.issue.UpdateIssueFieldFunction</arg>
                 </function>
                 <function type="class">
-                  <arg name="full.module.key">com.semmle.lgtm-jira-addonlgtm-dismiss-alert</arg>
-                  <arg name="class.name">com.semmle.jira.addon.workflow.LgtmDismissAlert</arg>
-                  <arg name="transitionField">unsuppress</arg>
+                  <arg name="full.module.key">com.semmle.lgtm-jira-addonlgtm-transition-notification</arg>
+                  <arg name="class.name">com.semmle.jira.addon.workflow.LgtmTransitionNotificationFunction</arg>
+                  <arg name="transition">UNSUPPRESS</arg>
                 </function>
                 <function type="class">
                   <arg name="class.name">com.atlassian.jira.workflow.function.issue.UpdateIssueStatusFunction</arg>

@@ -1,0 +1,12 @@
+<tr>
+    <td class="fieldLabelArea">
+        Transition:
+    </td>
+    <td nowrap>
+	<select  name="transition" id="transition">
+	  #foreach ($trans in $transitions)
+	    <option value="$trans.name()"#if ($trans.name().equals($transition)) selected#end>$trans.toString()</option>
+	  #end
+	</select>
+    </td>
+</tr>

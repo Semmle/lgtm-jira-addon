@@ -20,8 +20,8 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class LgtmDismissAlertTest {
-  private LgtmDismissAlert function;
+public class LgtmTransitionNotificationFunctionTest {
+  private LgtmTransitionNotificationFunction function;
   private MutableIssue issue;
   private Request requestBody;
   private URI requestURL;
@@ -69,7 +69,7 @@ public class LgtmDismissAlertTest {
     Config.put(config, transaction, settingsFactory);
 
     function =
-        new LgtmDismissAlert(settingsFactory, transaction) {
+        new LgtmTransitionNotificationFunction(settingsFactory, transaction) {
           @Override
           protected MutableIssue getIssue(@SuppressWarnings("rawtypes") Map transientVars) {
             return issue;
@@ -77,9 +77,9 @@ public class LgtmDismissAlertTest {
 
           @Override
           protected void postMessage(String secret, URI url, Request request) {
-            LgtmDismissAlertTest.this.secret = secret;
-            LgtmDismissAlertTest.this.requestURL = url;
-            LgtmDismissAlertTest.this.requestBody = request;
+            LgtmTransitionNotificationFunctionTest.this.secret = secret;
+            LgtmTransitionNotificationFunctionTest.this.requestURL = url;
+            LgtmTransitionNotificationFunctionTest.this.requestBody = request;
           }
         };
   }
@@ -92,7 +92,7 @@ public class LgtmDismissAlertTest {
   @Test
   public void testValidParameters() throws Exception {
     Map<String, String> args = new LinkedHashMap<>();
-    args.put(LgtmDismissAlert.FIELD_TRANSITION, Transition.SUPPRESS.value);
+    args.put(LgtmTransitionNotificationFunction.FIELD_TRANSITION, Transition.SUPPRESS.name());
     function.execute(Collections.emptyMap(), args, null);
     Assert.assertEquals("secret", secret);
     Assert.assertEquals("https://localhost:8080", requestURL.toString());
