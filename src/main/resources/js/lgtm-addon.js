@@ -8,7 +8,7 @@ var externalHookUrlFieldId = "#externalHookUrl";
 var projectFieldId = "#project";
 var priorityFieldId = "#priority";
 
-var webhookUrlFieldId = "#webhookUrl";
+var webhookUrlFieldId = "#incomingHookUrl";
 var urlCodeId = "urlCode";
 var key = "webhook";
 
@@ -43,11 +43,7 @@ var key = "webhook";
 })();
 
 function renderWebhookUrl(url) {
-	AJS.$("#"+urlCodeId).remove();
-	var urlCode = document.createElement('code');
-	urlCode.id = urlCodeId;
-	urlCode.textContent = url;
-	AJS.$(webhookUrlFieldId).append(urlCode);
+	AJS.$(webhookUrlFieldId).val(url);
 }
 
 function loadProjects() {

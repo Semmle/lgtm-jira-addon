@@ -1,0 +1,7 @@
+form.aui .text, form.aui .aui-select2-container  {
+    max-width: 450px;
+}
+
+form.aui input[readonly]  {
+    background:#E6E6E6;
+}
