@@ -86,6 +86,10 @@ public class Request {
     Transition(String value) {
       this.value = value;
     }
+
+    public String toString() {
+      return value;
+    }
   }
 
   public static class Project {

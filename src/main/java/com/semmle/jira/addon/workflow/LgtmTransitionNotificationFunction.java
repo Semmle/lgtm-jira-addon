@@ -26,18 +26,14 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * This is the post-function class that gets executed at the end of the transition. Any parameters
- * that were saved in your factory class will be available in the transientVars Map.
- */
-public class LgtmDismissAlert extends AbstractJiraFunctionProvider {
-  public static final String FIELD_TRANSITION = "transitionField";
+public class LgtmTransitionNotificationFunction extends AbstractJiraFunctionProvider {
+  public static final String FIELD_TRANSITION = "transition";
 
   @ComponentImport private final PluginSettingsFactory pluginSettingsFactory;
   @ComponentImport private final TransactionTemplate transactionTemplate;
 
   @Inject
-  LgtmDismissAlert(
+  LgtmTransitionNotificationFunction(
       PluginSettingsFactory pluginSettingsFactory, TransactionTemplate transactionTemplate) {
     this.pluginSettingsFactory = pluginSettingsFactory;
     this.transactionTemplate = transactionTemplate;
@@ -121,7 +117,7 @@ public class LgtmDismissAlert extends AbstractJiraFunctionProvider {
       throw new InvalidInputException("Missing value for 'transition' parameter");
     Transition transition = null;
     for (Transition t : Arrays.asList(Transition.SUPPRESS, Transition.UNSUPPRESS)) {
-      if (t.value.equals(transitionArg)) {
+      if (t.name().equals(transitionArg)) {
         transition = t;
         break;
       }

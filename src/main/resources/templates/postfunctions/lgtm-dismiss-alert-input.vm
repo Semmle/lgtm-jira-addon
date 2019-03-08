@@ -1,8 +1,0 @@
-<tr>
-    <td class="fieldLabelArea">
-        Transition:
-    </td>
-    <td nowrap>
-        <input name="transitionField" id="transitionField" value="$transitionField" />
-    </td>
-</tr>

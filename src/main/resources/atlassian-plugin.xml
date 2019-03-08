@@ -30,21 +30,20 @@
 		class="com.semmle.jira.addon.config.AdminServlet">
 		<url-pattern>/lgtm</url-pattern>
 	</servlet>
-
 	<rest key="rest" path="/lgtm-config" version="1.0">
 		<description>Provides REST resources for the admin UI.</description>
 	</rest>
-	<workflow-function key="lgtm-dismiss-alert" name="Dismiss LGTM alert"
-		i18n-name-key="lgtm-dismiss-alert.name" class="com.semmle.jira.addon.workflow.LgtmDismissAlertFactory">
-		<description key="lgtm-dismiss-alert.description">Post-function that sends suppress/unsuppress events to LGTM
+	<workflow-function key="lgtm-transition-notification" name="LGTM Transition Notification"
+		i18n-name-key="lgtm-transition-notification.name" class="com.semmle.jira.addon.workflow.LgtmTransitionNotificationFunctionFactory">
+		<description key="lgtm-transition-notification.description">Post-function that sends transition notifications to LGTM.
 		</description>
-		<function-class>com.semmle.jira.addon.workflow.LgtmDismissAlert
+		<function-class>com.semmle.jira.addon.workflow.LgtmTransitionNotificationFunction
 		</function-class>
 		<resource type="velocity" name="view"
-			location="templates/postfunctions/lgtm-dismiss-alert.vm" />
+			location="templates/postfunctions/lgtm-transition-notification.vm" />
 		<resource type="velocity" name="input-parameters"
-			location="templates/postfunctions/lgtm-dismiss-alert-input.vm" />
+			location="templates/postfunctions/lgtm-transition-notification-input.vm" />
 		<resource type="velocity" name="edit-parameters"
-			location="templates/postfunctions/lgtm-dismiss-alert-input.vm" />
+			location="templates/postfunctions/lgtm-transition-notification-input.vm" />
 	</workflow-function>
 </atlassian-plugin>
