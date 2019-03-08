@@ -2,13 +2,13 @@ package com.semmle.jira.addon.workflow;
 
 import java.util.Objects;
 
-public enum Operator {
+public enum ComparisonOperator {
   EQUALS("is"),
   NOT_EQUALS("is not");
 
   private final String value;
 
-  private Operator(String value) {
+  private ComparisonOperator(String value) {
     this.value = value;
   }
 
@@ -16,7 +16,7 @@ public enum Operator {
     return value;
   }
 
-  Operator negate() {
+  ComparisonOperator negate() {
     switch (this) {
       case EQUALS:
         return NOT_EQUALS;

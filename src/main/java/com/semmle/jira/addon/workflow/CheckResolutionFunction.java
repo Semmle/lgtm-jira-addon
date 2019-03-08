@@ -17,7 +17,7 @@ class CheckResolutionFunction extends AbstractJiraFunctionProvider {
   @Override
   public void execute(Map transientVars, Map args, PropertySet ps) throws InvalidInputException {
     String resolutionId = (String) args.get(FIELD_RESOLUTION);
-    Operator operator = Operator.valueOf((String) args.get(FIELD_OPERATOR));
+    ComparisonOperator operator = ComparisonOperator.valueOf((String) args.get(FIELD_OPERATOR));
 
     Issue issue = getIssue(transientVars);
 

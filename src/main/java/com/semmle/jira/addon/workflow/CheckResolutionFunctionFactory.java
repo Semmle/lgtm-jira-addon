@@ -13,8 +13,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/** A combined factory for Resolution Condition and Validator workflow functions */
 @SuppressWarnings({"unchecked", "rawtypes"})
-public class ResolutionValidatorFactory extends AbstractWorkflowPluginFactory
+public class CheckResolutionFunctionFactory extends AbstractWorkflowPluginFactory
     implements WorkflowPluginValidatorFactory, WorkflowPluginConditionFactory {
 
   private static final String FIELD_RESOLUTION_NAME = "resolutionName";
@@ -23,7 +24,7 @@ public class ResolutionValidatorFactory extends AbstractWorkflowPluginFactory
   private static final String FIELD_OPERATORS = "operators";
   private Map<String, String> resolutions = new LinkedHashMap<>();
 
-  public ResolutionValidatorFactory() {
+  public CheckResolutionFunctionFactory() {
     resolutions =
         ComponentAccessor.getComponent(ResolutionManager.class).getResolutions().stream()
             .collect(Collectors.toMap(Resolution::getId, Resolution::getName));
@@ -32,7 +33,7 @@ public class ResolutionValidatorFactory extends AbstractWorkflowPluginFactory
   @Override
   protected void getVelocityParamsForInput(Map velocityParams) {
     velocityParams.put(FIELD_RESOLUTIONS, resolutions);
-    velocityParams.put(FIELD_OPERATORS, Operator.values());
+    velocityParams.put(FIELD_OPERATORS, ComparisonOperator.values());
   }
 
   @Override
@@ -52,15 +53,15 @@ public class ResolutionValidatorFactory extends AbstractWorkflowPluginFactory
       throw new IllegalArgumentException(
           "Descriptor must be a ConditionDescriptor or ValidatorDescriptor.");
     }
-    String resolutionId = arguments.get(ResolutionValidator.FIELD_RESOLUTION);
-    String operatorId = arguments.get(ResolutionValidator.FIELD_OPERATOR);
-    velocityParams.put(ResolutionValidator.FIELD_RESOLUTION, resolutionId);
-    velocityParams.put(ResolutionValidator.FIELD_OPERATOR, operatorId);
+    String resolutionId = arguments.get(CheckResolutionFunction.FIELD_RESOLUTION);
+    String operatorId = arguments.get(CheckResolutionFunction.FIELD_OPERATOR);
+    velocityParams.put(CheckResolutionFunction.FIELD_RESOLUTION, resolutionId);
+    velocityParams.put(CheckResolutionFunction.FIELD_OPERATOR, operatorId);
     String resolution = resolutions.get(resolutionId);
     velocityParams.put(FIELD_RESOLUTION_NAME, resolution == null ? "invalid" : resolution);
     String operator = "invalid operator";
     try {
-      if (operatorId != null) operator = Operator.valueOf(operatorId).toString();
+      if (operatorId != null) operator = ComparisonOperator.valueOf(operatorId).toString();
     } catch (IllegalArgumentException e) {
       // ignored
     }
@@ -72,11 +73,11 @@ public class ResolutionValidatorFactory extends AbstractWorkflowPluginFactory
     // Process The map
     Map<String, String> params = new LinkedHashMap<>();
     params.put(
-        ResolutionValidator.FIELD_RESOLUTION,
-        extractSingleParam(validatorParams, ResolutionValidator.FIELD_RESOLUTION));
+        CheckResolutionFunction.FIELD_RESOLUTION,
+        extractSingleParam(validatorParams, CheckResolutionFunction.FIELD_RESOLUTION));
     params.put(
-        ResolutionValidator.FIELD_OPERATOR,
-        extractSingleParam(validatorParams, ResolutionValidator.FIELD_OPERATOR));
+        CheckResolutionFunction.FIELD_OPERATOR,
+        extractSingleParam(validatorParams, CheckResolutionFunction.FIELD_OPERATOR));
     return params;
   }
 }

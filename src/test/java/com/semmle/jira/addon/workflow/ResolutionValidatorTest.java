@@ -59,18 +59,18 @@ public class ResolutionValidatorTest {
 
   @Test
   public void testValidates() throws InvalidInputException {
-    testValidateResolution("done", Operator.EQUALS, "done", true);
-    testValidateResolution("done", Operator.NOT_EQUALS, "wontdo", true);
-    testValidateResolution("done", Operator.EQUALS, "wontdo", false);
-    testValidateResolution("done", Operator.NOT_EQUALS, "done", false);
-    testValidateResolution("invalid", Operator.EQUALS, "wontdo", false);
+    testValidateResolution("done", ComparisonOperator.EQUALS, "done", true);
+    testValidateResolution("done", ComparisonOperator.NOT_EQUALS, "wontdo", true);
+    testValidateResolution("done", ComparisonOperator.EQUALS, "wontdo", false);
+    testValidateResolution("done", ComparisonOperator.NOT_EQUALS, "done", false);
+    testValidateResolution("invalid", ComparisonOperator.EQUALS, "wontdo", false);
     // The function merely checks that the resolution IDs match, it does not validate that the
     // resolutions actually exist.
-    testValidateResolution("invalid", Operator.EQUALS, "invalid", true);
+    testValidateResolution("invalid", ComparisonOperator.EQUALS, "invalid", true);
   }
 
   public void testValidateResolution(
-      String resolution, Operator op, String ticketResolution, boolean expected)
+      String resolution, ComparisonOperator op, String ticketResolution, boolean expected)
       throws InvalidInputException {
     Map<String, String> args = new LinkedHashMap<>();
     args.put(ResolutionValidator.FIELD_RESOLUTION, resolution);
