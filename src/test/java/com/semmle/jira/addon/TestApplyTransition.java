@@ -1,7 +1,7 @@
 package com.semmle.jira.addon;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -64,7 +64,8 @@ public class TestApplyTransition extends TestCreateAndTransitionBase {
 
     MutableIssue issue = mock(MutableIssue.class);
 
-    servlet.applyTransition(issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, resp, config);
+    servlet.applyTransition(
+        issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, config.getUser(), resp);
 
     verify(resp.getWriter()).write("{\"code\":500,\"error\":\"No valid transition found.\"}");
     verify(resp).setStatus(500);
@@ -83,7 +84,8 @@ public class TestApplyTransition extends TestCreateAndTransitionBase {
 
     MutableIssue issue = mock(MutableIssue.class);
 
-    servlet.applyTransition(issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, resp, config);
+    servlet.applyTransition(
+        issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, config.getUser(), resp);
 
     verify(resp).setStatus(500);
   }
@@ -101,7 +103,8 @@ public class TestApplyTransition extends TestCreateAndTransitionBase {
     MutableIssue issue = mock(MutableIssue.class);
     when(issueResult.getIssue()).thenReturn(issue);
 
-    servlet.applyTransition(issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, resp, config);
+    servlet.applyTransition(
+        issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, config.getUser(), resp);
 
     verify(resp).setStatus(200);
   }

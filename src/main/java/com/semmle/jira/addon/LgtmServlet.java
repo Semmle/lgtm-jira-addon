@@ -5,7 +5,7 @@ import com.atlassian.jira.bc.issue.IssueService;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.IssueInputParameters;
 import com.atlassian.jira.issue.MutableIssue;
-import com.atlassian.jira.issue.status.Status;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.TransitionOptions;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
@@ -20,8 +20,6 @@ import com.semmle.jira.addon.config.InvalidConfigurationException;
 import com.semmle.jira.addon.config.ProcessedConfig;
 import com.semmle.jira.addon.util.Constants;
 import com.semmle.jira.addon.util.JiraUtils;
-import com.semmle.jira.addon.util.StatusNotFoundException;
-import com.semmle.jira.addon.util.WorkflowNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
@@ -77,22 +75,11 @@ public class LgtmServlet extends HttpServlet {
       return;
     }
 
-    ComponentAccessor.getJiraAuthenticationContext().setLoggedInUser(config.getUser());
-
-    Status falsePositiveStatus = null;
-    try {
-      falsePositiveStatus =
-          JiraUtils.getLgtmWorkflowStatus(Constants.WORKFLOW_FALSE_POSITIVE_STATUS_NAME);
-    } catch (StatusNotFoundException | WorkflowNotFoundException e) {
-      sendError(
-          resp,
-          HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-          "Configuration needed – see documentation.");
-      return;
-    }
+    ApplicationUser user = config.getUser();
+    ComponentAccessor.getJiraAuthenticationContext().setLoggedInUser(user);
 
     MutableIssue issue =
-        ComponentAccessor.getIssueService().getIssue(config.getUser(), request.issueId).getIssue();
+        ComponentAccessor.getIssueService().getIssue(user, request.issueId).getIssue();
     if (issue == null && request.transition != Transition.CREATE) {
       sendError(resp, HttpServletResponse.SC_GONE, "Issue " + request.issueId + " not found.");
       return;
@@ -103,22 +90,16 @@ public class LgtmServlet extends HttpServlet {
         createIssue(request, resp, config);
         break;
       case REOPEN:
-        applyTransition(issue, Constants.WORKFLOW_REOPEN_TRANSITION_NAME, resp, config);
+        applyTransition(issue, Constants.WORKFLOW_REOPEN_TRANSITION_NAME, user, resp);
         break;
       case CLOSE:
-        applyTransition(issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, resp, config);
+        applyTransition(issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, user, resp);
         break;
       case SUPPRESS:
-        if (!issue
-            .getStatusId() // lgtm [java/dereferenced-value-may-be-null]
-            .equals(falsePositiveStatus.getId())) {
-          applyTransition(issue, Constants.WORKFLOW_SUPPRESS_TRANSITION_NAME, resp, config);
-        } else {
-          sendJSON(resp, HttpServletResponse.SC_OK, new Response(issue.getId()));
-        }
+        applyTransition(issue, Constants.WORKFLOW_SUPPRESS_TRANSITION_NAME, user, resp);
         break;
       case UNSUPPRESS:
-        applyTransition(issue, Constants.WORKFLOW_REOPEN_TRANSITION_NAME, resp, config);
+        applyTransition(issue, Constants.WORKFLOW_REOPEN_TRANSITION_NAME, user, resp);
         break;
     }
   }
@@ -182,7 +163,7 @@ public class LgtmServlet extends HttpServlet {
   }
 
   void applyTransition(
-      MutableIssue issue, String transitionName, HttpServletResponse resp, ProcessedConfig config)
+      MutableIssue issue, String transitionName, ApplicationUser user, HttpServletResponse resp)
       throws IOException {
     IssueInputParameters issueInputParameters =
         ComponentAccessor.getIssueService().newIssueInputParameters();
@@ -197,16 +178,11 @@ public class LgtmServlet extends HttpServlet {
       IssueService.TransitionValidationResult transitionValidationResult =
           ComponentAccessor.getIssueService()
               .validateTransition(
-                  config.getUser(),
-                  issue.getId(),
-                  action.getId(),
-                  issueInputParameters,
-                  transitionOptions);
+                  user, issue.getId(), action.getId(), issueInputParameters, transitionOptions);
 
       if (transitionValidationResult.isValid()) {
         IssueService.IssueResult issueResult =
-            ComponentAccessor.getIssueService()
-                .transition(config.getUser(), transitionValidationResult);
+            ComponentAccessor.getIssueService().transition(user, transitionValidationResult);
 
         if (!issueResult.isValid()) {
           writeErrors(issueResult, resp);
