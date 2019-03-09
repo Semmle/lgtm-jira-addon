@@ -8,6 +8,8 @@ import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
 import org.junit.Rule;
@@ -19,12 +21,21 @@ public class TestLgtmServletBase {
   PluginSettingsFactory pluginSettingsFactory;
   TransactionTemplate transactionTemplate;
   LgtmServlet servlet;
+  List<String> log = new ArrayList<>();
 
   @Before
   public void setupServlet() {
     pluginSettingsFactory = mock(PluginSettingsFactory.class);
     transactionTemplate = mock(TransactionTemplate.class);
-    servlet = new LgtmServlet(pluginSettingsFactory, transactionTemplate);
+    servlet =
+        new LgtmServlet(pluginSettingsFactory, transactionTemplate) {
+          private static final long serialVersionUID = 1L;
+
+          @Override
+          public void log(String msg) {
+            log.add(msg);
+          }
+        };
   }
 
   public HttpServletResponse mockResponse() throws IOException {

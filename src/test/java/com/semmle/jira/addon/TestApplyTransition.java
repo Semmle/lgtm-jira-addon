@@ -10,6 +10,7 @@ import com.atlassian.jira.bc.issue.IssueService.IssueResult;
 import com.atlassian.jira.bc.issue.IssueService.TransitionValidationResult;
 import com.atlassian.jira.issue.IssueInputParameters;
 import com.atlassian.jira.issue.MutableIssue;
+import com.atlassian.jira.issue.status.MockStatus;
 import com.atlassian.jira.junit.rules.AvailableInContainer;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.util.SimpleErrorCollection;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import javax.servlet.http.HttpServletResponse;
+import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -72,7 +74,7 @@ public class TestApplyTransition extends TestCreateAndTransitionBase {
   }
 
   @Test
-  public void testApplyTransitionFailure() throws IOException {
+  public void testApplyTransitionInvalid() throws IOException {
     HttpServletResponse resp = mockResponse();
 
     when(transitionValidationResult.isValid()).thenReturn(true);
@@ -83,11 +85,16 @@ public class TestApplyTransition extends TestCreateAndTransitionBase {
     when(issueResult.getErrorCollection()).thenReturn(new SimpleErrorCollection());
 
     MutableIssue issue = mock(MutableIssue.class);
+    when(issue.getStatus()).thenReturn(new MockStatus("100", "StatusName"));
 
     servlet.applyTransition(
         issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, config.getUser(), resp);
-
-    verify(resp).setStatus(500);
+    // There was an applicable transition, however, it could not be executed. We just log a message
+    // if this happens.
+    Assert.assertEquals(
+        "Transition LGTM.Close could not be applied for issue 0 with status StatusName.",
+        log.get(0));
+    verify(resp).setStatus(200);
   }
 
   @Test

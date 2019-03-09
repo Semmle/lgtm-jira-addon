@@ -171,6 +171,10 @@ public class LgtmServlet extends HttpServlet {
 
     JiraWorkflow workflow = ComponentAccessor.getWorkflowManager().getWorkflow(issue);
     Collection<ActionDescriptor> candidateActions = workflow.getActionsByName(transitionName);
+
+    // is there any transition with matching name that is applicable for the current issue status?
+    boolean anyApplicable = false;
+    boolean success = false;
     for (ActionDescriptor action : candidateActions) {
       TransitionOptions transitionOptions =
           new TransitionOptions.Builder().skipConditions().build();
@@ -181,19 +185,31 @@ public class LgtmServlet extends HttpServlet {
                   user, issue.getId(), action.getId(), issueInputParameters, transitionOptions);
 
       if (transitionValidationResult.isValid()) {
+        anyApplicable = true;
         IssueService.IssueResult issueResult =
             ComponentAccessor.getIssueService().transition(user, transitionValidationResult);
 
-        if (!issueResult.isValid()) {
-          writeErrors(issueResult, resp);
-          return;
+        if (issueResult.isValid()) {
+          success = true;
+          break;
         }
-        Response response = new Response(issueResult.getIssue().getId());
-        sendJSON(resp, HttpServletResponse.SC_OK, response);
-        return;
       }
     }
-    sendError(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "No valid transition found.");
+    if (!anyApplicable) {
+      sendError(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "No valid transition found.");
+      return;
+    }
+    if (!success) {
+      // There was an applicable transition, however, it could not be executed.
+      // This is expected if a Validator Function rejects the transition. There is no point
+      // telling LGTM about this so return 200 OK nevertheless and log a message.
+      log(
+          String.format(
+              "Transition %s could not be applied for issue %s with status %s.",
+              transitionName, issue.getId(), issue.getStatus().getName()));
+    }
+    Response response = new Response(issue.getId());
+    sendJSON(resp, HttpServletResponse.SC_OK, response);
   }
 
   private void writeErrors(ServiceResult result, HttpServletResponse resp) throws IOException {
