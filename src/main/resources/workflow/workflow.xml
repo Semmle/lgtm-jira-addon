@@ -153,9 +153,9 @@
     <step id="1" name="Open">
       <meta name="jira.status.id">1</meta>
       <actions>
-        <action id="41" name="Suppress">
+        <action id="41" name="Suppress" view="fieldscreen">
           <meta name="jira.description"></meta>
-          <meta name="jira.fieldscreen.id"></meta>
+          <meta name="jira.fieldscreen.id">2</meta>
           <results>
             <unconditional-result old-status="null" status="null" step="3">
               <post-functions>
@@ -198,9 +198,9 @@
     <step id="3" name="Suppressed">
       <meta name="jira.status.id">10000</meta>
       <actions>
-        <action id="51" name="Unsuppress">
+        <action id="51" name="Unsuppress" view="fieldscreen">
           <meta name="jira.description"></meta>
-          <meta name="jira.fieldscreen.id"></meta>
+          <meta name="jira.fieldscreen.id">2</meta>
           <results>
             <unconditional-result old-status="null" status="null" step="1">
               <post-functions>
@@ -235,9 +235,9 @@
             </unconditional-result>
           </results>
         </action>
-        <action id="61" name="Confirm">
+        <action id="61" name="Confirm" view="fieldscreen">
           <meta name="jira.description"></meta>
-          <meta name="jira.fieldscreen.id"></meta>
+          <meta name="jira.fieldscreen.id">2</meta>
           <results>
             <unconditional-result old-status="null" status="null" step="4">
               <post-functions>
@@ -266,9 +266,9 @@
     <step id="4" name="False Positive">
       <meta name="jira.status.id">10001</meta>
       <actions>
-        <action id="71" name="Reopen">
+        <action id="71" name="Reopen" view="fieldscreen">
           <meta name="jira.description"></meta>
-          <meta name="jira.fieldscreen.id"></meta>
+          <meta name="jira.fieldscreen.id">2</meta>
           <results>
             <unconditional-result old-status="null" status="null" step="1">
               <post-functions>
