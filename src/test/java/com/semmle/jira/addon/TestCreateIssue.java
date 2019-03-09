@@ -31,6 +31,8 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
   CreateValidationResult createValidationResult = mock(CreateValidationResult.class);
   ProcessedConfig config = mock(ProcessedConfig.class);
 
+  private IssueResult issueResult = mock(IssueResult.class);
+
   @Before
   public void initTests() {
     super.initTests();
@@ -48,7 +50,6 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
     ErrorCollection errorCollection = mock(ErrorCollection.class);
     when(createValidationResult.getErrorCollection()).thenReturn(errorCollection);
 
-    IssueResult issueResult = mock(IssueResult.class);
     when(issueService.create(any(), any())).thenReturn(issueResult);
     MutableIssue issue = mock(MutableIssue.class);
     when(issueResult.getIssue()).thenReturn(issue);
@@ -65,7 +66,7 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
     Request request = Util.createRequest("test", "Query", "test.cpp", "Security Error");
 
     when(createValidationResult.getErrorCollection().hasAnyErrors()).thenReturn(false);
-
+    when(issueResult.isValid()).thenReturn(true);
     servlet.createIssue(request, resp, config);
     verify(resp).setStatus(201);
   }
