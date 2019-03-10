@@ -17,7 +17,10 @@ import com.atlassian.jira.issue.label.LabelManager;
 import com.atlassian.jira.junit.rules.AvailableInContainer;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.util.ErrorCollection;
-import com.semmle.jira.addon.Utils.Util;
+import com.semmle.jira.addon.Request.Alert;
+import com.semmle.jira.addon.Request.Alert.Query;
+import com.semmle.jira.addon.Request.Project;
+import com.semmle.jira.addon.Request.Transition;
 import com.semmle.jira.addon.config.ProcessedConfig;
 import com.semmle.jira.addon.util.Constants;
 import java.io.IOException;
@@ -34,6 +37,17 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
   ProcessedConfig config = mock(ProcessedConfig.class);
 
   private IssueResult issueResult = mock(IssueResult.class);
+
+  public static Request createRequest(
+      String projectName, String queryName, String alertFile, String alertMessage) {
+    Transition transition = Transition.CREATE;
+    String url = "www." + projectName + ".com";
+    Project project = new Project(1l, "g/" + projectName, projectName, url);
+    Query query = new Query(queryName, url + "/" + queryName);
+    Alert alert = new Alert(alertFile, alertMessage, url + "/alert", query);
+
+    return new Request(transition, 1l, project, alert);
+  }
 
   @Before
   public void initTests() {
@@ -65,22 +79,22 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
   @Test
   public void testCreateIssueSuccess() throws IOException {
     HttpServletResponse resp = mockResponse();
-    Request request = Util.createRequest("test", "Query", "test.cpp", "Security Error");
+    Request request = createRequest("test", "Query", "test.cpp", "Security Error");
 
     when(createValidationResult.getErrorCollection().hasAnyErrors()).thenReturn(false);
     when(issueResult.isValid()).thenReturn(true);
-    servlet.createIssue(request, resp, config);
+    servlet.createIssue(Util.JSON.valueToTree(request), request, resp, config);
     verify(resp).setStatus(201);
   }
 
   @Test
   public void testCreateIssueFailure() throws IOException {
     HttpServletResponse resp = mockResponse();
-    Request request = Util.createRequest("test", "Query", "test.cpp", "Security Error");
+    Request request = createRequest("test", "Query", "test.cpp", "Security Error");
 
     when(createValidationResult.getErrorCollection().hasAnyErrors()).thenReturn(true);
 
-    servlet.createIssue(request, resp, config);
+    servlet.createIssue(Util.JSON.valueToTree(request), request, resp, config);
     verify(resp).setStatus(500);
   }
 }
