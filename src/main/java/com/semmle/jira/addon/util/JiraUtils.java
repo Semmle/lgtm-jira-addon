@@ -17,6 +17,7 @@ import com.atlassian.jira.web.bean.PagerFilter;
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.WorkflowManager;
 import com.atlassian.jira.workflow.WorkflowSchemeManager;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -57,9 +58,15 @@ public class JiraUtils {
     return getIssueTypeByName(Constants.ISSUE_TYPE_NAME);
   }
 
-  public static void addWorkflowToProject(
-      Project project, JiraWorkflow workflow, IssueType issueType, ApplicationUser user)
-      throws GenericEntityException, UsedIssueTypeException {
+  public static void configureWorkflowForProject(
+      Project project, IssueType issueType, ApplicationUser user)
+      throws GenericEntityException, UsedIssueTypeException, WorkflowNotFoundException {
+
+    WorkflowManager workflowManager = ComponentAccessor.getWorkflowManager();
+    JiraWorkflow currentWorkflow = workflowManager.getWorkflow(project.getId(), issueType.getId());
+    // If the currently configured workflow is good then there is no need to change anything.
+    if (isCompatible(currentWorkflow)) return;
+
     JqlQueryBuilder builder = JqlQueryBuilder.newBuilder();
     builder.where().project(project.getId()).and().issueType(issueType.getName());
     try {
@@ -79,8 +86,25 @@ public class JiraUtils {
 
     WorkflowSchemeManager workflowSchemeManager = ComponentAccessor.getWorkflowSchemeManager();
     GenericValue workflowScheme = workflowSchemeManager.getWorkflowScheme(project);
+    JiraWorkflow workflow = workflowManager.getWorkflow(Constants.WORKFLOW_NAME);
+    if (workflow == null) throw new WorkflowNotFoundException();
+
     workflowSchemeManager.addWorkflowToScheme(
         workflowScheme, workflow.getName(), issueType.getId());
+  }
+
+  private static boolean isCompatible(JiraWorkflow workflow) {
+    List<String> requiredTransitions =
+        Arrays.asList(
+            Constants.WORKFLOW_CLOSE_TRANSITION_NAME,
+            Constants.WORKFLOW_REOPEN_TRANSITION_NAME,
+            Constants.WORKFLOW_SUPPRESS_TRANSITION_NAME);
+    for (String transition : requiredTransitions) {
+      if (workflow.getActionsByName(transition).isEmpty()) {
+        return false;
+      }
+    }
+    return true;
   }
 
   public static Status getLgtmWorkflowStatus(String statusName)
