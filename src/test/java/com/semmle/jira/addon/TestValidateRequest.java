@@ -19,6 +19,7 @@ import com.semmle.jira.addon.config.ProcessedConfig;
 import java.io.IOException;
 import java.util.Arrays;
 import javax.servlet.http.HttpServletResponse;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
@@ -69,12 +70,12 @@ public class TestValidateRequest extends TestLgtmServletBase {
 
     config.setLgtmSecret(null); // Mocking the configuration is not set
 
-    ProcessedConfig processedConfig =
-        servlet.validateRequest(lgtmSignature, bytes, resp, configKey);
+    servlet.validateRequest(lgtmSignature, bytes, resp, configKey);
 
     verify(resp).setStatus(500);
-    verify(resp.getWriter())
-        .write("{\"code\":500,\"error\":\"Configuration needed – see documentation.\"}");
+    Assert.assertEquals(
+        "{\"code\":500,\"error\":\"Configuration needed – see documentation.\"}",
+        resp.getOutputStream().toString());
   }
 
   @Test
@@ -85,11 +86,11 @@ public class TestValidateRequest extends TestLgtmServletBase {
 
     HttpServletResponse resp = mockResponse();
 
-    ProcessedConfig processedConfig =
-        servlet.validateRequest(lgtmSignature, bytes, resp, configKey);
+    servlet.validateRequest(lgtmSignature, bytes, resp, configKey);
 
     verify(resp).setStatus(403);
-    verify(resp.getWriter()).write("{\"code\":403,\"error\":\"Forbidden.\"}");
+    Assert.assertEquals(
+        "{\"code\":403,\"error\":\"Forbidden.\"}", resp.getOutputStream().toString());
   }
 
   @Test

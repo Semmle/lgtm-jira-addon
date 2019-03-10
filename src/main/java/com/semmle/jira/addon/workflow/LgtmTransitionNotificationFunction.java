@@ -5,7 +5,6 @@ import com.atlassian.jira.workflow.function.issue.AbstractJiraFunctionProvider;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
-import com.google.gson.Gson;
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.workflow.InvalidInputException;
 import com.opensymphony.workflow.WorkflowException;
@@ -16,17 +15,21 @@ import com.semmle.jira.addon.Util;
 import com.semmle.jira.addon.config.Config;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
+import org.codehaus.jackson.JsonProcessingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LgtmTransitionNotificationFunction extends AbstractJiraFunctionProvider {
+
+  private static final Logger log =
+      LoggerFactory.getLogger(LgtmTransitionNotificationFunction.class);
+
   public static final String FIELD_TRANSITION = "transition";
 
   @ComponentImport private final PluginSettingsFactory pluginSettingsFactory;
@@ -64,8 +67,12 @@ public class LgtmTransitionNotificationFunction extends AbstractJiraFunctionProv
   }
 
   protected void postMessage(String secret, URI url, Request message) throws WorkflowException {
-    Gson gson = new Gson();
-    byte[] body = gson.toJson(message).getBytes(StandardCharsets.UTF_8);
+    byte[] body;
+    try {
+      body = Util.JSON.writeValueAsBytes(message);
+    } catch (IOException e) {
+      throw new WorkflowException("Failed to serialize JSON message", e);
+    }
     try {
       HttpURLConnection connection = (HttpURLConnection) url.toURL().openConnection();
       try {
@@ -86,11 +93,13 @@ public class LgtmTransitionNotificationFunction extends AbstractJiraFunctionProv
             if (input == null) {
               error = connection.getResponseMessage();
             } else {
-              try (Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8)) {
-                JsonError jsonError = gson.fromJson(reader, JsonError.class);
+              try {
+                JsonError jsonError = Util.JSON.readValue(input, JsonError.class);
                 if (jsonError.error != null) {
                   error = jsonError.error;
                 }
+              } catch (JsonProcessingException e) {
+                log.warn("Invalid response for notification: " + e, e);
               } finally {
                 input.close();
               }

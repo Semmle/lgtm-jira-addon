@@ -15,7 +15,6 @@ import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.WorkflowManager;
 import com.atlassian.jira.workflow.WorkflowUtil;
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.Gson;
 import com.opensymphony.workflow.FactoryException;
 import com.opensymphony.workflow.loader.ActionDescriptor;
 import com.opensymphony.workflow.loader.FunctionDescriptor;
@@ -39,7 +38,10 @@ public class WorkflowUtils {
       ResolutionCondition.class.getName();
 
   static void createWorkflow(
-      String workflowName, String workflowXml, String statusesJson, String resolutionsJson)
+      String workflowName,
+      String workflowXml,
+      WorkflowStatus[] statuses,
+      WorkflowResolution[] resolutions)
       throws FactoryException {
     WorkflowManager workflowManager = ComponentAccessor.getWorkflowManager();
     if (workflowManager.workflowExists(workflowName)) {
@@ -48,8 +50,8 @@ public class WorkflowUtils {
 
     WorkflowDescriptor descriptor = WorkflowUtil.convertXMLtoWorkflowDescriptor(workflowXml);
 
-    updateStatuses(descriptor, statusesJson);
-    updateResolutions(descriptor, resolutionsJson);
+    updateStatuses(descriptor, statuses);
+    updateResolutions(descriptor, resolutions);
 
     JiraWorkflow workflow = new ConfigurableJiraWorkflow(workflowName, descriptor, workflowManager);
     workflowManager.createWorkflow( // User is not needed for creating
@@ -57,7 +59,7 @@ public class WorkflowUtils {
   }
 
   @SuppressWarnings("unchecked")
-  private static void updateStatuses(WorkflowDescriptor descriptor, String statusesJson) {
+  private static void updateStatuses(WorkflowDescriptor descriptor, WorkflowStatus[] statusesJson) {
     Map<String, WorkflowStatus> statuses = mapStatuses(statusesJson);
 
     List<StepDescriptor> steps = descriptor.getSteps();
@@ -83,9 +85,8 @@ public class WorkflowUtils {
   }
 
   @SuppressWarnings("unchecked")
-  private static void updateResolutions(WorkflowDescriptor descriptor, String resolutionsJson) {
-    WorkflowResolution[] resolutions =
-        new Gson().fromJson(resolutionsJson, WorkflowResolution[].class);
+  private static void updateResolutions(
+      WorkflowDescriptor descriptor, WorkflowResolution[] resolutions) {
 
     ResolutionManager resolutionManager = ComponentAccessor.getComponent(ResolutionManager.class);
     Map<String, String> existing =
@@ -184,8 +185,7 @@ public class WorkflowUtils {
     return statusManager.createStatus(statusName, description, "status.png", category);
   }
 
-  private static Map<String, WorkflowStatus> mapStatuses(String statusesJson) {
-    WorkflowStatus[] statuses = new Gson().fromJson(statusesJson, WorkflowStatus[].class);
+  private static Map<String, WorkflowStatus> mapStatuses(WorkflowStatus[] statuses) {
 
     Map<String, WorkflowStatus> statusesMap = new LinkedHashMap<String, WorkflowStatus>();
     for (WorkflowStatus status : statuses) {

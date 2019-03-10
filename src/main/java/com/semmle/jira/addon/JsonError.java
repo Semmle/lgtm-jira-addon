@@ -1,10 +1,16 @@
 package com.semmle.jira.addon;
 
-public class JsonError {
-  public int code;
-  public String error;
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
 
-  public JsonError(int code, String error) {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class JsonError {
+  @JsonProperty public int code;
+  @JsonProperty public String error;
+
+  @JsonCreator
+  public JsonError(@JsonProperty("code") int code, @JsonProperty("error") String error) {
     this.code = code;
     this.error = error;
   }

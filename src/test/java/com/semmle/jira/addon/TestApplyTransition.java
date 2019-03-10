@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import javax.servlet.http.HttpServletResponse;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -69,7 +69,9 @@ public class TestApplyTransition extends TestCreateAndTransitionBase {
     servlet.applyTransition(
         issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, true, config.getUser(), resp);
 
-    verify(resp.getWriter()).write("{\"code\":500,\"error\":\"No valid transition found.\"}");
+    Assert.assertEquals(
+        "{\"code\":500,\"error\":\"No valid transition found.\"}",
+        resp.getOutputStream().toString());
     verify(resp).setStatus(500);
   }
 

@@ -12,7 +12,7 @@ import com.atlassian.jira.testkit.client.util.TimeBombLicence;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
 import com.google.common.collect.Iterables;
-import com.google.gson.GsonBuilder;
+import com.semmle.jira.addon.Util;
 import com.semmle.jira.addon.config.Config;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -153,7 +153,7 @@ public class IntegrationTest {
         "Basic "
             + Base64.getEncoder().encodeToString(("admin:admin").getBytes(StandardCharsets.UTF_8)));
 
-    httpPut.setEntity(new StringEntity(new GsonBuilder().create().toJson(config)));
+    httpPut.setEntity(new StringEntity(Util.JSON.writeValueAsString(config)));
 
     HttpResponse response = httpClient.execute(httpPut);
 

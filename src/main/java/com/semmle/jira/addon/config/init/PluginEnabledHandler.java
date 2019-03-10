@@ -9,15 +9,14 @@ import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.opensymphony.workflow.FactoryException;
+import com.semmle.jira.addon.Util;
 import com.semmle.jira.addon.util.Constants;
 import com.semmle.jira.addon.util.JiraUtils;
 import com.semmle.jira.addon.util.WorkflowNotFoundException;
-
 import java.io.IOException;
 import java.io.InputStream;
 import javax.inject.Inject;
 import javax.inject.Named;
-
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -57,7 +56,6 @@ public class PluginEnabledHandler implements InitializingBean, DisposableBean {
       } catch (WorkflowNotFoundException e1) {
         createLgtmWorkflow();
       }
-      
     }
   }
 
@@ -68,18 +66,17 @@ public class PluginEnabledHandler implements InitializingBean, DisposableBean {
       workflowXml = IOUtils.toString(is, "UTF-8");
     }
 
-    String statusesJson;
+    WorkflowStatus[] statuses;
     try (InputStream is = classLoader.getResourceAsStream("workflow/statuses.json")) {
-      statusesJson = IOUtils.toString(is, "UTF-8");
+      statuses = Util.JSON.readValue(is, WorkflowStatus[].class);
     }
 
-    String resolutionsJson;
+    WorkflowResolution[] resolutions;
     try (InputStream is = classLoader.getResourceAsStream("workflow/resolutions.json")) {
-      resolutionsJson = IOUtils.toString(is, "UTF-8");
+      resolutions = Util.JSON.readValue(is, WorkflowResolution[].class);
     }
 
-    WorkflowUtils.createWorkflow(
-        Constants.WORKFLOW_NAME, workflowXml, statusesJson, resolutionsJson);
+    WorkflowUtils.createWorkflow(Constants.WORKFLOW_NAME, workflowXml, statuses, resolutions);
 
     String layoutJson;
     try (InputStream is = classLoader.getResourceAsStream("workflow/layout.v2.json")) {
