@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 
 import com.atlassian.jira.config.ConstantsManager;
 import com.atlassian.jira.issue.issuetype.IssueType;
-import com.atlassian.jira.issue.priority.Priority;
 import com.atlassian.jira.issue.status.Status;
 import com.atlassian.jira.junit.rules.AvailableInContainer;
 import com.atlassian.jira.project.ProjectManager;
@@ -53,8 +52,6 @@ public class TestValidateRequest extends TestLgtmServletBase {
     when(constantsManager.getIssueType(any(String.class))).thenReturn(issueType);
     Status status = mock(Status.class);
     when(constantsManager.getStatus(any(String.class))).thenReturn(status);
-    Priority priority = mock(Priority.class);
-    when(constantsManager.getPriorityObject(any(String.class))).thenReturn(priority);
 
     // Config
     setupConfig();
@@ -118,6 +115,5 @@ public class TestValidateRequest extends TestLgtmServletBase {
     config.setLgtmSecret("secret");
     config.setUsername("username");
     config.setProjectKey("projectKey");
-    config.setPriorityLevelId("priorityLevelId");
   }
 }

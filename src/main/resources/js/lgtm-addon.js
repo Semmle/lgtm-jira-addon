@@ -6,7 +6,6 @@ var userFieldId = "#user";
 var secretFieldId = "#secret";
 var externalHookUrlFieldId = "#externalHookUrl";
 var projectFieldId = "#project";
-var priorityFieldId = "#priority";
 
 var webhookUrlFieldId = "#incomingHookUrl";
 var urlCodeId = "urlCode";
@@ -20,7 +19,6 @@ var key = "webhook";
 
 		// Init select2 fields
 		AJS.$(projectFieldId).auiSelect2();
-		AJS.$(priorityFieldId).auiSelect2();
 
 		AJS.$(adminFormId).submit(function(e) {
 			e.preventDefault();
@@ -60,60 +58,11 @@ function loadProjects() {
 		fieldContent.unshift({value : "none", text : ""});
 		
 		renderSelect2Field(projectFieldId, fieldContent);
-		AJS.$(projectFieldId).on('change', handleProjectChange);
 		if (config !== null) {
 			changeSelect2Value(projectFieldId, config.projectKey);
 		}
 	});
 }
-
-function handleProjectChange(event) {
-	clearSelect2Field(priorityFieldId);
-	
-	if (AJS.$(projectFieldId).select2('val') !== "none") {
-		loadPriorities(AJS.$(projectFieldId).select2('val'));
-	}
-}
-
-function loadPriorities(projectKey) {
-	AJS.$.ajax({
-		url : AJS.contextPath() + "/rest/api/2/priority"
-	}).done(function(allPriorities) {
-		var idToName = new Map();
-		for (var j = 0; j < allPriorities.length; j++) {
-			idToName.set(allPriorities[j].id, allPriorities[j].name);
-		}
-		
-		var priorityIds = new Array();
-		AJS.$.ajax({
-			url : AJS.contextPath() + "/rest/api/2/project/" + projectKey
-					+ "/priorityscheme"
-		}).done(function(schemes) {
-			priorityIds = schemes.optionIds;
-		}).fail(function() {
-			priorityIds = allPriorities.map(function(priority) {
-				return priority.id;
-			});
-		}).always(function() {
-			priorityIds.sort();
-			
-			var fieldContent = priorityIds.map(function(priorityId) {
-				return {
-					value : priorityId,
-					text : idToName.get(priorityId)
-				}
-			});
-			
-			fieldContent.unshift({value : "", text : "--Default--"});
-			
-			renderSelect2Field(priorityFieldId, fieldContent);
-			
-			if (config !== null) {
-				changeSelect2Value(priorityFieldId, config.priorityLevelId);
-			}
-		});
-	});
-};
 
 function clearSelect2Field(fieldId) {
 	var select2Field = AJS.$(fieldId);
@@ -184,7 +133,6 @@ function updateConfig() {
 		'externalHookUrl' : externalHookUrl,
 		'username' : AJS.$('#user').attr('value'),
 		'projectKey' : AJS.$('#project').select2('val'),
-		'priorityLevelId' : AJS.$('#priority').select2('val')
 	};
 
 	AJS.$.ajax({

@@ -17,7 +17,6 @@ public class Config {
   @XmlElement private String lgtmSecret;
   @XmlElement private String username;
   @XmlElement private String projectKey;
-  @XmlElement private String priorityLevelId;
   @XmlElement private URI externalHookUrl;
   @XmlElement private String trackerKey;
 
@@ -53,14 +52,6 @@ public class Config {
     this.projectKey = projectKey;
   }
 
-  public String getPriorityLevelId() {
-    return priorityLevelId;
-  }
-
-  public void setPriorityLevelId(String priorityLevelId) {
-    this.priorityLevelId = priorityLevelId;
-  }
-
   public URI getExternalHookUrl() {
     return externalHookUrl;
   }
@@ -93,8 +84,6 @@ public class Config {
                 (String) settings.get("com.lgtm.addon.config." + configKey + ".username"));
             config.setProjectKey(
                 (String) settings.get("com.lgtm.addon.config." + configKey + ".projectKey"));
-            config.setPriorityLevelId(
-                (String) settings.get("com.lgtm.addon.config." + configKey + ".priorityLevelId"));
             String externalHook =
                 (String) settings.get("com.lgtm.addon.config." + configKey + ".externalHookUrl");
             config.setExternalHookUrl(externalHook == null ? null : URI.create(externalHook));
@@ -119,9 +108,6 @@ public class Config {
                 "com.lgtm.addon.config." + config.getKey() + ".username", config.getUsername());
             settings.put(
                 "com.lgtm.addon.config." + config.getKey() + ".projectKey", config.getProjectKey());
-            settings.put(
-                "com.lgtm.addon.config." + config.getKey() + ".priorityLevelId",
-                config.getPriorityLevelId());
             URI externalHook = config.getExternalHookUrl();
             settings.put(
                 "com.lgtm.addon.config." + config.getKey() + ".externalHookUrl",

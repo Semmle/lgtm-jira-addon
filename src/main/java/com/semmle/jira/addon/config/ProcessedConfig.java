@@ -1,7 +1,6 @@
 package com.semmle.jira.addon.config;
 
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.issue.priority.Priority;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.user.ApplicationUser;
 import java.util.ArrayList;
@@ -11,7 +10,6 @@ import java.util.stream.Collectors;
 public class ProcessedConfig {
   private ApplicationUser user;
   private Project project;
-  private Priority priorityLevel;
 
   public ProcessedConfig(Config config) throws InvalidConfigurationException {
 
@@ -34,15 +32,6 @@ public class ProcessedConfig {
       configErrors.add("projectKey was null");
     }
 
-    priorityLevel = null;
-    if (config.getPriorityLevelId() != null && !config.getPriorityLevelId().isEmpty()) {
-      priorityLevel =
-          ComponentAccessor.getConstantsManager().getPriorityObject(config.getPriorityLevelId());
-      if (priorityLevel == null)
-        configErrors.add(
-            String.format("priority level id '%s' not found", config.getPriorityLevelId()));
-    }
-
     if (!configErrors.isEmpty()) {
       String message =
           configErrors.stream().collect(Collectors.joining(", ", "Invalid configuration – ", "."));
@@ -56,9 +45,5 @@ public class ProcessedConfig {
 
   public Project getProject() {
     return project;
-  }
-
-  public Priority getPriorityLevel() {
-    return priorityLevel;
   }
 }

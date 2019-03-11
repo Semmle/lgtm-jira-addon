@@ -165,8 +165,6 @@ public class LgtmServlet extends HttpServlet {
     issueInputParameters.setProjectId(config.getProject().getId());
     issueInputParameters.setIssueTypeId(JiraUtils.getLgtmIssueType().getId());
 
-    if (config.getPriorityLevel() != null)
-      issueInputParameters.setPriorityId(config.getPriorityLevel().getId());
     issueInputParameters.setApplyDefaultValuesWhenParameterNotProvided(true);
 
     IssueService.CreateValidationResult createValidationResult =
