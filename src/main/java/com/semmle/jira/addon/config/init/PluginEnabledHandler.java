@@ -10,10 +10,14 @@ import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.opensymphony.workflow.FactoryException;
 import com.semmle.jira.addon.util.Constants;
+import com.semmle.jira.addon.util.JiraUtils;
+import com.semmle.jira.addon.util.WorkflowNotFoundException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -48,7 +52,12 @@ public class PluginEnabledHandler implements InitializingBean, DisposableBean {
   public void onPluginEnabled(PluginEnabledEvent event) throws FactoryException, IOException {
     Plugin plugin = event.getPlugin();
     if (LGTM_PLUGIN_KEY.equals(plugin.getKey())) {
-      createLgtmWorkflow();
+      try {
+        JiraUtils.getLgtmWorkflow();
+      } catch (WorkflowNotFoundException e1) {
+        createLgtmWorkflow();
+      }
+      
     }
   }
 
