@@ -6,7 +6,7 @@
   </head>
   <body>
     <h1>LGTM add-on configuration</h1>
-    <form id="admin" class="aui" style="width:2000px;">
+    <form id="admin" class="aui">
     
       <h3>Jira settings</h3>
       <div class="field-group">
