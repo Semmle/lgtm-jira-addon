@@ -67,7 +67,7 @@ public class TestApplyTransition extends TestCreateAndTransitionBase {
     MutableIssue issue = mock(MutableIssue.class);
 
     servlet.applyTransition(
-        issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, config.getUser(), resp);
+        issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, true, config.getUser(), resp);
 
     verify(resp.getWriter()).write("{\"code\":500,\"error\":\"No valid transition found.\"}");
     verify(resp).setStatus(500);
@@ -88,7 +88,7 @@ public class TestApplyTransition extends TestCreateAndTransitionBase {
     when(issue.getStatus()).thenReturn(new MockStatus("100", "StatusName"));
 
     servlet.applyTransition(
-        issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, config.getUser(), resp);
+        issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, true, config.getUser(), resp);
     // There was an applicable transition, however, it could not be executed. We just log a message
     // if this happens.
     Assert.assertEquals(
@@ -111,7 +111,7 @@ public class TestApplyTransition extends TestCreateAndTransitionBase {
     when(issueResult.getIssue()).thenReturn(issue);
 
     servlet.applyTransition(
-        issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, config.getUser(), resp);
+        issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, true, config.getUser(), resp);
 
     verify(resp).setStatus(200);
   }

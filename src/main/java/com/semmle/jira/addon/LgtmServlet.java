@@ -8,6 +8,7 @@ import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.TransitionOptions;
+import com.atlassian.jira.workflow.TransitionOptions.Builder;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
@@ -90,16 +91,16 @@ public class LgtmServlet extends HttpServlet {
         createIssue(request, resp, config);
         break;
       case REOPEN:
-        applyTransition(issue, Constants.WORKFLOW_REOPEN_TRANSITION_NAME, user, resp);
+        applyTransition(issue, Constants.WORKFLOW_REOPEN_TRANSITION_NAME, true, user, resp);
         break;
       case CLOSE:
-        applyTransition(issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, user, resp);
+        applyTransition(issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, true, user, resp);
         break;
       case SUPPRESS:
-        applyTransition(issue, Constants.WORKFLOW_SUPPRESS_TRANSITION_NAME, user, resp);
+        applyTransition(issue, Constants.WORKFLOW_SUPPRESS_TRANSITION_NAME, false, user, resp);
         break;
       case UNSUPPRESS:
-        applyTransition(issue, Constants.WORKFLOW_REOPEN_TRANSITION_NAME, user, resp);
+        applyTransition(issue, Constants.WORKFLOW_REOPEN_TRANSITION_NAME, true, user, resp);
         break;
     }
   }
@@ -163,7 +164,11 @@ public class LgtmServlet extends HttpServlet {
   }
 
   void applyTransition(
-      MutableIssue issue, String transitionName, ApplicationUser user, HttpServletResponse resp)
+      MutableIssue issue,
+      String transitionName,
+      boolean skipValidate,
+      ApplicationUser user,
+      HttpServletResponse resp)
       throws IOException {
     IssueInputParameters issueInputParameters =
         ComponentAccessor.getIssueService().newIssueInputParameters();
@@ -172,12 +177,15 @@ public class LgtmServlet extends HttpServlet {
     JiraWorkflow workflow = ComponentAccessor.getWorkflowManager().getWorkflow(issue);
     Collection<ActionDescriptor> candidateActions = workflow.getActionsByName(transitionName);
 
+    Builder optionsBuilder = new TransitionOptions.Builder().skipConditions();
+
+    if (skipValidate) optionsBuilder.skipValidators();
+    TransitionOptions transitionOptions = optionsBuilder.build();
+
     // is there any transition with matching name that is applicable for the current issue status?
     boolean anyApplicable = false;
     boolean success = false;
     for (ActionDescriptor action : candidateActions) {
-      TransitionOptions transitionOptions =
-          new TransitionOptions.Builder().skipConditions().build();
 
       IssueService.TransitionValidationResult transitionValidationResult =
           ComponentAccessor.getIssueService()
