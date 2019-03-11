@@ -1,1 +1,20 @@
-[{"originalId":"10000","name":"Suppressed","description":null,"statusCategoryId":2},{"originalId":"10001","name":"False Positive","description":null,"statusCategoryId":3}]
+[
+  {
+    "originalId": "10000",
+    "name": "To Do",
+    "description": "",
+    "statusCategoryId": 2
+  },
+  {
+    "originalId": "10001",
+    "name": "In Review",
+    "description": "",
+    "statusCategoryId": 4
+  },
+  {
+    "originalId": "10002",
+    "name": "Done",
+    "description": "",
+    "statusCategoryId": 3
+  }
+]
