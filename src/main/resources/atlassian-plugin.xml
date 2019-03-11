@@ -46,4 +46,32 @@
 		<resource type="velocity" name="edit-parameters"
 			location="templates/postfunctions/lgtm-transition-notification-input.vm" />
 	</workflow-function>
+	<workflow-validator key="resolution-validator" name="Resolution Validator"
+		i18n-name-key="resolution-validator.name" class="com.semmle.jira.addon.workflow.CheckResolutionFunctionFactory">
+		<description key="resolution-validator.description">Validates that the issue ticket has or
+			does not have a particular resolution.
+		</description>
+		<validator-class>com.semmle.jira.addon.workflow.ResolutionValidator
+		</validator-class>
+		<resource type="velocity" name="view"
+			location="templates/validators/resolution-validator.vm" />
+		<resource type="velocity" name="input-parameters"
+			location="templates/validators/resolution-validator-input.vm" />
+		<resource type="velocity" name="edit-parameters"
+			location="templates/validators/resolution-validator-input.vm" />
+	</workflow-validator>
+	<workflow-condition key="resolution-condition" name="Resolution Condition"
+		i18n-name-key="resolution-condition.name" class="com.semmle.jira.addon.workflow.CheckResolutionFunctionFactory">
+		<description key="resolution-validator.description">Validates that the issue ticket has or
+			does not have a particular resolution.
+		</description>
+		<condition-class>com.semmle.jira.addon.workflow.ResolutionCondition
+		</condition-class>
+		<resource type="velocity" name="view"
+			location="templates/validators/resolution-validator.vm" />
+		<resource type="velocity" name="input-parameters"
+			location="templates/validators/resolution-validator-input.vm" />
+		<resource type="velocity" name="edit-parameters"
+			location="templates/validators/resolution-validator-input.vm" />
+	</workflow-condition>
 </atlassian-plugin>

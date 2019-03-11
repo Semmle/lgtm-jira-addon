@@ -1,0 +1,13 @@
+<div>
+Validate that the ticket's resolution 
+<select  name="operator" id="operator">
+  #foreach ($op in $operators)
+    <option value="$op.name()"#if ($op.name().equals($operator)) selected#end>$op</option>
+  #end
+</select>
+<select  name="resolution" id="resolution">
+  #foreach ($entry in $resolutions.entrySet())
+    <option value="$entry.key" #if ($entry.key.equals($resolution)) selected#end >$entry.value</option>
+  #end
+</select>
+</div>

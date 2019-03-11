@@ -1,12 +1,5 @@
 package com.semmle.jira.addon.config.init;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.apache.commons.codec.digest.DigestUtils;
-
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.ConstantsManager;
 import com.atlassian.jira.config.ResolutionManager;
@@ -28,11 +21,22 @@ import com.opensymphony.workflow.loader.ActionDescriptor;
 import com.opensymphony.workflow.loader.FunctionDescriptor;
 import com.opensymphony.workflow.loader.StepDescriptor;
 import com.opensymphony.workflow.loader.WorkflowDescriptor;
+import com.semmle.jira.addon.workflow.ResolutionCondition;
+import com.semmle.jira.addon.workflow.ResolutionValidator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import org.apache.commons.codec.digest.DigestUtils;
 
 public class WorkflowUtils {
 
   private static final String UPDATE_FIELD_FUNCTION_ID =
       com.atlassian.jira.workflow.function.issue.UpdateIssueFieldFunction.class.getName();
+  private static final String RESOLUTION_VALIDATOR_FUNCTION_ID =
+      ResolutionValidator.class.getName();
+  private static final String RESOLUTION_CONDITION_FUNCTION_ID =
+      ResolutionCondition.class.getName();
 
   static void createWorkflow(
       String workflowName, String workflowXml, String statusesJson, String resolutionsJson)
@@ -105,21 +109,40 @@ public class WorkflowUtils {
 
       for (ActionDescriptor action : (List<ActionDescriptor>) step.getActions()) {
         for (FunctionDescriptor function :
+            (List<FunctionDescriptor>) action.getUnconditionalResult().getPreFunctions()) {
+          updateResolutions(function, resolutionsMap);
+        }
+        for (FunctionDescriptor function :
+            (List<FunctionDescriptor>) action.getUnconditionalResult().getValidators()) {
+          updateResolutions(function, resolutionsMap);
+        }
+        for (FunctionDescriptor function :
             (List<FunctionDescriptor>) action.getUnconditionalResult().getPostFunctions()) {
-          // skip non-class functions
-          if (!"class".equals(function.getType())) continue;
-
-          Map<String, String> args = function.getArgs();
-          Object name = args.get("class.name");
-          if (UPDATE_FIELD_FUNCTION_ID.equals(name)) {
-            if ("resolution".equals(args.get("field.name"))) {
-              String oldValue = (String) args.get("field.value");
-              String newValue = resolutionsMap.get(oldValue);
-              if (newValue != null) args.put("field.value", newValue);
-            }
-          }
+          updateResolutions(function, resolutionsMap);
         }
       }
+    }
+  }
+
+  private static void updateResolutions(
+      FunctionDescriptor function, Map<String, String> resolutionsMap) {
+    // skip non-class functions
+    if (!"class".equals(function.getType())) return;
+
+    @SuppressWarnings("unchecked")
+    Map<String, String> args = function.getArgs();
+    Object name = args.get("class.name");
+    if (UPDATE_FIELD_FUNCTION_ID.equals(name)) {
+      if ("resolution".equals(args.get("field.name"))) {
+        String oldValue = (String) args.get("field.value");
+        String newValue = resolutionsMap.get(oldValue);
+        if (newValue != null) args.put("field.value", newValue);
+      }
+    } else if (RESOLUTION_VALIDATOR_FUNCTION_ID.equals(name)
+        || RESOLUTION_CONDITION_FUNCTION_ID.equals(name)) {
+      String oldValue = (String) args.get("resolution");
+      String newValue = resolutionsMap.get(oldValue);
+      if (newValue != null) args.put("resolution", newValue);
     }
   }
 
