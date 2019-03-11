@@ -145,7 +145,6 @@ public class IntegrationTest {
     config.setLgtmSecret("12345678");
     config.setUsername("admin");
     config.setProjectKey("MKY");
-    config.setPriorityLevelId("3");
 
     HttpPut httpPut = new HttpPut(baseUrl + "/rest/lgtm-config/1.0/");
     httpPut.setHeader("Content-type", "application/json");

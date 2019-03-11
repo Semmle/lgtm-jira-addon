@@ -20,12 +20,6 @@
         </select>
       </div>
       <div class="field-group">
-        <label for="priority">$i18n.getText("lgtm-servlet.admin.priority.label")</label>
-        <select id="priority">
-        	<option value="none"></option>
-        </select>
-      </div>
-      <div class="field-group">
         <label for="user">$i18n.getText("lgtm-servlet.admin.incomingHookUrl.label")</label>
         <input readonly type="text" id="incomingHookUrl" name="incomingHookUrl" class="text readonly">
       </div>
