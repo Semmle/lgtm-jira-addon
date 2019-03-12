@@ -12,8 +12,6 @@ import com.atlassian.jira.workflow.TransitionOptions.Builder;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import com.opensymphony.workflow.loader.ActionDescriptor;
 import com.semmle.jira.addon.Request.Transition;
 import com.semmle.jira.addon.config.Config;
@@ -22,7 +20,6 @@ import com.semmle.jira.addon.config.ProcessedConfig;
 import com.semmle.jira.addon.util.Constants;
 import com.semmle.jira.addon.util.JiraUtils;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
@@ -63,8 +60,8 @@ public class LgtmServlet extends HttpServlet {
 
     Request request;
     try {
-      request = new Gson().fromJson(new String(bytes, StandardCharsets.UTF_8), Request.class);
-    } catch (JsonSyntaxException e) {
+      request = Util.JSON.readValue(bytes, Request.class);
+    } catch (IOException e) {
       String message = e.getCause() != null ? " - " + e.getCause().getMessage() : "";
       sendError(
           resp, HttpServletResponse.SC_BAD_REQUEST, "Syntax error in request body: " + message);
@@ -240,6 +237,6 @@ public class LgtmServlet extends HttpServlet {
     resp.setContentType("application/json");
     resp.setCharacterEncoding("UTF-8");
     resp.setStatus(code);
-    resp.getWriter().write(new Gson().toJson(value));
+    Util.JSON.writeValue(resp.getOutputStream(), value);
   }
 }

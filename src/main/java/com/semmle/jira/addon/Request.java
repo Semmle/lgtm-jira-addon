@@ -1,22 +1,31 @@
 package com.semmle.jira.addon;
 
-import com.google.gson.annotations.SerializedName;
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.annotate.JsonValue;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Request {
 
-  public final Transition transition;
+  @JsonProperty public final Transition transition;
 
-  @SerializedName("issue-id")
+  @JsonProperty("issue-id")
   public final Long issueId;
 
-  public final Project project;
-  public final Alert alert;
+  @JsonProperty public final Project project;
+  @JsonProperty public final Alert alert;
 
   public Request(Transition transition, Long issueId) {
     this(transition, issueId, null, null);
   }
 
-  public Request(Transition transition, Long issueId, Project project, Alert alert) {
+  @JsonCreator
+  public Request(
+      @JsonProperty("transition") Transition transition,
+      @JsonProperty("issue-id") Long issueId,
+      @JsonProperty("project") Project project,
+      @JsonProperty("alert") Alert alert) {
     this.transition = transition;
     this.issueId = issueId;
     this.project = project;
@@ -69,16 +78,11 @@ public class Request {
     return String.format("%s (%s)", this.alert.query.name, this.project.name);
   }
 
-  public enum Transition {
-    @SerializedName("create")
+  public static enum Transition {
     CREATE("create"),
-    @SerializedName("reopen")
     REOPEN("reopen"),
-    @SerializedName("close")
     CLOSE("close"),
-    @SerializedName("suppress")
     SUPPRESS("suppress"),
-    @SerializedName("unsuppress")
     UNSUPPRESS("unsuppress");
 
     public final String value;
@@ -87,21 +91,36 @@ public class Request {
       this.value = value;
     }
 
+    @JsonCreator
+    public static Transition fromString(String value) {
+      for (Transition transition : Transition.values()) {
+        if (transition.value.equals(value)) return transition;
+      }
+      throw new IllegalArgumentException("Invalid transition:" + value);
+    }
+
+    @JsonValue
     public String toString() {
       return value;
     }
   }
 
+  @JsonIgnoreProperties(ignoreUnknown = true)
   public static class Project {
-    public final Long id;
+    @JsonProperty public final Long id;
 
-    @SerializedName("url-identifier")
+    @JsonProperty("url-identifier")
     public final String urlIdentifier;
 
-    public final String name;
-    public final String url;
+    @JsonProperty public final String name;
+    @JsonProperty public final String url;
 
-    public Project(Long id, String urlIdentifier, String name, String url) {
+    @JsonCreator
+    public Project(
+        @JsonProperty("id") Long id,
+        @JsonProperty("url-identifier") String urlIdentifier,
+        @JsonProperty("name") String name,
+        @JsonProperty("url") String url) {
       this.id = id;
       this.urlIdentifier = urlIdentifier;
       this.name = name;
@@ -117,13 +136,19 @@ public class Request {
     }
   }
 
+  @JsonIgnoreProperties(ignoreUnknown = true)
   public static class Alert {
-    public final String file;
-    public final String message;
-    public final String url;
-    public final Query query;
+    @JsonProperty public final String file;
+    @JsonProperty public final String message;
+    @JsonProperty public final String url;
+    @JsonProperty public final Query query;
 
-    public Alert(String file, String message, String url, Query query) {
+    @JsonCreator
+    public Alert(
+        @JsonProperty("file") String file,
+        @JsonProperty("message") String message,
+        @JsonProperty("url") String url,
+        @JsonProperty("query") Query query) {
       this.file = file;
       this.message = message;
       this.url = url;
@@ -138,11 +163,13 @@ public class Request {
       return true;
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Query {
-      public final String name;
-      public final String url;
+      @JsonProperty public final String name;
+      @JsonProperty public final String url;
 
-      public Query(String name, String url) {
+      @JsonCreator
+      public Query(@JsonProperty("name") String name, @JsonProperty("url") String url) {
         this.name = name;
         this.url = url;
       }

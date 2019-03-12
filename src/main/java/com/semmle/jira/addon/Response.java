@@ -1,12 +1,16 @@
 package com.semmle.jira.addon;
 
-import com.google.gson.annotations.SerializedName;
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Response {
-  @SerializedName("issue-id")
+  @JsonProperty("issue-id")
   public final String issueId;
 
-  public Response(Long issueId) {
+  @JsonCreator
+  public Response(@JsonProperty("issue-id") Long issueId) {
     this.issueId = issueId.toString();
   }
 }

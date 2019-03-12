@@ -7,8 +7,21 @@ import java.util.Arrays;
 import java.util.List;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import org.codehaus.jackson.JsonGenerator;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
 public class Util {
+
+  public static final ObjectMapper JSON = new ObjectMapper();
+
+  static {
+    JSON.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, false);
+    JSON.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
+    JSON.setSerializationInclusion(Inclusion.NON_NULL);
+  }
+
   public static boolean signatureIsValid(
       String lgtmSecret, byte[] requestBytes, String lgtmSignature) {
     String hmac = calculateHmac(lgtmSecret, requestBytes);
