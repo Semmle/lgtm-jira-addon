@@ -5,6 +5,7 @@ import com.atlassian.jira.bc.issue.IssueService;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.IssueInputParameters;
 import com.atlassian.jira.issue.MutableIssue;
+import com.atlassian.jira.issue.label.LabelManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.TransitionOptions;
@@ -157,6 +158,9 @@ public class LgtmServlet extends HttpServlet {
     } else {
       IssueService.IssueResult issueResult =
           ComponentAccessor.getIssueService().create(config.getUser(), createValidationResult);
+
+      LabelManager mgr = ComponentAccessor.getComponent(LabelManager.class);
+      mgr.addLabel(config.getUser(), issueResult.getIssue().getId(), request.project.name, false);
 
       if (!issueResult.isValid()) {
         writeErrors(issueResult, resp);
