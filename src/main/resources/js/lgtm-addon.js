@@ -95,6 +95,10 @@ function changeSelect2Value(fieldId, newValue) {
 
 function updateConfig() {
 	
+	for (var i = 0; i < AJS.$("#message-context").children().length; i++) {
+		AJS.$("#message-context").children()[i].remove();
+	}
+	
 	if (AJS.$(secretFieldId).attr("value") === "") {
 		AJS.messages.error("#message-context", {
 			title : 'Please enter a valid secret.',
