@@ -4,6 +4,7 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.ConstantsManager;
 import com.atlassian.jira.config.ResolutionManager;
 import com.atlassian.jira.config.StatusManager;
+import com.atlassian.jira.issue.priority.Priority;
 import com.atlassian.jira.issue.resolution.Resolution;
 import com.atlassian.jira.issue.status.Status;
 import com.atlassian.jira.issue.status.category.StatusCategory;
@@ -17,12 +18,14 @@ import com.atlassian.jira.workflow.WorkflowUtil;
 import com.google.common.collect.ImmutableMap;
 import com.opensymphony.workflow.FactoryException;
 import com.opensymphony.workflow.loader.ActionDescriptor;
+import com.opensymphony.workflow.loader.DescriptorFactory;
 import com.opensymphony.workflow.loader.FunctionDescriptor;
 import com.opensymphony.workflow.loader.StepDescriptor;
 import com.opensymphony.workflow.loader.WorkflowDescriptor;
 import com.semmle.jira.addon.workflow.ResolutionCondition;
 import com.semmle.jira.addon.workflow.ResolutionValidator;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +60,30 @@ public class WorkflowUtils {
     JiraWorkflow workflow = new ConfigurableJiraWorkflow(workflowName, descriptor, workflowManager);
     workflowManager.createWorkflow( // User is not needed for creating
         (ApplicationUser) null, workflow);
+  }
+
+  public static void addDefaultPriorityToWorkflow(String workflowName, Priority priority) {
+    FunctionDescriptor setPriorityFunction =
+        DescriptorFactory.getFactory().createFunctionDescriptor();
+    setPriorityFunction.setType("class");
+    setPriorityFunction.setName("Priority");
+
+    @SuppressWarnings("unchecked")
+    Map<String, String> args = setPriorityFunction.getArgs();
+    args.put(
+        "full.module.key", "com.atlassian.jira.plugin.system.workflowupdate-issue-field-function");
+    args.put("field.name", "priority");
+    args.put("field.value", priority.getId());
+    args.put("class.name", "com.atlassian.jira.workflow.function.issue.UpdateIssueFieldFunction");
+
+    WorkflowManager workflowManager = ComponentAccessor.getWorkflowManager();
+    JiraWorkflow workflow = workflowManager.getWorkflow(workflowName);
+
+    @SuppressWarnings("unchecked")
+    List<ActionDescriptor> initialActions = workflow.getDescriptor().getInitialActions();
+    for (ActionDescriptor action : initialActions) {
+      addFunction(action, setPriorityFunction);
+    }
   }
 
   @SuppressWarnings("unchecked")
@@ -172,6 +199,26 @@ public class WorkflowUtils {
             "id", layoutId,
             "value", layoutJson);
     ofBizDelegator.createValue("OSPropertyText", textFields);
+  }
+
+  private static void addFunction(ActionDescriptor transition, FunctionDescriptor function) {
+    @SuppressWarnings("unchecked")
+    List<FunctionDescriptor> functions = transition.getUnconditionalResult().getPostFunctions();
+    // remove existing functions with the same name
+    String name = function.getName();
+    if (name != null) {
+      Iterator<?> iter = functions.iterator();
+      while (iter.hasNext()) {
+        Object obj = iter.next();
+        if (obj instanceof FunctionDescriptor) {
+          FunctionDescriptor fun = (FunctionDescriptor) obj;
+          if (name.equals(fun.getName())) {
+            iter.remove();
+          }
+        }
+      }
+    }
+    functions.add(function);
   }
 
   private static Status getOrCreateStatus(
