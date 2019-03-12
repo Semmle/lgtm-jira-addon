@@ -182,16 +182,28 @@ function updateConfig() {
 			return;
 		} else if (jqXHR.getResponseHeader("Error") === "workflow-not-found") {
 			AJS.messages.error("#message-context", {
-				title : 'The LGTM alert workflow does not exists. Please install it.',
+				title : 'The LGTM alert workflow does not exists. Please re-enable add-on.',
 				closeable : true,
 				fadeout : true
 			});
 			return;
 		} else if (jqXHR.getResponseHeader("Error") === "manual-migration-needed") {
+			
+			var body = '<p>There are existing tickets using an old workflow type, and hence a one-time manual migration is needed.</p>' +
+			'<ul>'+
+			'<li>Please go to the <a href="' + AJS.params.baseURL + '/plugins/servlet/project-config/'+
+																				AJS.$('#project').select2('val') +
+																				'/workflows" target="_blank">project workflow page</a> '+
+																	"and select 'Add workflow' followed by 'Add existing'.</li>" +
+			"<li>On the first screen select 'LGTM workflow' then on the second select 'LGTM alert'. Click 'Finish'.</li>" +
+			"<li>Finally, click 'Publish' and Jira will guide you through mapping tickets to the new workflow.</li>" +
+			'</ul>';
+			
 			AJS.messages.error("#message-context", {
 				title : 'A manual workflow migration is needed.',
+				body : body,
 				closeable : true,
-				fadeout : true
+				fadeout : false
 			});
 			return;
 		}
