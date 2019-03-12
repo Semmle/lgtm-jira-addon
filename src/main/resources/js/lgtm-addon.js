@@ -111,7 +111,7 @@ function updateConfig() {
 
 	if (AJS.$(userFieldId).attr("value") === "") {
 		AJS.messages.error("#message-context", {
-			title : 'Please enter a valid user.',
+			title : 'Please enter a username.',
 			closeable : true,
 			fadeout : true
 		});
@@ -148,7 +148,7 @@ function updateConfig() {
 			fadeout : true
 		});
 	}).fail(function(jqXHR, textStatus, errorThrown) {
-		if (jqXHR.getResponseHeader("Error") === "username") {
+		if (jqXHR.getResponseHeader("Error") === "user-not-found") {
 			AJS.messages.error("#message-context", {
 				title : 'The user ' + AJS.$(userFieldId).attr("value")
 						+ ' does not exist.',
@@ -156,7 +156,7 @@ function updateConfig() {
 				fadeout : true
 			});
 			return;
-		} else if (jqXHR.getResponseHeader("Error") === "project") {
+		} else if (jqXHR.getResponseHeader("Error") === "project-not-found") {
 			// This should not happen
 			AJS.messages.error("#message-context", {
 				title : 'The project "' + AJS.$(projectFieldId).select2('data').text
@@ -165,16 +165,17 @@ function updateConfig() {
 				fadeout : true
 			});
 			return;
-		} else if (jqXHR.getResponseHeader("Error") === "issueType") {
+		} else if (jqXHR.getResponseHeader("Error") === "issueType-not-found") {
 			AJS.messages.error("#message-context", {
 				title : 'The "LGTM alert" issue type could not be found.',
 				closeable : true,
 				fadeout : true
 			});
 			return;
-		} else if (jqXHR.getResponseHeader("Error") === "workflow") {
+		} else if (jqXHR.getResponseHeader("Error") === "workflow-generic-error") {
 			AJS.messages.error("#message-context", {
-				title : 'A problem occurred when adding the LGTM alert workflow to the project.',
+				title : "An error occurred when adding the 'LGTM alert' workflow to the project.",
+				body : 'If this problem persist please contact your Jira administrator.',
 				closeable : true,
 				fadeout : true
 			});
@@ -196,6 +197,7 @@ function updateConfig() {
 		}
 		AJS.messages.error("#message-context", {
 			title : 'An error happened.',
+			body : 'Please try again.',
 			closeable : true,
 			fadeout : true
 		});

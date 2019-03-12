@@ -78,18 +78,18 @@ public class ConfigResource {
     }
 
     if (!UserUtils.userExists(config.getUsername())) {
-      return Response.status(Status.BAD_REQUEST).header("Error", "username").build();
+      return Response.status(Status.BAD_REQUEST).header("Error", "user-not-found").build();
     }
 
     Project project =
         ComponentAccessor.getProjectManager().getProjectByCurrentKey(config.getProjectKey());
     if (project == null) {
-      return Response.status(Status.BAD_REQUEST).header("Error", "project").build();
+      return Response.status(Status.BAD_REQUEST).header("Error", "project-not-found").build();
     }
     JiraUtils.createLgtmIssueType();
     IssueType lgtmIssueType = JiraUtils.getIssueTypeByName(Constants.ISSUE_TYPE_NAME);
     if (lgtmIssueType == null) {
-      return Response.status(Status.BAD_REQUEST).header("Error", "issueType").build();
+      return Response.status(Status.BAD_REQUEST).header("Error", "issueType-not-found").build();
     }
 
     JiraUtils.addIssueTypeToProject(project, lgtmIssueType);
@@ -100,7 +100,7 @@ public class ConfigResource {
       return Response.status(Status.BAD_REQUEST).header("Error", "workflow-not-found").build();
     } catch (GenericEntityException e) {
       log.error("Error while adding the LGTM workflow to the project", e);
-      return Response.status(Status.BAD_REQUEST).header("Error", "workflow").build();
+      return Response.status(Status.BAD_REQUEST).header("Error", "workflow-generic-error").build();
     } catch (UsedIssueTypeException e) {
       return Response.status(Status.BAD_REQUEST).header("Error", "manual-migration-needed").build();
     }
