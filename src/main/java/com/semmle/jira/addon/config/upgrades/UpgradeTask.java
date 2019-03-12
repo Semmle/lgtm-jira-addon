@@ -6,14 +6,14 @@ import com.atlassian.sal.api.upgrade.PluginUpgradeTask;
 import com.semmle.jira.addon.util.Constants;
 
 public abstract class UpgradeTask implements PluginUpgradeTask {
-  protected final String CONFIGURED_VERSION_KEY = "com.lgtm.addon.version";
+  protected static final String CONFIGURED_VERSION_KEY = "com.lgtm.addon.version";
 
   protected final PluginSettings settings;
 
-  protected final int buildNumber;
+  public static final int buildNumber = 0;
+  public static final int highestBuildNumber = 1;
 
-  public UpgradeTask(int buildNumber, PluginSettingsFactory pluginSettingsFactory) {
-    this.buildNumber = buildNumber;
+  public UpgradeTask(PluginSettingsFactory pluginSettingsFactory) {
     this.settings = pluginSettingsFactory.createGlobalSettings();
   }
 
@@ -45,6 +45,10 @@ public abstract class UpgradeTask implements PluginUpgradeTask {
    * upgrade succeeds.
    */
   protected void putConfiguredVersion() {
-    settings.put(CONFIGURED_VERSION_KEY, buildNumber);
+    if (isFreshInstall()) {
+      settings.put(CONFIGURED_VERSION_KEY, highestBuildNumber);
+    } else {
+      settings.put(CONFIGURED_VERSION_KEY, buildNumber);
+    }
   }
 }

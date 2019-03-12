@@ -18,9 +18,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class UpgradeTask1 extends UpgradeTask {
 
+  public static final int buildNumber = 1;
+
   @Autowired
   public UpgradeTask1(@ComponentImport final PluginSettingsFactory pluginSettingsFactory) {
-    super(1, pluginSettingsFactory);
+    super(pluginSettingsFactory);
   }
 
   @Override
