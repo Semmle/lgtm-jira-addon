@@ -158,6 +158,10 @@ public class LgtmServlet extends HttpServlet {
       IssueService.IssueResult issueResult =
           ComponentAccessor.getIssueService().create(config.getUser(), createValidationResult);
 
+      if (!issueResult.isValid()) {
+        writeErrors(issueResult, resp);
+        return;
+      }
       Response response = new Response(issueResult.getIssue().getId());
       sendJSON(resp, HttpServletResponse.SC_CREATED, response);
     }
