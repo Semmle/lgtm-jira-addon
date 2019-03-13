@@ -196,9 +196,9 @@ function updateConfig() {
 			var body = '<p>There are existing tickets using an old workflow type, and hence a one-time manual migration is needed.</p>' +
 			'<ul>'+
 			'<li>Please go to the <a href="' + AJS.params.baseURL + '/plugins/servlet/project-config/'+
-																				AJS.$('#project').select2('val') +
-																				'/workflows" target="_blank">project workflow page</a> '+
-																	"and select 'Add workflow' followed by 'Add existing'.</li>" +
+				AJS.$('#project').select2('val') +
+				'/workflows" target="_blank">project workflow page</a> '+
+				"and select 'Add workflow' followed by 'Add existing'.</li>" +
 			"<li>On the first screen select 'LGTM workflow' then on the second select 'LGTM alert'. Click 'Finish'.</li>" +
 			"<li>Finally, click 'Publish' and Jira will guide you through mapping tickets to the new workflow.</li>" +
 			'</ul>';
@@ -212,7 +212,7 @@ function updateConfig() {
 			return;
 		}
 		AJS.messages.error("#message-context", {
-			title : 'An error happened.',
+			title : 'An error occurred.',
 			body : 'Please try again.',
 			closeable : true,
 			fadeout : true
