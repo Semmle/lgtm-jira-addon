@@ -109,6 +109,13 @@ public class ConfigResource {
     PluginSettings settings = pluginSettingsFactory.createGlobalSettings();
     settings.put(KEY_SETTINGS_NAME, config.getKey());
 
+    String version =
+        ComponentAccessor.getPluginAccessor()
+            .getPlugin(Constants.PLUGIN_KEY)
+            .getPluginInformation()
+            .getVersion();
+    settings.put(Constants.CONFIGURED_VERSION_KEY, version);
+
     return Response.noContent().build();
   }
 }
