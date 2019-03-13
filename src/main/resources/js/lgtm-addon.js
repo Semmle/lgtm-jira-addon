@@ -95,6 +95,10 @@ function changeSelect2Value(fieldId, newValue) {
 
 function updateConfig() {
 	
+	for (var i = 0; i < AJS.$("#message-context").children().length; i++) {
+		AJS.$("#message-context").children()[i].remove();
+	}
+	
 	if (AJS.$(secretFieldId).attr("value") === "") {
 		AJS.messages.error("#message-context", {
 			title : 'Please enter a valid secret.',
@@ -111,7 +115,7 @@ function updateConfig() {
 
 	if (AJS.$(userFieldId).attr("value") === "") {
 		AJS.messages.error("#message-context", {
-			title : 'Please enter a valid user.',
+			title : 'Please enter a username.',
 			closeable : true,
 			fadeout : true
 		});
@@ -148,7 +152,7 @@ function updateConfig() {
 			fadeout : true
 		});
 	}).fail(function(jqXHR, textStatus, errorThrown) {
-		if (jqXHR.getResponseHeader("Error") === "username") {
+		if (jqXHR.getResponseHeader("Error") === "user-not-found") {
 			AJS.messages.error("#message-context", {
 				title : 'The user ' + AJS.$(userFieldId).attr("value")
 						+ ' does not exist.',
@@ -156,7 +160,7 @@ function updateConfig() {
 				fadeout : true
 			});
 			return;
-		} else if (jqXHR.getResponseHeader("Error") === "project") {
+		} else if (jqXHR.getResponseHeader("Error") === "project-not-found") {
 			// This should not happen
 			AJS.messages.error("#message-context", {
 				title : 'The project "' + AJS.$(projectFieldId).select2('data').text
@@ -165,37 +169,51 @@ function updateConfig() {
 				fadeout : true
 			});
 			return;
-		} else if (jqXHR.getResponseHeader("Error") === "issueType") {
+		} else if (jqXHR.getResponseHeader("Error") === "issueType-not-found") {
 			AJS.messages.error("#message-context", {
 				title : 'The "LGTM alert" issue type could not be found.',
 				closeable : true,
 				fadeout : true
 			});
 			return;
-		} else if (jqXHR.getResponseHeader("Error") === "workflow") {
+		} else if (jqXHR.getResponseHeader("Error") === "workflow-generic-error") {
 			AJS.messages.error("#message-context", {
-				title : 'A problem occurred when adding the LGTM alert workflow to the project.',
+				title : "An error occurred when adding the 'LGTM alert' workflow to the project.",
+				body : 'If this problem persist please contact your Jira administrator.',
 				closeable : true,
 				fadeout : true
 			});
 			return;
 		} else if (jqXHR.getResponseHeader("Error") === "workflow-not-found") {
 			AJS.messages.error("#message-context", {
-				title : 'The LGTM alert workflow does not exists. Please install it.',
+				title : 'The LGTM alert workflow does not exists. Please re-enable add-on.',
 				closeable : true,
 				fadeout : true
 			});
 			return;
 		} else if (jqXHR.getResponseHeader("Error") === "manual-migration-needed") {
+			
+			var body = '<p>There are existing tickets using an old workflow type, and hence a one-time manual migration is needed.</p>' +
+			'<ul>'+
+			'<li>Please go to the <a href="' + AJS.params.baseURL + '/plugins/servlet/project-config/'+
+				AJS.$('#project').select2('val') +
+				'/workflows" target="_blank">project workflow page</a> '+
+				"and select 'Add workflow' followed by 'Add existing'.</li>" +
+			"<li>On the first screen select 'LGTM workflow' then on the second select 'LGTM alert'. Click 'Finish'.</li>" +
+			"<li>Finally, click 'Publish' and Jira will guide you through mapping tickets to the new workflow.</li>" +
+			'</ul>';
+			
 			AJS.messages.error("#message-context", {
 				title : 'A manual workflow migration is needed.',
+				body : body,
 				closeable : true,
-				fadeout : true
+				fadeout : false
 			});
 			return;
 		}
 		AJS.messages.error("#message-context", {
-			title : 'An error happened.',
+			title : 'An error occurred.',
+			body : 'Please try again.',
 			closeable : true,
 			fadeout : true
 		});
