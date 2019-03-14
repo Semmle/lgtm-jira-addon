@@ -13,6 +13,7 @@ import com.atlassian.jira.config.ConstantsManager;
 import com.atlassian.jira.issue.IssueInputParameters;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.issuetype.IssueType;
+import com.atlassian.jira.issue.label.LabelManager;
 import com.atlassian.jira.junit.rules.AvailableInContainer;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.util.ErrorCollection;
@@ -27,6 +28,7 @@ import org.junit.Test;
 public class TestCreateIssue extends TestCreateAndTransitionBase {
 
   @AvailableInContainer private ConstantsManager constantsManager = mock(ConstantsManager.class);
+  @AvailableInContainer private LabelManager labelManager = mock(LabelManager.class);
 
   CreateValidationResult createValidationResult = mock(CreateValidationResult.class);
   ProcessedConfig config = mock(ProcessedConfig.class);
