@@ -22,6 +22,7 @@ import com.opensymphony.workflow.loader.StepDescriptor;
 import com.opensymphony.workflow.loader.WorkflowDescriptor;
 import com.semmle.jira.addon.workflow.ResolutionCondition;
 import com.semmle.jira.addon.workflow.ResolutionValidator;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,22 +106,27 @@ public class WorkflowUtils {
       }
       resolutionsMap.put(resolution.originalId, newId);
     }
+
+    List<ActionDescriptor> actions = new ArrayList<ActionDescriptor>();
+    actions.addAll(descriptor.getInitialActions());
+    actions.addAll(descriptor.getGlobalActions());
     List<StepDescriptor> steps = descriptor.getSteps();
     for (StepDescriptor step : steps) {
+      actions.addAll(step.getActions());
+    }
 
-      for (ActionDescriptor action : (List<ActionDescriptor>) step.getActions()) {
-        for (FunctionDescriptor function :
-            (List<FunctionDescriptor>) action.getUnconditionalResult().getPreFunctions()) {
-          updateResolutions(function, resolutionsMap);
-        }
-        for (FunctionDescriptor function :
-            (List<FunctionDescriptor>) action.getUnconditionalResult().getValidators()) {
-          updateResolutions(function, resolutionsMap);
-        }
-        for (FunctionDescriptor function :
-            (List<FunctionDescriptor>) action.getUnconditionalResult().getPostFunctions()) {
-          updateResolutions(function, resolutionsMap);
-        }
+    for (ActionDescriptor action : actions) {
+      for (FunctionDescriptor function :
+          (List<FunctionDescriptor>) action.getUnconditionalResult().getPreFunctions()) {
+        updateResolutions(function, resolutionsMap);
+      }
+      for (FunctionDescriptor function :
+          (List<FunctionDescriptor>) action.getUnconditionalResult().getValidators()) {
+        updateResolutions(function, resolutionsMap);
+      }
+      for (FunctionDescriptor function :
+          (List<FunctionDescriptor>) action.getUnconditionalResult().getPostFunctions()) {
+        updateResolutions(function, resolutionsMap);
       }
     }
   }
