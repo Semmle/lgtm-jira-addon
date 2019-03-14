@@ -2,6 +2,7 @@ package it.com.semmle.jira.addon;
 
 import static org.hamcrest.Matchers.isIn;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 import com.atlassian.jira.testkit.client.Backdoor;
@@ -15,13 +16,13 @@ import com.google.common.collect.Iterables;
 import com.semmle.jira.addon.Util;
 import com.semmle.jira.addon.config.Config;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
@@ -30,6 +31,27 @@ import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
 public class IntegrationTest {
+
+  final String CREATE_STRING =
+      "{\n"
+          + "    \"transition\": \"create\",\n"
+          + "    \"project\": {\n"
+          + "        \"id\": 1000001,\n"
+          + "        \"url-identifier\": \"Git/example_user/example_repo\",\n"
+          + "        \"name\": \"example_user/example_repo\",\n"
+          + "        \"url\": \"http://lgtm.example.com/projects/Git/example_user/example_repo\"\n"
+          + "    },\n"
+          + "    \"alert\": {\n"
+          + "        \"file\": \"/example.py\",\n"
+          + "        \"message\": \"Description of one issue.\\nDescription of another issue.\\n\",\n"
+          + "        \"url\": \"http://lgtm.example.com/issues/10000/language/8cdXzW+PyA3qiHBbWFomoMGtiIE=\",\n"
+          + "        \"query\": {\n"
+          + "            \"name\": \"Example rule\",\n"
+          + "            \"url\": \"http://lgtm.example.com/rules/10000\"\n"
+          + "        }\n"
+          + "    }\n"
+          + "}";
+  final String CREATE_SIGNATURE = "a520128c3068f74c6d0f54d266dd0b2fe6634c33";
 
   Backdoor testKit;
   String baseUrl;
@@ -45,43 +67,35 @@ public class IntegrationTest {
     baseUrl = testKit.generalConfiguration().getEnvironmentData().getBaseUrl().toString();
     httpClient = HttpClientBuilder.create().build();
 
-    // manually create `LGTM alert` due to issues with plugin lifecycle
-    createIssueType();
-
+    reenablePlugin();
     config = configurePlugin();
   }
 
   @Test
   public void testCreationAndTransitionOfIssues() throws IOException, JSONException {
-
-    String createString =
-        "{\n"
-            + "    \"transition\": \"create\",\n"
-            + "    \"project\": {\n"
-            + "        \"id\": 1000001,\n"
-            + "        \"url-identifier\": \"Git/example_user/example_repo\",\n"
-            + "        \"name\": \"example_user/example_repo\",\n"
-            + "        \"url\": \"http://lgtm.example.com/projects/Git/example_user/example_repo\"\n"
-            + "    },\n"
-            + "    \"alert\": {\n"
-            + "        \"file\": \"/example.py\",\n"
-            + "        \"message\": \"Description of one issue.\\nDescription of another issue.\\n\",\n"
-            + "        \"url\": \"http://lgtm.example.com/issues/10000/language/8cdXzW+PyA3qiHBbWFomoMGtiIE=\",\n"
-            + "        \"query\": {\n"
-            + "            \"name\": \"Example rule\",\n"
-            + "            \"url\": \"http://lgtm.example.com/rules/10000\"\n"
-            + "        }\n"
-            + "    }\n"
-            + "}";
-    String createSignature = "a520128c3068f74c6d0f54d266dd0b2fe6634c33";
-
     // Create three issues, subsequent tests assume these have known IDs
-    Issue issueA = postWebhookJson(createString, createSignature);
+    Issue issueA = postWebhookJson(CREATE_STRING, CREATE_SIGNATURE);
     assertEquals("IssueA id is wrong", "10000", issueA.id);
-    Issue issueB = postWebhookJson(createString, createSignature);
+    Issue issueB = postWebhookJson(CREATE_STRING, CREATE_SIGNATURE);
     assertEquals("IssueB id is wrong", "10001", issueB.id);
-    Issue issueC = postWebhookJson(createString, createSignature);
+    Issue issueC = postWebhookJson(CREATE_STRING, CREATE_SIGNATURE);
     assertEquals("IssueC id is wrong", "10002", issueC.id);
+    Issue issueD = postWebhookJson(CREATE_STRING, CREATE_SIGNATURE);
+    assertEquals("issueD id is wrong", "10003", issueD.id);
+    Issue issueE = postWebhookJson(CREATE_STRING, CREATE_SIGNATURE);
+    assertEquals("issueE id is wrong", "10004", issueE.id);
+
+    // Check correct handling of text fields into issue
+    assertEquals("Example rule (example_user/example_repo)", issueA.fields.summary);
+    String description =
+        "*[Example rule|http://lgtm.example.com/rules/10000]*\n"
+            + "\n"
+            + "In {{/example.py}}:\n"
+            + "{quote}Description of one issue.\n"
+            + "Description of another issue.{quote}\n"
+            + "[View alert on LGTM|http://lgtm.example.com/issues/10000/language/8cdXzW\\+PyA3qiHBbWFomoMGtiIE=]";
+
+    assertEquals(description, issueA.fields.description);
 
     // Close two issues
     postWebhookJson(
@@ -96,46 +110,92 @@ public class IntegrationTest {
         "{\"issue-id\": \"10002\", \"transition\": \"reopen\" }",
         "92bbd2be7524447cbd7d8f8e63c8eb7b88c29777");
 
+    // Suppress two issues
+    postWebhookJson(
+        "{\"issue-id\": \"10003\", \"transition\": \"suppress\" }",
+        "f184bb5ba1853dc0715ba41e0ba1ae79d582d438");
+    postWebhookJson(
+        "{\"issue-id\": \"10004\", \"transition\": \"suppress\" }",
+        "3f7dfc9b322fc1da13c3e04f581422991d45e020");
+
+    // Unsuppress one issue
+    postWebhookJson(
+        "{\"issue-id\": \"10004\", \"transition\": \"unsuppress\" }",
+        "d1e4593427491478c5a82bd87a3294cc84a33cf4");
+
     // Check states of all tickets
     assertEquals(issueA.fields.status.id(), getIssue("10000").fields.status.id()); // unchanged
-    // assertEquals(config.getClosedStatusId(), getIssue("10001").fields.status.id()); // closed
-    // assertEquals(config.getReopenedStatusId(), getIssue("10002").fields.status.id()); // reopened
 
-    // Check correct handling of text fields into issue
-    assertEquals("Example rule (example_user/example_repo)", issueA.fields.summary);
+    assertEquals("Done", getIssue("10001").fields.status.name()); // closed
+    assertEquals("Fixed", getIssue("10001").fields.resolution.name); // closed
 
-    String description =
-        "*[Example rule|http://lgtm.example.com/rules/10000]*\n"
-            + "\n"
-            + "In {{/example.py}}:\n"
-            + "{quote}Description of one issue.\n"
-            + "Description of another issue.{quote}\n"
-            + "[View alert on LGTM|http://lgtm.example.com/issues/10000/language/8cdXzW\\+PyA3qiHBbWFomoMGtiIE=]";
+    assertEquals("To Do", getIssue("10002").fields.status.name()); // reopened
+    assertNull(getIssue("10002").fields.resolution); // reopened
 
-    assertEquals(description, issueA.fields.description);
+    assertEquals("In Review", getIssue("10003").fields.status.name()); // suppressed
+    assertEquals("Won't Fix", getIssue("10003").fields.resolution.name); // suppressed
+
+    assertEquals("To Do", getIssue("10004").fields.status.name()); // unsuppressed
+    assertNull(getIssue("10004").fields.resolution); // unsuppressed
   }
 
-  private void createIssueType() throws UnsupportedEncodingException, IOException, JSONException {
+  @Test
+  public void testManualTransitionOfIssues() throws IOException, JSONException {
+    // Create three issues, subsequent tests assume these have known IDs
+    Issue issueA = postWebhookJson(CREATE_STRING, CREATE_SIGNATURE);
+    assertEquals("IssueA id is wrong", "10000", issueA.id);
+    Issue issueB = postWebhookJson(CREATE_STRING, CREATE_SIGNATURE);
+    assertEquals("IssueB id is wrong", "10001", issueB.id);
+    Issue issueC = postWebhookJson(CREATE_STRING, CREATE_SIGNATURE);
+    assertEquals("IssueC id is wrong", "10002", issueC.id);
+    Issue issueD = postWebhookJson(CREATE_STRING, CREATE_SIGNATURE);
+    assertEquals("issueD id is wrong", "10003", issueD.id);
+    Issue issueE = postWebhookJson(CREATE_STRING, CREATE_SIGNATURE);
+    assertEquals("issueE id is wrong", "10004", issueE.id);
 
-    HttpPost httpPost = new HttpPost(baseUrl + "/rest/api/2/issuetype");
-    httpPost.setHeader("Content-type", "application/json");
-    httpPost.setHeader(
-        "Authorization",
-        "Basic "
-            + Base64.getEncoder().encodeToString(("admin:admin").getBytes(StandardCharsets.UTF_8)));
+    // Suppress 3 issues
+    testKit.issues().transitionIssue("10000", 51);
+    testKit.issues().transitionIssue("10001", 51);
+    testKit.issues().transitionIssue("10002", 51);
 
-    String jsonString =
-        new JSONObject()
-            .put("name", "LGTM alert")
-            .put("description", "Issue type for managing LGTM alerts")
-            .put("type", "standard")
-            .toString();
+    // Reopen 1 issue
+    testKit.issues().transitionIssue("10001", 61);
 
-    httpPost.setEntity(new StringEntity(jsonString));
+    // Close 1 issue
+    testKit.issues().transitionIssue("10002", 71);
 
-    HttpResponse httpResponse = httpClient.execute(httpPost);
+    // Check states of all tickets
+    assertEquals("In Review", getIssue("10000").fields.status.name()); // suppressed
+    assertEquals("Won't Fix", getIssue("10000").fields.resolution.name); // suppressed
 
-    assertEquals("Failed to create issue type", 201, httpResponse.getStatusLine().getStatusCode());
+    assertEquals("To Do", getIssue("10001").fields.status.name()); // reopened
+    assertNull(getIssue("10001").fields.resolution); // reopened
+
+    assertEquals("Done", getIssue("10002").fields.status.name()); // close suppressed
+    assertEquals("Won't Fix", getIssue("10002").fields.resolution.name); // close suppressed
+
+    // Send suppresion to close suppressed
+    postWebhookJson(
+        "{\"issue-id\": \"10002\", \"transition\": \"suppress\" }",
+        "ae581e61e472e9e1daf949085c8fc86b3f40cb68");
+    // Should be unchanged
+    assertEquals("Done", getIssue("10002").fields.status.name()); // close suppressed
+    assertEquals("Won't Fix", getIssue("10002").fields.resolution.name); // close suppressed
+
+    // Close suppressed issues
+    postWebhookJson(
+        "{\"issue-id\": \"10000\", \"transition\": \"close\" }",
+        "7a55296797b3db7ce9d3ce23c34d0fea8954a309");
+    postWebhookJson(
+        "{\"issue-id\": \"10002\", \"transition\": \"close\" }",
+        "6bedc9b786705787c1522118f5723c94122d5200");
+
+    // Check closed issues
+    assertEquals("Done", getIssue("10000").fields.status.name()); // closed
+    assertEquals("Fixed", getIssue("10000").fields.resolution.name); // closed
+
+    assertEquals("Done", getIssue("10002").fields.status.name()); // closed
+    assertEquals("Fixed", getIssue("10002").fields.resolution.name); // closed
   }
 
   private Config configurePlugin() throws ClientProtocolException, IOException {
@@ -160,6 +220,19 @@ public class IntegrationTest {
     assertEquals("Failed to configure plugin", 204, response.getStatusLine().getStatusCode());
 
     return config;
+  }
+
+  private void reenablePlugin() throws ClientProtocolException, IOException {
+    HttpResponse resp;
+    resp =
+        httpClient.execute(
+            new HttpDelete(baseUrl + "/rest/qr/1.0/plugin/enabled/com.semmle.lgtm-jira-addon"));
+    resp.getEntity().getContent().close();
+
+    resp =
+        httpClient.execute(
+            new HttpPost(baseUrl + "/rest/qr/1.0/plugin/enabled/com.semmle.lgtm-jira-addon"));
+    resp.getEntity().getContent().close();
   }
 
   private Issue postWebhookJson(String jsonString, String signature)
