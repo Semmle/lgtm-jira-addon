@@ -86,7 +86,7 @@ public class ConfigResource {
     if (project == null) {
       return Response.status(Status.BAD_REQUEST).header("Error", "project-not-found").build();
     }
-    JiraUtils.createLgtmIssueType();
+    
     IssueType lgtmIssueType = JiraUtils.getIssueTypeByName(Constants.ISSUE_TYPE_NAME);
     if (lgtmIssueType == null) {
       return Response.status(Status.BAD_REQUEST).header("Error", "issueType-not-found").build();

@@ -1,13 +1,14 @@
 package com.semmle.jira.addon;
 
-import com.semmle.jira.addon.config.init.WorkflowResolution;
-import com.semmle.jira.addon.config.init.WorkflowStatus;
 import java.io.IOException;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.codehaus.jackson.node.TextNode;
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.semmle.jira.addon.util.workflow.WorkflowResolution;
+import com.semmle.jira.addon.util.workflow.WorkflowStatus;
 
 public class Json {
 

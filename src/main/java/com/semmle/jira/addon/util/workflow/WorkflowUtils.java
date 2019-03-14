@@ -1,4 +1,4 @@
-package com.semmle.jira.addon.config.init;
+package com.semmle.jira.addon.util.workflow;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.ConstantsManager;
@@ -41,7 +41,7 @@ public class WorkflowUtils {
   private static final String RESOLUTION_CONDITION_FUNCTION_ID =
       ResolutionCondition.class.getName();
 
-  static void createWorkflow(
+  public static void createWorkflow(
       String workflowName,
       String workflowXml,
       WorkflowStatus[] statuses,
@@ -60,6 +60,27 @@ public class WorkflowUtils {
     JiraWorkflow workflow = new ConfigurableJiraWorkflow(workflowName, descriptor, workflowManager);
     workflowManager.createWorkflow( // User is not needed for creating
         (ApplicationUser) null, workflow);
+  }
+
+  public static void addLayoutToWorkflow(String workflowName, String layoutJson) {
+    OfBizDelegator ofBizDelegator = ComponentAccessor.getComponent(OfBizDelegator.class);
+    String layoutKey = DigestUtils.md5Hex(workflowName);
+    final Map<String, Object> entryFields =
+        ImmutableMap.of(
+            "entityName",
+            "com.atlassian.jira.plugins.jira-workflow-designer",
+            "entityId",
+            1,
+            "propertyKey",
+            "jira.workflow.layout.v5:" + layoutKey,
+            "type",
+            6);
+    final Long layoutId = ofBizDelegator.createValue("OSPropertyEntry", entryFields).getLong("id");
+    final Map<String, Object> textFields =
+        ImmutableMap.of(
+            "id", layoutId,
+            "value", layoutJson);
+    ofBizDelegator.createValue("OSPropertyText", textFields);
   }
 
   public static void addDefaultPriorityToWorkflow(String workflowName, Priority priority) {
@@ -178,27 +199,6 @@ public class WorkflowUtils {
       String newValue = resolutionsMap.get(oldValue);
       if (newValue != null) args.put("resolution", newValue);
     }
-  }
-
-  static void addLayoutToWorkflow(String workflowName, String layoutJson) {
-    OfBizDelegator ofBizDelegator = ComponentAccessor.getComponent(OfBizDelegator.class);
-    String layoutKey = DigestUtils.md5Hex(workflowName);
-    final Map<String, Object> entryFields =
-        ImmutableMap.of(
-            "entityName",
-            "com.atlassian.jira.plugins.jira-workflow-designer",
-            "entityId",
-            1,
-            "propertyKey",
-            "jira.workflow.layout.v5:" + layoutKey,
-            "type",
-            6);
-    final Long layoutId = ofBizDelegator.createValue("OSPropertyEntry", entryFields).getLong("id");
-    final Map<String, Object> textFields =
-        ImmutableMap.of(
-            "id", layoutId,
-            "value", layoutJson);
-    ofBizDelegator.createValue("OSPropertyText", textFields);
   }
 
   private static void addFunction(ActionDescriptor transition, FunctionDescriptor function) {
