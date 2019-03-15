@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class UpgradeTask3ConfigMigration implements PluginUpgradeTask {
   private static final String KEY_SETTINGS_NAME = "com.lgtm.addon.config.key";
-  public final int BUILD_NUMER = 3;
+  private final int BUILD_NUMER = 3;
 
   protected final PluginSettings settings;
 

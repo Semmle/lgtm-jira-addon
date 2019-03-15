@@ -1,10 +1,7 @@
 package com.semmle.jira.addon.config.upgrades;
 
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
-import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.message.Message;
-import com.atlassian.sal.api.pluginsettings.PluginSettings;
-import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.upgrade.PluginUpgradeTask;
 import com.semmle.jira.addon.Util;
 import com.semmle.jira.addon.util.Constants;
@@ -15,21 +12,12 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
 import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @ExportAsService(PluginUpgradeTask.class)
 @Component
 public class UpgradeTask2CreateWorkflow implements PluginUpgradeTask {
-  public final int BUILD_NUMER = 2;
-
-  protected final PluginSettings settings;
-
-  @Autowired
-  public UpgradeTask2CreateWorkflow(
-      @ComponentImport final PluginSettingsFactory pluginSettingsFactory) {
-    this.settings = pluginSettingsFactory.createGlobalSettings();
-  }
+  private final int BUILD_NUMER = 2;
 
   @Override
   public Collection<Message> doUpgrade() throws Exception {
