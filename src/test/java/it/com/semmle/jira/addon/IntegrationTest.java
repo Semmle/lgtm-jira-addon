@@ -23,7 +23,6 @@ import java.util.Base64;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.HttpClientUtils;
@@ -70,7 +69,6 @@ public class IntegrationTest {
     baseUrl = testKit.generalConfiguration().getEnvironmentData().getBaseUrl().toString();
     httpClient = HttpClientBuilder.create().build();
 
-    reenablePlugin();
     config = configurePlugin();
   }
 
@@ -209,19 +207,6 @@ public class IntegrationTest {
     HttpClientUtils.closeQuietly(response);
 
     return config;
-  }
-
-  private void reenablePlugin() throws ClientProtocolException, IOException {
-    HttpResponse resp;
-    resp =
-        httpClient.execute(
-            new HttpDelete(baseUrl + "/rest/qr/1.0/plugin/enabled/com.semmle.lgtm-jira-addon"));
-    HttpClientUtils.closeQuietly(resp);
-
-    resp =
-        httpClient.execute(
-            new HttpPost(baseUrl + "/rest/qr/1.0/plugin/enabled/com.semmle.lgtm-jira-addon"));
-    HttpClientUtils.closeQuietly(resp);
   }
 
   private Issue postWebhookJson(Object request) throws ClientProtocolException, IOException {
