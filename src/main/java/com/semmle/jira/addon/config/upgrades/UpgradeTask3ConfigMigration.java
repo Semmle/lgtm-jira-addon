@@ -61,7 +61,7 @@ public class UpgradeTask3ConfigMigration implements PluginUpgradeTask {
 
   @Override
   public String getShortDescription() {
-    return "Upgrade Task " + BUILD_NUMER;
+    return "Upgrade Task " + BUILD_NUMER + " migrate configuration from 0.1.0 to 0.2.0";
   }
 
   @Override

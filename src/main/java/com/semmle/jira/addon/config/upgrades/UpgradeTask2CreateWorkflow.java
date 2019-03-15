@@ -67,7 +67,7 @@ public class UpgradeTask2CreateWorkflow implements PluginUpgradeTask {
 
   @Override
   public String getShortDescription() {
-    return "Upgrade Task " + BUILD_NUMER;
+    return "Upgrade Task " + BUILD_NUMER + " create LGTM workflow.";
   }
 
   @Override

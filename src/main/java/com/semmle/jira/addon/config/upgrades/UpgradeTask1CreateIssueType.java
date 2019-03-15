@@ -40,7 +40,7 @@ public class UpgradeTask1CreateIssueType implements PluginUpgradeTask {
 
   @Override
   public String getShortDescription() {
-    return "Upgrade Task " + BUILD_NUMER;
+    return "Upgrade Task " + BUILD_NUMER + " create 'LGTM aler' issue type.";
   }
 
   @Override
