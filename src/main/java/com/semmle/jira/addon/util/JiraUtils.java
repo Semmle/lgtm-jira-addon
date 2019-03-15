@@ -4,9 +4,15 @@ import com.atlassian.jira.bc.issue.search.SearchService;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.ConstantsManager;
 import com.atlassian.jira.config.IssueTypeManager;
+import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.fields.config.FieldConfigScheme;
 import com.atlassian.jira.issue.fields.config.manager.IssueTypeSchemeManager;
+import com.atlassian.jira.issue.fields.screen.FieldScreen;
+import com.atlassian.jira.issue.fields.screen.FieldScreenScheme;
+import com.atlassian.jira.issue.fields.screen.FieldScreenTab;
+import com.atlassian.jira.issue.fields.screen.issuetype.IssueTypeScreenScheme;
 import com.atlassian.jira.issue.issuetype.IssueType;
+import com.atlassian.jira.issue.operation.IssueOperations;
 import com.atlassian.jira.issue.search.SearchException;
 import com.atlassian.jira.issue.search.SearchResults;
 import com.atlassian.jira.issue.status.Status;
@@ -136,6 +142,26 @@ public class JiraUtils {
           .createIssueType(Constants.ISSUE_TYPE_NAME, "Issue type for managing LGTM alerts", 0l);
     } catch (IllegalStateException e) {
       // Issue Type already created
+    }
+  }
+
+  public static void addCustomFieldToProjectCreateScreen(Project project) {
+
+    CustomField customField =
+        ComponentAccessor.getCustomFieldManager()
+            .getCustomFieldObjectByName(Constants.CUSTOM_FIELD_NAME);
+
+    IssueTypeScreenScheme screenScheme =
+        ComponentAccessor.getIssueTypeScreenSchemeManager().getIssueTypeScreenScheme(project);
+
+    FieldScreenScheme fieldScreenScheme =
+        screenScheme.getEffectiveFieldScreenScheme(getLgtmIssueType());
+
+    FieldScreen screen = fieldScreenScheme.getFieldScreen(IssueOperations.CREATE_ISSUE_OPERATION);
+
+    if (!screen.containsField(customField.getId())) {
+      FieldScreenTab firstTab = screen.getTab(0);
+      firstTab.addFieldScreenLayoutItem(customField.getId());
     }
   }
 }

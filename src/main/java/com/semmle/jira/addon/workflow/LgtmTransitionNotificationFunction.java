@@ -1,6 +1,8 @@
 package com.semmle.jira.addon.workflow;
 
+import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.MutableIssue;
+import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.workflow.function.issue.AbstractJiraFunctionProvider;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
@@ -13,6 +15,7 @@ import com.semmle.jira.addon.Request;
 import com.semmle.jira.addon.Request.Transition;
 import com.semmle.jira.addon.Util;
 import com.semmle.jira.addon.config.Config;
+import com.semmle.jira.addon.util.Constants;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -45,14 +48,20 @@ public class LgtmTransitionNotificationFunction extends AbstractJiraFunctionProv
   @SuppressWarnings("rawtypes")
   public void execute(Map transientVars, Map args, PropertySet ps) throws WorkflowException {
 
-    String configKey = "webhook"; // TODO get config key from custom field
+    Transition transition = getTransitionParam(args);
+    MutableIssue issue = getIssue(transientVars);
+
+    CustomField customField =
+        ComponentAccessor.getCustomFieldManager()
+            .getCustomFieldObjectByName(Constants.CUSTOM_FIELD_NAME);
+
+    String configKey = (String) issue.getCustomFieldValue(customField);
+
     Config config = Config.get(configKey, transactionTemplate, pluginSettingsFactory);
     URI url = config.getExternalHookUrl();
     // There is no external hook URL configured
     if (url == null) return;
 
-    Transition transition = getTransitionParam(args);
-    MutableIssue issue = getIssue(transientVars);
     Request message = new Request(transition, issue.getId());
     WorkflowException exception = null;
     for (int retries = 0; retries < 3; retries++) {

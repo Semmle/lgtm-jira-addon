@@ -93,6 +93,9 @@ public class ConfigResource {
     }
 
     JiraUtils.addIssueTypeToProject(project, lgtmIssueType);
+
+    JiraUtils.addCustomFieldToProjectCreateScreen(project);
+
     try {
       JiraUtils.configureWorkflowForProject(
           project, lgtmIssueType, UserUtils.getUser(config.getUsername()));

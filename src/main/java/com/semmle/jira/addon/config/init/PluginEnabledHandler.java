@@ -2,7 +2,11 @@ package com.semmle.jira.addon.config.init;
 
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.IssueTypeManager;
+import com.atlassian.jira.issue.CustomFieldManager;
+import com.atlassian.jira.issue.context.GlobalIssueContext;
+import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
@@ -15,9 +19,11 @@ import com.semmle.jira.addon.util.JiraUtils;
 import com.semmle.jira.addon.util.WorkflowNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.commons.io.IOUtils;
+import org.ofbiz.core.entity.GenericEntityException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -48,7 +54,8 @@ public class PluginEnabledHandler implements InitializingBean, DisposableBean {
   }
 
   @EventListener
-  public void onPluginEnabled(PluginEnabledEvent event) throws FactoryException, IOException {
+  public void onPluginEnabled(PluginEnabledEvent event)
+      throws FactoryException, IOException, GenericEntityException {
     Plugin plugin = event.getPlugin();
     if (LGTM_PLUGIN_KEY.equals(plugin.getKey())) {
       try {
@@ -57,6 +64,7 @@ public class PluginEnabledHandler implements InitializingBean, DisposableBean {
         createLgtmWorkflow();
       }
     }
+    ensureConfigKeyCustomFieldExists();
   }
 
   private static void createLgtmWorkflow() throws IOException, FactoryException {
@@ -83,5 +91,27 @@ public class PluginEnabledHandler implements InitializingBean, DisposableBean {
       layoutJson = IOUtils.toString(is, "UTF-8");
     }
     WorkflowUtils.addLayoutToWorkflow(Constants.WORKFLOW_NAME, layoutJson);
+  }
+
+  private static void ensureConfigKeyCustomFieldExists() throws GenericEntityException {
+
+    CustomFieldManager customFieldManager = ComponentAccessor.getCustomFieldManager();
+
+    CustomField customField =
+        customFieldManager.getCustomFieldObjectByName(Constants.CUSTOM_FIELD_NAME);
+
+    if (customField == null) {
+
+      customField =
+          customFieldManager.createCustomField(
+              Constants.CUSTOM_FIELD_NAME,
+              Constants.CUSTOM_FIELD_NAME,
+              customFieldManager.getCustomFieldType(
+                  "com.atlassian.jira.plugin.system.customfieldtypes:textfield"),
+              customFieldManager.getCustomFieldSearcher(
+                  "com.atlassian.jira.plugin.system.customfieldtypes:exacttextsearcher"),
+              Collections.singletonList(GlobalIssueContext.getInstance()),
+              Collections.singletonList(JiraUtils.getLgtmIssueType()));
+    }
   }
 }

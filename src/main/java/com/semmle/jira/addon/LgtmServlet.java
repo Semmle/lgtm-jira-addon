@@ -3,8 +3,10 @@ package com.semmle.jira.addon;
 import com.atlassian.jira.bc.ServiceResult;
 import com.atlassian.jira.bc.issue.IssueService;
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.IssueInputParameters;
 import com.atlassian.jira.issue.MutableIssue;
+import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.TransitionOptions;
@@ -143,6 +145,13 @@ public class LgtmServlet extends HttpServlet {
     issueInputParameters.setReporterId(config.getUser().getName());
     issueInputParameters.setProjectId(config.getProject().getId());
     issueInputParameters.setIssueTypeId(JiraUtils.getLgtmIssueType().getId());
+
+    CustomFieldManager customFieldManager = ComponentAccessor.getCustomFieldManager();
+
+    CustomField customField =
+        customFieldManager.getCustomFieldObjectByName(Constants.CUSTOM_FIELD_NAME);
+
+    issueInputParameters.addCustomFieldValue(customField.getIdAsLong(), config.getKey());
 
     issueInputParameters.setApplyDefaultValuesWhenParameterNotProvided(true);
 
