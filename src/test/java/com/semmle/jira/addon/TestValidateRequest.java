@@ -6,6 +6,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+import java.util.Arrays;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Matchers;
+
 import com.atlassian.jira.config.ConstantsManager;
 import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.issue.status.Status;
@@ -16,13 +26,6 @@ import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.semmle.jira.addon.config.Config;
 import com.semmle.jira.addon.config.ProcessedConfig;
-import java.io.IOException;
-import java.util.Arrays;
-import javax.servlet.http.HttpServletResponse;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Matchers;
 
 public class TestValidateRequest extends TestLgtmServletBase {
   @AvailableInContainer private UserManager userManager = mock(UserManager.class);

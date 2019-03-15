@@ -6,3 +6,9 @@ pool:
 
 steps:
 - template: build-steps.yml
+- task: CopyFiles@2
+  inputs:
+    sourceFolder: 'target'
+    contents: 'lgtm-jira-addon-*.jar'
+    targetFolder: '$(Build.ArtifactStagingDirectory)'
+
