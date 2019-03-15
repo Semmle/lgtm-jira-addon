@@ -5,6 +5,24 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Base64;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.utils.HttpClientUtils;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.junit.Before;
+import org.junit.Test;
+
 import com.atlassian.jira.testkit.client.Backdoor;
 import com.atlassian.jira.testkit.client.restclient.Issue;
 import com.atlassian.jira.testkit.client.restclient.SearchRequest;
@@ -16,21 +34,6 @@ import com.semmle.jira.addon.Request.Transition;
 import com.semmle.jira.addon.Response;
 import com.semmle.jira.addon.Util;
 import com.semmle.jira.addon.config.Config;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Base64;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.utils.HttpClientUtils;
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.junit.Test;
 
 public class IntegrationTest {
 
@@ -60,6 +63,12 @@ public class IntegrationTest {
   HttpClient httpClient;
   Config config;
 
+  private Issue issueA;
+  private Issue issueB;
+  private Issue issueC;
+  private Issue issueD;
+  private Issue issueE;
+
   public IntegrationTest() throws ClientProtocolException, IOException {
 
     // Use TestKit to initialise a test instance of Jira
@@ -72,20 +81,24 @@ public class IntegrationTest {
     config = configurePlugin();
   }
 
+  @Before
+  public void setUp() throws IOException {
+    Request createRequest = Util.JSON.readValue(CREATE_STRING, Request.class);
+    // Create some issues, subsequent tests assume these have known IDs
+    issueA = postWebhookJson(createRequest);
+    assertEquals("IssueA id is wrong", "10000", issueA.id);
+    issueB = postWebhookJson(createRequest);
+    assertEquals("IssueB id is wrong", "10001", issueB.id);
+    issueC = postWebhookJson(createRequest);
+    assertEquals("IssueC id is wrong", "10002", issueC.id);
+    issueD = postWebhookJson(createRequest);
+    assertEquals("issueD id is wrong", "10003", issueD.id);
+    issueE = postWebhookJson(createRequest);
+    assertEquals("issueE id is wrong", "10004", issueE.id);
+  }
+
   @Test
   public void testCreationAndTransitionOfIssues() throws IOException {
-    Request createRequest = Util.JSON.readValue(CREATE_STRING, Request.class);
-    // Create four issues, subsequent tests assume these have known IDs
-    Issue issueA = postWebhookJson(createRequest);
-    assertEquals("IssueA id is wrong", "10000", issueA.id);
-    Issue issueB = postWebhookJson(createRequest);
-    assertEquals("IssueB id is wrong", "10001", issueB.id);
-    Issue issueC = postWebhookJson(createRequest);
-    assertEquals("IssueC id is wrong", "10002", issueC.id);
-    Issue issueD = postWebhookJson(createRequest);
-    assertEquals("issueD id is wrong", "10003", issueD.id);
-    Issue issueE = postWebhookJson(createRequest);
-    assertEquals("issueE id is wrong", "10004", issueE.id);
 
     // Check correct handling of text fields into issue
     assertEquals("Example rule (example_user/example_repo)", issueA.fields.summary);
@@ -131,18 +144,6 @@ public class IntegrationTest {
 
   @Test
   public void testManualTransitionOfIssues() throws IOException {
-    // Create four issues, subsequent tests assume these have known IDs
-    Request createRequest = Util.JSON.readValue(CREATE_STRING, Request.class);
-    Issue issueA = postWebhookJson(createRequest);
-    assertEquals("IssueA id is wrong", "10000", issueA.id);
-    Issue issueB = postWebhookJson(createRequest);
-    assertEquals("IssueB id is wrong", "10001", issueB.id);
-    Issue issueC = postWebhookJson(createRequest);
-    assertEquals("IssueC id is wrong", "10002", issueC.id);
-    Issue issueD = postWebhookJson(createRequest);
-    assertEquals("issueD id is wrong", "10003", issueD.id);
-    Issue issueE = postWebhookJson(createRequest);
-    assertEquals("issueE id is wrong", "10004", issueE.id);
 
     // Suppress 3 issues
     testKit.issues().transitionIssue("10000", 51);
