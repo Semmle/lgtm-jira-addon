@@ -2,7 +2,6 @@ package com.semmle.jira.addon;
 
 import static org.junit.Assert.assertEquals;
 
-import com.semmle.jira.addon.Utils.Util;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,7 +10,7 @@ public class TestRequest {
 
   @Before
   public void createRequest() {
-    request = Util.createRequest("test", "Query", "test.cpp", "Security Error");
+    request = TestCreateIssue.createRequest("test", "Query", "test.cpp", "Security Error");
   }
 
   @Test
