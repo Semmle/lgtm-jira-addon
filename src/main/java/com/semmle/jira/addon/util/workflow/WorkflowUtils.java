@@ -17,10 +17,13 @@ import com.atlassian.jira.workflow.WorkflowManager;
 import com.atlassian.jira.workflow.WorkflowUtil;
 import com.google.common.collect.ImmutableMap;
 import com.opensymphony.workflow.FactoryException;
+import com.opensymphony.workflow.loader.AbstractDescriptor;
 import com.opensymphony.workflow.loader.ActionDescriptor;
+import com.opensymphony.workflow.loader.ConditionDescriptor;
 import com.opensymphony.workflow.loader.DescriptorFactory;
 import com.opensymphony.workflow.loader.FunctionDescriptor;
 import com.opensymphony.workflow.loader.StepDescriptor;
+import com.opensymphony.workflow.loader.ValidatorDescriptor;
 import com.opensymphony.workflow.loader.WorkflowDescriptor;
 import com.semmle.jira.addon.workflow.ResolutionCondition;
 import com.semmle.jira.addon.workflow.ResolutionValidator;
@@ -164,28 +167,46 @@ public class WorkflowUtils {
     }
 
     for (ActionDescriptor action : actions) {
-      for (FunctionDescriptor function :
-          (List<FunctionDescriptor>) action.getUnconditionalResult().getPreFunctions()) {
-        updateResolutions(function, resolutionsMap);
+      List<AbstractDescriptor> functions = new ArrayList<>();
+      functions.addAll(action.getValidators());
+      functions.addAll(action.getPreFunctions());
+      functions.addAll(action.getPostFunctions());
+      if (action.getUnconditionalResult() != null) {
+        functions.addAll(action.getUnconditionalResult().getValidators());
+        functions.addAll(action.getUnconditionalResult().getPreFunctions());
+        functions.addAll(action.getUnconditionalResult().getPostFunctions());
       }
-      for (FunctionDescriptor function :
-          (List<FunctionDescriptor>) action.getUnconditionalResult().getValidators()) {
-        updateResolutions(function, resolutionsMap);
+      if (action.getRestriction() != null
+          && action.getRestriction().getConditionsDescriptor() != null) {
+        functions.addAll(action.getRestriction().getConditionsDescriptor().getConditions());
       }
-      for (FunctionDescriptor function :
-          (List<FunctionDescriptor>) action.getUnconditionalResult().getPostFunctions()) {
+      for (AbstractDescriptor function : functions) {
         updateResolutions(function, resolutionsMap);
       }
     }
   }
 
+  @SuppressWarnings("unchecked")
   private static void updateResolutions(
-      FunctionDescriptor function, Map<String, String> resolutionsMap) {
-    // skip non-class functions
-    if (!"class".equals(function.getType())) return;
+      AbstractDescriptor function, Map<String, String> resolutionsMap) {
 
-    @SuppressWarnings("unchecked")
-    Map<String, String> args = function.getArgs();
+    String type;
+    Map<String, String> args;
+    if (function instanceof ConditionDescriptor) {
+      type = ((ConditionDescriptor) function).getType();
+      args = ((ConditionDescriptor) function).getArgs();
+    } else if (function instanceof ValidatorDescriptor) {
+      type = ((ValidatorDescriptor) function).getType();
+      args = ((ValidatorDescriptor) function).getArgs();
+    } else if (function instanceof FunctionDescriptor) {
+      type = ((FunctionDescriptor) function).getType();
+      args = ((FunctionDescriptor) function).getArgs();
+    } else {
+      return;
+    }
+    // skip non-class functions
+    if (!"class".equals(type)) return;
+
     Object name = args.get("class.name");
     if (UPDATE_FIELD_FUNCTION_ID.equals(name)) {
       if ("resolution".equals(args.get("field.name"))) {
