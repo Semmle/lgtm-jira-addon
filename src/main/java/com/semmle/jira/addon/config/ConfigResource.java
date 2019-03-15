@@ -86,7 +86,7 @@ public class ConfigResource {
     if (project == null) {
       return Response.status(Status.BAD_REQUEST).header("Error", "project-not-found").build();
     }
-    JiraUtils.createLgtmIssueType();
+
     IssueType lgtmIssueType = JiraUtils.getIssueTypeByName(Constants.ISSUE_TYPE_NAME);
     if (lgtmIssueType == null) {
       return Response.status(Status.BAD_REQUEST).header("Error", "issueType-not-found").build();
@@ -108,6 +108,13 @@ public class ConfigResource {
     Config.put(config, transactionTemplate, pluginSettingsFactory);
     PluginSettings settings = pluginSettingsFactory.createGlobalSettings();
     settings.put(KEY_SETTINGS_NAME, config.getKey());
+
+    String version =
+        ComponentAccessor.getPluginAccessor()
+            .getPlugin(Constants.PLUGIN_KEY)
+            .getPluginInformation()
+            .getVersion();
+    settings.put(Constants.CONFIGURED_VERSION_KEY, version);
 
     return Response.noContent().build();
   }
