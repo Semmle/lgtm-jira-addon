@@ -1,11 +1,5 @@
 package com.semmle.jira.addon.config.upgrades;
 
-import java.util.Collection;
-import java.util.Collections;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.message.Message;
@@ -14,6 +8,10 @@ import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.upgrade.PluginUpgradeTask;
 import com.semmle.jira.addon.util.Constants;
 import com.semmle.jira.addon.util.JiraUtils;
+import java.util.Collection;
+import java.util.Collections;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @ExportAsService(PluginUpgradeTask.class)
 @Component
@@ -30,7 +28,7 @@ public class UpgradeTask1CreateIssueType implements PluginUpgradeTask {
 
   @Override
   public Collection<Message> doUpgrade() throws Exception {
-	  JiraUtils.createLgtmIssueType();
+    JiraUtils.createLgtmIssueType();
 
     return Collections.emptySet();
   }
@@ -47,6 +45,6 @@ public class UpgradeTask1CreateIssueType implements PluginUpgradeTask {
 
   @Override
   public String getPluginKey() {
-	  return Constants.PLUGIN_KEY;
+    return Constants.PLUGIN_KEY;
   }
 }

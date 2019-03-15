@@ -1,13 +1,5 @@
 package com.semmle.jira.addon.config.upgrades;
 
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.Collections;
-
-import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.message.Message;
@@ -19,6 +11,12 @@ import com.semmle.jira.addon.util.Constants;
 import com.semmle.jira.addon.util.workflow.WorkflowResolution;
 import com.semmle.jira.addon.util.workflow.WorkflowStatus;
 import com.semmle.jira.addon.util.workflow.WorkflowUtils;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.Collections;
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @ExportAsService(PluginUpgradeTask.class)
 @Component
@@ -35,30 +33,29 @@ public class UpgradeTask2CreateWorkflow implements PluginUpgradeTask {
 
   @Override
   public Collection<Message> doUpgrade() throws Exception {
-	  ClassLoader classLoader = UpgradeTask2CreateWorkflow.class.getClassLoader();
-	    String workflowXml;
-	    try (InputStream is = classLoader.getResourceAsStream("workflow/workflow.xml")) {
-	      workflowXml = IOUtils.toString(is, "UTF-8");
-	    }
+    ClassLoader classLoader = UpgradeTask2CreateWorkflow.class.getClassLoader();
+    String workflowXml;
+    try (InputStream is = classLoader.getResourceAsStream("workflow/workflow.xml")) {
+      workflowXml = IOUtils.toString(is, "UTF-8");
+    }
 
-	    WorkflowStatus[] statuses;
-	    try (InputStream is = classLoader.getResourceAsStream("workflow/statuses.json")) {
-	      statuses = Util.JSON.readValue(is, WorkflowStatus[].class);
-	    }
+    WorkflowStatus[] statuses;
+    try (InputStream is = classLoader.getResourceAsStream("workflow/statuses.json")) {
+      statuses = Util.JSON.readValue(is, WorkflowStatus[].class);
+    }
 
-	    WorkflowResolution[] resolutions;
-	    try (InputStream is = classLoader.getResourceAsStream("workflow/resolutions.json")) {
-	      resolutions = Util.JSON.readValue(is, WorkflowResolution[].class);
-	    }
+    WorkflowResolution[] resolutions;
+    try (InputStream is = classLoader.getResourceAsStream("workflow/resolutions.json")) {
+      resolutions = Util.JSON.readValue(is, WorkflowResolution[].class);
+    }
 
-	    WorkflowUtils.createWorkflow(
-	        Constants.WORKFLOW_NAME, workflowXml, statuses, resolutions);
+    WorkflowUtils.createWorkflow(Constants.WORKFLOW_NAME, workflowXml, statuses, resolutions);
 
-	    String layoutJson;
-	    try (InputStream is = classLoader.getResourceAsStream("workflow/layout.v2.json")) {
-	      layoutJson = IOUtils.toString(is, "UTF-8");
-	    }
-	    WorkflowUtils.addLayoutToWorkflow(Constants.WORKFLOW_NAME, layoutJson);
+    String layoutJson;
+    try (InputStream is = classLoader.getResourceAsStream("workflow/layout.v2.json")) {
+      layoutJson = IOUtils.toString(is, "UTF-8");
+    }
+    WorkflowUtils.addLayoutToWorkflow(Constants.WORKFLOW_NAME, layoutJson);
 
     return Collections.emptySet();
   }
@@ -75,6 +72,6 @@ public class UpgradeTask2CreateWorkflow implements PluginUpgradeTask {
 
   @Override
   public String getPluginKey() {
-	  return Constants.PLUGIN_KEY;
+    return Constants.PLUGIN_KEY;
   }
 }

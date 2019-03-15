@@ -10,7 +10,6 @@ import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.upgrade.PluginUpgradeTask;
 import com.semmle.jira.addon.util.Constants;
 import com.semmle.jira.addon.util.workflow.WorkflowUtils;
-
 import java.util.Collection;
 import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +66,6 @@ public class UpgradeTask3ConfigMigration implements PluginUpgradeTask {
 
   @Override
   public String getPluginKey() {
-	  return Constants.PLUGIN_KEY;
+    return Constants.PLUGIN_KEY;
   }
 }
