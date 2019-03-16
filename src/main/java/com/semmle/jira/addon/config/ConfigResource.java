@@ -4,7 +4,6 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.user.UserUtils;
-import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
@@ -28,9 +27,10 @@ import javax.ws.rs.core.Response.Status;
 import org.ofbiz.core.entity.GenericEntityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+@Component
 @Path("/")
-@Scanned
 public class ConfigResource {
   private static final Logger log = LoggerFactory.getLogger(ConfigResource.class);
 
