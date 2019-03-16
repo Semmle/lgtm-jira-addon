@@ -10,8 +10,10 @@ import static org.mockito.Mockito.when;
 import com.atlassian.jira.bc.issue.IssueService.CreateValidationResult;
 import com.atlassian.jira.bc.issue.IssueService.IssueResult;
 import com.atlassian.jira.config.ConstantsManager;
+import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.IssueInputParameters;
 import com.atlassian.jira.issue.MutableIssue;
+import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.issue.label.LabelManager;
 import com.atlassian.jira.junit.rules.AvailableInContainer;
@@ -30,8 +32,14 @@ import org.junit.Test;
 
 public class TestCreateIssue extends TestCreateAndTransitionBase {
 
+  private static final Long CUSTOM_FIELD_ID = 43L;
+  private static final String CONFIG_KEY = "config_key";
+
   @AvailableInContainer private ConstantsManager constantsManager = mock(ConstantsManager.class);
   @AvailableInContainer private LabelManager labelManager = mock(LabelManager.class);
+
+  @AvailableInContainer
+  private CustomFieldManager customFieldManager = mock(CustomFieldManager.class);
 
   CreateValidationResult createValidationResult = mock(CreateValidationResult.class);
   ProcessedConfig config = mock(ProcessedConfig.class);
@@ -60,6 +68,10 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
             eq(ConstantsManager.CONSTANT_TYPE.ISSUE_TYPE.getType()), anyString()))
         .thenReturn(lgtmIssueType);
 
+    CustomField customField = mock(CustomField.class);
+    when(customField.getIdAsLong()).thenReturn(CUSTOM_FIELD_ID);
+    when(customFieldManager.getCustomFieldObjectByName(Constants.CUSTOM_FIELD_NAME))
+        .thenReturn(customField);
     when(issueService.validateCreate(any(ApplicationUser.class), any(IssueInputParameters.class)))
         .thenReturn(createValidationResult);
 
@@ -74,6 +86,7 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
     when(config.getUser()).thenReturn(user);
     com.atlassian.jira.project.Project project = mock(com.atlassian.jira.project.Project.class);
     when(config.getProject()).thenReturn(project);
+    when(config.getKey()).thenReturn(CONFIG_KEY);
   }
 
   @Test
@@ -85,6 +98,7 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
     when(issueResult.isValid()).thenReturn(true);
     servlet.createIssue(Util.JSON.valueToTree(request), request, resp, config);
     verify(resp).setStatus(201);
+    verify(issueInputParameters).addCustomFieldValue(CUSTOM_FIELD_ID, CONFIG_KEY);
   }
 
   @Test
