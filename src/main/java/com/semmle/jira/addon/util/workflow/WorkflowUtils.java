@@ -1,9 +1,10 @@
-package com.semmle.jira.addon.config.init;
+package com.semmle.jira.addon.util.workflow;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.ConstantsManager;
 import com.atlassian.jira.config.ResolutionManager;
 import com.atlassian.jira.config.StatusManager;
+import com.atlassian.jira.issue.priority.Priority;
 import com.atlassian.jira.issue.resolution.Resolution;
 import com.atlassian.jira.issue.status.Status;
 import com.atlassian.jira.issue.status.category.StatusCategory;
@@ -16,12 +17,18 @@ import com.atlassian.jira.workflow.WorkflowManager;
 import com.atlassian.jira.workflow.WorkflowUtil;
 import com.google.common.collect.ImmutableMap;
 import com.opensymphony.workflow.FactoryException;
+import com.opensymphony.workflow.loader.AbstractDescriptor;
 import com.opensymphony.workflow.loader.ActionDescriptor;
+import com.opensymphony.workflow.loader.ConditionDescriptor;
+import com.opensymphony.workflow.loader.DescriptorFactory;
 import com.opensymphony.workflow.loader.FunctionDescriptor;
 import com.opensymphony.workflow.loader.StepDescriptor;
+import com.opensymphony.workflow.loader.ValidatorDescriptor;
 import com.opensymphony.workflow.loader.WorkflowDescriptor;
 import com.semmle.jira.addon.workflow.ResolutionCondition;
 import com.semmle.jira.addon.workflow.ResolutionValidator;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +44,7 @@ public class WorkflowUtils {
   private static final String RESOLUTION_CONDITION_FUNCTION_ID =
       ResolutionCondition.class.getName();
 
-  static void createWorkflow(
+  public static void createWorkflow(
       String workflowName,
       String workflowXml,
       WorkflowStatus[] statuses,
@@ -56,6 +63,51 @@ public class WorkflowUtils {
     JiraWorkflow workflow = new ConfigurableJiraWorkflow(workflowName, descriptor, workflowManager);
     workflowManager.createWorkflow( // User is not needed for creating
         (ApplicationUser) null, workflow);
+  }
+
+  public static void addLayoutToWorkflow(String workflowName, String layoutJson) {
+    OfBizDelegator ofBizDelegator = ComponentAccessor.getComponent(OfBizDelegator.class);
+    String layoutKey = DigestUtils.md5Hex(workflowName);
+    final Map<String, Object> entryFields =
+        ImmutableMap.of(
+            "entityName",
+            "com.atlassian.jira.plugins.jira-workflow-designer",
+            "entityId",
+            1,
+            "propertyKey",
+            "jira.workflow.layout.v5:" + layoutKey,
+            "type",
+            6);
+    final Long layoutId = ofBizDelegator.createValue("OSPropertyEntry", entryFields).getLong("id");
+    final Map<String, Object> textFields =
+        ImmutableMap.of(
+            "id", layoutId,
+            "value", layoutJson);
+    ofBizDelegator.createValue("OSPropertyText", textFields);
+  }
+
+  public static void addDefaultPriorityToWorkflow(String workflowName, Priority priority) {
+    FunctionDescriptor setPriorityFunction =
+        DescriptorFactory.getFactory().createFunctionDescriptor();
+    setPriorityFunction.setType("class");
+    setPriorityFunction.setName("Priority");
+
+    @SuppressWarnings("unchecked")
+    Map<String, String> args = setPriorityFunction.getArgs();
+    args.put(
+        "full.module.key", "com.atlassian.jira.plugin.system.workflowupdate-issue-field-function");
+    args.put("field.name", "priority");
+    args.put("field.value", priority.getId());
+    args.put("class.name", "com.atlassian.jira.workflow.function.issue.UpdateIssueFieldFunction");
+
+    WorkflowManager workflowManager = ComponentAccessor.getWorkflowManager();
+    JiraWorkflow workflow = workflowManager.getWorkflow(workflowName);
+
+    @SuppressWarnings("unchecked")
+    List<ActionDescriptor> initialActions = workflow.getDescriptor().getInitialActions();
+    for (ActionDescriptor action : initialActions) {
+      addFunction(action, setPriorityFunction);
+    }
   }
 
   @SuppressWarnings("unchecked")
@@ -105,33 +157,56 @@ public class WorkflowUtils {
       }
       resolutionsMap.put(resolution.originalId, newId);
     }
+
+    List<ActionDescriptor> actions = new ArrayList<ActionDescriptor>();
+    actions.addAll(descriptor.getInitialActions());
+    actions.addAll(descriptor.getGlobalActions());
     List<StepDescriptor> steps = descriptor.getSteps();
     for (StepDescriptor step : steps) {
+      actions.addAll(step.getActions());
+    }
 
-      for (ActionDescriptor action : (List<ActionDescriptor>) step.getActions()) {
-        for (FunctionDescriptor function :
-            (List<FunctionDescriptor>) action.getUnconditionalResult().getPreFunctions()) {
-          updateResolutions(function, resolutionsMap);
-        }
-        for (FunctionDescriptor function :
-            (List<FunctionDescriptor>) action.getUnconditionalResult().getValidators()) {
-          updateResolutions(function, resolutionsMap);
-        }
-        for (FunctionDescriptor function :
-            (List<FunctionDescriptor>) action.getUnconditionalResult().getPostFunctions()) {
-          updateResolutions(function, resolutionsMap);
-        }
+    for (ActionDescriptor action : actions) {
+      List<AbstractDescriptor> functions = new ArrayList<>();
+      functions.addAll(action.getValidators());
+      functions.addAll(action.getPreFunctions());
+      functions.addAll(action.getPostFunctions());
+      if (action.getUnconditionalResult() != null) {
+        functions.addAll(action.getUnconditionalResult().getValidators());
+        functions.addAll(action.getUnconditionalResult().getPreFunctions());
+        functions.addAll(action.getUnconditionalResult().getPostFunctions());
+      }
+      if (action.getRestriction() != null
+          && action.getRestriction().getConditionsDescriptor() != null) {
+        functions.addAll(action.getRestriction().getConditionsDescriptor().getConditions());
+      }
+      for (AbstractDescriptor function : functions) {
+        updateResolutions(function, resolutionsMap);
       }
     }
   }
 
+  @SuppressWarnings("unchecked")
   private static void updateResolutions(
-      FunctionDescriptor function, Map<String, String> resolutionsMap) {
-    // skip non-class functions
-    if (!"class".equals(function.getType())) return;
+      AbstractDescriptor function, Map<String, String> resolutionsMap) {
 
-    @SuppressWarnings("unchecked")
-    Map<String, String> args = function.getArgs();
+    String type;
+    Map<String, String> args;
+    if (function instanceof ConditionDescriptor) {
+      type = ((ConditionDescriptor) function).getType();
+      args = ((ConditionDescriptor) function).getArgs();
+    } else if (function instanceof ValidatorDescriptor) {
+      type = ((ValidatorDescriptor) function).getType();
+      args = ((ValidatorDescriptor) function).getArgs();
+    } else if (function instanceof FunctionDescriptor) {
+      type = ((FunctionDescriptor) function).getType();
+      args = ((FunctionDescriptor) function).getArgs();
+    } else {
+      return;
+    }
+    // skip non-class functions
+    if (!"class".equals(type)) return;
+
     Object name = args.get("class.name");
     if (UPDATE_FIELD_FUNCTION_ID.equals(name)) {
       if ("resolution".equals(args.get("field.name"))) {
@@ -147,25 +222,24 @@ public class WorkflowUtils {
     }
   }
 
-  static void addLayoutToWorkflow(String workflowName, String layoutJson) {
-    OfBizDelegator ofBizDelegator = ComponentAccessor.getComponent(OfBizDelegator.class);
-    String layoutKey = DigestUtils.md5Hex(workflowName);
-    final Map<String, Object> entryFields =
-        ImmutableMap.of(
-            "entityName",
-            "com.atlassian.jira.plugins.jira-workflow-designer",
-            "entityId",
-            1,
-            "propertyKey",
-            "jira.workflow.layout.v5:" + layoutKey,
-            "type",
-            6);
-    final Long layoutId = ofBizDelegator.createValue("OSPropertyEntry", entryFields).getLong("id");
-    final Map<String, Object> textFields =
-        ImmutableMap.of(
-            "id", layoutId,
-            "value", layoutJson);
-    ofBizDelegator.createValue("OSPropertyText", textFields);
+  private static void addFunction(ActionDescriptor transition, FunctionDescriptor function) {
+    @SuppressWarnings("unchecked")
+    List<FunctionDescriptor> functions = transition.getUnconditionalResult().getPostFunctions();
+    // remove existing functions with the same name
+    String name = function.getName();
+    if (name != null) {
+      Iterator<?> iter = functions.iterator();
+      while (iter.hasNext()) {
+        Object obj = iter.next();
+        if (obj instanceof FunctionDescriptor) {
+          FunctionDescriptor fun = (FunctionDescriptor) obj;
+          if (name.equals(fun.getName())) {
+            iter.remove();
+          }
+        }
+      }
+    }
+    functions.add(function);
   }
 
   private static Status getOrCreateStatus(

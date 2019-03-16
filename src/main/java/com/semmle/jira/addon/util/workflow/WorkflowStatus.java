@@ -1,20 +1,23 @@
-package com.semmle.jira.addon.config.init;
+package com.semmle.jira.addon.util.workflow;
 
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public class WorkflowResolution {
+public class WorkflowStatus {
   @JsonProperty public final String originalId;
   @JsonProperty public final String name;
   @JsonProperty public final String description;
+  @JsonProperty public final String statusCategoryId;
 
   @JsonCreator
-  public WorkflowResolution(
+  public WorkflowStatus(
       @JsonProperty("originalId") String originalId,
       @JsonProperty("name") String name,
-      @JsonProperty("description") String description) {
+      @JsonProperty("description") String description,
+      @JsonProperty("statusCategoryId") String statusCategoryId) {
     this.originalId = originalId;
     this.name = name;
     this.description = description;
+    this.statusCategoryId = statusCategoryId;
   }
 }
