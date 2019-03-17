@@ -10,13 +10,19 @@ import static org.mockito.Mockito.when;
 import com.atlassian.jira.bc.issue.IssueService.CreateValidationResult;
 import com.atlassian.jira.bc.issue.IssueService.IssueResult;
 import com.atlassian.jira.config.ConstantsManager;
+import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.IssueInputParameters;
 import com.atlassian.jira.issue.MutableIssue;
+import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.issuetype.IssueType;
+import com.atlassian.jira.issue.label.LabelManager;
 import com.atlassian.jira.junit.rules.AvailableInContainer;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.util.ErrorCollection;
-import com.semmle.jira.addon.Utils.Util;
+import com.semmle.jira.addon.Request.Alert;
+import com.semmle.jira.addon.Request.Alert.Query;
+import com.semmle.jira.addon.Request.Project;
+import com.semmle.jira.addon.Request.Transition;
 import com.semmle.jira.addon.config.ProcessedConfig;
 import com.semmle.jira.addon.util.Constants;
 import java.io.IOException;
@@ -26,12 +32,30 @@ import org.junit.Test;
 
 public class TestCreateIssue extends TestCreateAndTransitionBase {
 
+  private static final Long CUSTOM_FIELD_ID = 43L;
+  private static final String CONFIG_KEY = "config_key";
+
   @AvailableInContainer private ConstantsManager constantsManager = mock(ConstantsManager.class);
+  @AvailableInContainer private LabelManager labelManager = mock(LabelManager.class);
+
+  @AvailableInContainer
+  private CustomFieldManager customFieldManager = mock(CustomFieldManager.class);
 
   CreateValidationResult createValidationResult = mock(CreateValidationResult.class);
   ProcessedConfig config = mock(ProcessedConfig.class);
 
   private IssueResult issueResult = mock(IssueResult.class);
+
+  public static Request createRequest(
+      String projectName, String queryName, String alertFile, String alertMessage) {
+    Transition transition = Transition.CREATE;
+    String url = "www." + projectName + ".com";
+    Project project = new Project(1l, "g/" + projectName, projectName, url);
+    Query query = new Query(queryName, url + "/" + queryName);
+    Alert alert = new Alert(alertFile, alertMessage, url + "/alert", query);
+
+    return new Request(transition, 1l, project, alert);
+  }
 
   @Before
   public void initTests() {
@@ -44,6 +68,10 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
             eq(ConstantsManager.CONSTANT_TYPE.ISSUE_TYPE.getType()), anyString()))
         .thenReturn(lgtmIssueType);
 
+    CustomField customField = mock(CustomField.class);
+    when(customField.getIdAsLong()).thenReturn(CUSTOM_FIELD_ID);
+    when(customFieldManager.getCustomFieldObjectByName(Constants.CUSTOM_FIELD_NAME))
+        .thenReturn(customField);
     when(issueService.validateCreate(any(ApplicationUser.class), any(IssueInputParameters.class)))
         .thenReturn(createValidationResult);
 
@@ -58,27 +86,29 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
     when(config.getUser()).thenReturn(user);
     com.atlassian.jira.project.Project project = mock(com.atlassian.jira.project.Project.class);
     when(config.getProject()).thenReturn(project);
+    when(config.getKey()).thenReturn(CONFIG_KEY);
   }
 
   @Test
   public void testCreateIssueSuccess() throws IOException {
     HttpServletResponse resp = mockResponse();
-    Request request = Util.createRequest("test", "Query", "test.cpp", "Security Error");
+    Request request = createRequest("test", "Query", "test.cpp", "Security Error");
 
     when(createValidationResult.getErrorCollection().hasAnyErrors()).thenReturn(false);
     when(issueResult.isValid()).thenReturn(true);
-    servlet.createIssue(request, resp, config);
+    servlet.createIssue(Util.JSON.valueToTree(request), request, resp, config);
     verify(resp).setStatus(201);
+    verify(issueInputParameters).addCustomFieldValue(CUSTOM_FIELD_ID, CONFIG_KEY);
   }
 
   @Test
   public void testCreateIssueFailure() throws IOException {
     HttpServletResponse resp = mockResponse();
-    Request request = Util.createRequest("test", "Query", "test.cpp", "Security Error");
+    Request request = createRequest("test", "Query", "test.cpp", "Security Error");
 
     when(createValidationResult.getErrorCollection().hasAnyErrors()).thenReturn(true);
 
-    servlet.createIssue(request, resp, config);
+    servlet.createIssue(Util.JSON.valueToTree(request), request, resp, config);
     verify(resp).setStatus(500);
   }
 }

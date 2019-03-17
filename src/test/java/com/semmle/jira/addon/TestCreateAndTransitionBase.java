@@ -10,10 +10,10 @@ import org.junit.Before;
 
 public class TestCreateAndTransitionBase extends TestLgtmServletBase {
   @AvailableInContainer protected IssueService issueService = mock(IssueService.class);
+  protected IssueInputParameters issueInputParameters = mock(IssueInputParameters.class);
 
   @Before
   public void initTests() {
-    IssueInputParameters issueInputParameters = mock(IssueInputParameters.class);
     when(issueService.newIssueInputParameters()).thenReturn(issueInputParameters);
   }
 }

@@ -3,7 +3,11 @@ package com.semmle.jira.addon.workflow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.MutableIssue;
+import com.atlassian.jira.issue.fields.CustomField;
+import com.atlassian.jira.junit.rules.AvailableInContainer;
+import com.atlassian.jira.junit.rules.MockitoContainer;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionCallback;
@@ -12,15 +16,23 @@ import com.opensymphony.workflow.InvalidInputException;
 import com.semmle.jira.addon.Request;
 import com.semmle.jira.addon.Request.Transition;
 import com.semmle.jira.addon.config.Config;
+import com.semmle.jira.addon.util.Constants;
 import java.net.URI;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import junit.framework.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class LgtmTransitionNotificationFunctionTest {
+
+  @Rule public MockitoContainer mockitoContainer = new MockitoContainer(this);
+
+  @AvailableInContainer
+  private CustomFieldManager customFieldManager = mock(CustomFieldManager.class);
+
   private LgtmTransitionNotificationFunction function;
   private MutableIssue issue;
   private Request requestBody;
@@ -49,8 +61,14 @@ public class LgtmTransitionNotificationFunctionTest {
 
   @Before
   public void setup() {
+    CustomField customField = mock(CustomField.class);
+    when(customFieldManager.getCustomFieldObjectByName(Constants.CUSTOM_FIELD_NAME))
+        .thenReturn(customField);
+
     issue = mock(MutableIssue.class);
     when(issue.getId()).thenReturn(10L);
+    String CONFIG_KEY = "webhook";
+    when(issue.getCustomFieldValue(customField)).thenReturn(CONFIG_KEY);
     PluginSettingsFactory settingsFactory = mock(PluginSettingsFactory.class);
     PluginSettings settings = new MockPluginSettings();
     when(settingsFactory.createGlobalSettings()).thenReturn(settings);
@@ -63,7 +81,7 @@ public class LgtmTransitionNotificationFunctionTest {
           }
         };
     Config config = new Config();
-    config.setKey("webhook");
+    config.setKey(CONFIG_KEY);
     config.setLgtmSecret("secret");
     config.setExternalHookUrl(URI.create("https://localhost:8080"));
     Config.put(config, transaction, settingsFactory);

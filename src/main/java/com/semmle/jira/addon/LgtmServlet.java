@@ -7,6 +7,7 @@ import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.IssueInputParameters;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.fields.CustomField;
+import com.atlassian.jira.issue.label.LabelManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.TransitionOptions;
@@ -29,6 +30,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
+import org.codehaus.jackson.JsonNode;
 
 public class LgtmServlet extends HttpServlet {
   /** */
@@ -61,8 +63,10 @@ public class LgtmServlet extends HttpServlet {
     }
 
     Request request;
+    JsonNode jsonRequest;
     try {
-      request = Util.JSON.readValue(bytes, Request.class);
+      jsonRequest = Util.JSON.readTree(bytes);
+      request = Util.JSON.readValue(jsonRequest, Request.class);
     } catch (IOException e) {
       String message = e.getCause() != null ? " - " + e.getCause().getMessage() : "";
       sendError(
@@ -87,7 +91,7 @@ public class LgtmServlet extends HttpServlet {
 
     switch (request.transition) {
       case CREATE:
-        createIssue(request, resp, config);
+        createIssue(jsonRequest, request, resp, config);
         break;
       case REOPEN:
         applyTransition(issue, Constants.WORKFLOW_REOPEN_TRANSITION_NAME, true, user, resp);
@@ -135,7 +139,8 @@ public class LgtmServlet extends HttpServlet {
     return processedConfig;
   }
 
-  void createIssue(Request request, HttpServletResponse resp, ProcessedConfig config)
+  void createIssue(
+      JsonNode rawRequest, Request request, HttpServletResponse resp, ProcessedConfig config)
       throws IOException {
 
     IssueInputParameters issueInputParameters =
@@ -146,6 +151,7 @@ public class LgtmServlet extends HttpServlet {
     issueInputParameters.setProjectId(config.getProject().getId());
     issueInputParameters.setIssueTypeId(JiraUtils.getLgtmIssueType().getId());
 
+    issueInputParameters.addProperty(Constants.LGTM_PAYLOAD_PROPERTY, rawRequest);
     CustomFieldManager customFieldManager = ComponentAccessor.getCustomFieldManager();
 
     CustomField customField =
@@ -163,6 +169,9 @@ public class LgtmServlet extends HttpServlet {
     } else {
       IssueService.IssueResult issueResult =
           ComponentAccessor.getIssueService().create(config.getUser(), createValidationResult);
+
+      LabelManager mgr = ComponentAccessor.getComponent(LabelManager.class);
+      mgr.addLabel(config.getUser(), issueResult.getIssue().getId(), request.project.name, false);
 
       if (!issueResult.isValid()) {
         writeErrors(issueResult, resp);
