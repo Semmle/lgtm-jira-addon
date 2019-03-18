@@ -5,11 +5,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
+import com.atlassian.jira.testkit.client.Backdoor;
+import com.atlassian.jira.testkit.client.restclient.Issue;
+import com.atlassian.jira.testkit.client.restclient.SearchRequest;
+import com.atlassian.jira.testkit.client.util.TestKitLocalEnvironmentData;
+import com.atlassian.jira.testkit.client.util.TimeBombLicence;
+import com.google.common.collect.Iterables;
+import com.semmle.jira.addon.Request;
+import com.semmle.jira.addon.Request.Transition;
+import com.semmle.jira.addon.Response;
+import com.semmle.jira.addon.Util;
+import com.semmle.jira.addon.config.Config;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -22,18 +32,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.atlassian.jira.testkit.client.Backdoor;
-import com.atlassian.jira.testkit.client.restclient.Issue;
-import com.atlassian.jira.testkit.client.restclient.SearchRequest;
-import com.atlassian.jira.testkit.client.util.TestKitLocalEnvironmentData;
-import com.atlassian.jira.testkit.client.util.TimeBombLicence;
-import com.google.common.collect.Iterables;
-import com.semmle.jira.addon.Request;
-import com.semmle.jira.addon.Request.Transition;
-import com.semmle.jira.addon.Response;
-import com.semmle.jira.addon.Util;
-import com.semmle.jira.addon.config.Config;
 
 public class IntegrationTest {
 

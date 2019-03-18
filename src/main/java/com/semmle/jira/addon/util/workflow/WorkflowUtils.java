@@ -1,14 +1,13 @@
 package com.semmle.jira.addon.util.workflow;
 
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.config.ConstantsManager;
 import com.atlassian.jira.config.ResolutionManager;
+import com.atlassian.jira.config.StatusCategoryManager;
 import com.atlassian.jira.config.StatusManager;
 import com.atlassian.jira.issue.priority.Priority;
 import com.atlassian.jira.issue.resolution.Resolution;
 import com.atlassian.jira.issue.status.Status;
 import com.atlassian.jira.issue.status.category.StatusCategory;
-import com.atlassian.jira.issue.status.category.StatusCategoryImpl;
 import com.atlassian.jira.ofbiz.OfBizDelegator;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.workflow.ConfigurableJiraWorkflow;
@@ -28,6 +27,7 @@ import com.opensymphony.workflow.loader.WorkflowDescriptor;
 import com.semmle.jira.addon.workflow.ResolutionCondition;
 import com.semmle.jira.addon.workflow.ResolutionValidator;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -244,18 +244,17 @@ public class WorkflowUtils {
 
   private static Status getOrCreateStatus(
       String statusName, String description, long statusCategoryId) {
-    Status status =
-        (Status)
-            ComponentAccessor.getConstantsManager()
-                .getIssueConstantByName(
-                    ConstantsManager.CONSTANT_TYPE.STATUS.getType(), statusName);
-    if (status != null) {
-      return status;
-    }
-
     StatusManager statusManager = ComponentAccessor.getComponent(StatusManager.class);
-    StatusCategory category = StatusCategoryImpl.findById(statusCategoryId);
-
+    Collection<Status> statuses = statusManager.getStatuses();
+    for (Status status : statuses) {
+      if (status.getName().equalsIgnoreCase(statusName)) {
+        return status;
+      }
+    }
+    StatusCategoryManager statusCategoryManager =
+        ComponentAccessor.getComponent(StatusCategoryManager.class);
+    StatusCategory category = statusCategoryManager.getStatusCategory(statusCategoryId);
+    if (category == null) category = statusCategoryManager.getDefaultStatusCategory();
     return statusManager.createStatus(statusName, description, "status.png", category);
   }
 
