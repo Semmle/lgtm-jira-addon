@@ -7,6 +7,7 @@ import com.atlassian.jira.workflow.function.issue.AbstractJiraFunctionProvider;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
+import com.google.common.collect.Iterables;
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.workflow.InvalidInputException;
 import com.opensymphony.workflow.WorkflowException;
@@ -52,8 +53,9 @@ public class LgtmTransitionNotificationFunction extends AbstractJiraFunctionProv
     MutableIssue issue = getIssue(transientVars);
 
     CustomField customField =
-        ComponentAccessor.getCustomFieldManager()
-            .getCustomFieldObjectByName(Constants.CUSTOM_FIELD_NAME);
+        Iterables.getOnlyElement(
+            ComponentAccessor.getCustomFieldManager()
+                .getCustomFieldObjectsByName(Constants.CUSTOM_FIELD_NAME));
 
     String configKey = (String) issue.getCustomFieldValue(customField);
 

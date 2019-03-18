@@ -3,7 +3,6 @@ package com.semmle.jira.addon;
 import com.atlassian.jira.bc.ServiceResult;
 import com.atlassian.jira.bc.issue.IssueService;
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.IssueInputParameters;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.fields.CustomField;
@@ -15,6 +14,7 @@ import com.atlassian.jira.workflow.TransitionOptions.Builder;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
+import com.google.common.collect.Iterables;
 import com.opensymphony.workflow.loader.ActionDescriptor;
 import com.semmle.jira.addon.Request.Transition;
 import com.semmle.jira.addon.config.Config;
@@ -152,10 +152,11 @@ public class LgtmServlet extends HttpServlet {
     issueInputParameters.setIssueTypeId(JiraUtils.getLgtmIssueType().getId());
 
     issueInputParameters.addProperty(Constants.LGTM_PAYLOAD_PROPERTY, rawRequest);
-    CustomFieldManager customFieldManager = ComponentAccessor.getCustomFieldManager();
 
     CustomField customField =
-        customFieldManager.getCustomFieldObjectByName(Constants.CUSTOM_FIELD_NAME);
+        Iterables.getOnlyElement(
+            ComponentAccessor.getCustomFieldManager()
+                .getCustomFieldObjectsByName(Constants.CUSTOM_FIELD_NAME));
 
     issueInputParameters.addCustomFieldValue(customField.getIdAsLong(), config.getKey());
 

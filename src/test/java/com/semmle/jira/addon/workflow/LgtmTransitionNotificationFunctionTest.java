@@ -62,8 +62,8 @@ public class LgtmTransitionNotificationFunctionTest {
   @Before
   public void setup() {
     CustomField customField = mock(CustomField.class);
-    when(customFieldManager.getCustomFieldObjectByName(Constants.CUSTOM_FIELD_NAME))
-        .thenReturn(customField);
+    when(customFieldManager.getCustomFieldObjectsByName(Constants.CUSTOM_FIELD_NAME))
+        .thenReturn(Collections.singletonList(customField));
 
     issue = mock(MutableIssue.class);
     when(issue.getId()).thenReturn(10L);

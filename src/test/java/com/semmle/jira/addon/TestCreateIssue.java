@@ -26,6 +26,7 @@ import com.semmle.jira.addon.Request.Transition;
 import com.semmle.jira.addon.config.ProcessedConfig;
 import com.semmle.jira.addon.util.Constants;
 import java.io.IOException;
+import java.util.Collections;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
 import org.junit.Test;
@@ -70,8 +71,8 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
 
     CustomField customField = mock(CustomField.class);
     when(customField.getIdAsLong()).thenReturn(CUSTOM_FIELD_ID);
-    when(customFieldManager.getCustomFieldObjectByName(Constants.CUSTOM_FIELD_NAME))
-        .thenReturn(customField);
+    when(customFieldManager.getCustomFieldObjectsByName(Constants.CUSTOM_FIELD_NAME))
+        .thenReturn(Collections.singletonList(customField));
     when(issueService.validateCreate(any(ApplicationUser.class), any(IssueInputParameters.class)))
         .thenReturn(createValidationResult);
 

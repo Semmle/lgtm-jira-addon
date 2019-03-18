@@ -23,6 +23,7 @@ import com.atlassian.jira.web.bean.PagerFilter;
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.WorkflowManager;
 import com.atlassian.jira.workflow.WorkflowSchemeManager;
+import com.google.common.collect.Iterables;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -148,8 +149,9 @@ public class JiraUtils {
   public static void addCustomFieldToProjectCreateScreen(Project project) {
 
     CustomField customField =
-        ComponentAccessor.getCustomFieldManager()
-            .getCustomFieldObjectByName(Constants.CUSTOM_FIELD_NAME);
+        Iterables.getOnlyElement(
+            ComponentAccessor.getCustomFieldManager()
+                .getCustomFieldObjectsByName(Constants.CUSTOM_FIELD_NAME));
 
     IssueTypeScreenScheme screenScheme =
         ComponentAccessor.getIssueTypeScreenSchemeManager().getIssueTypeScreenScheme(project);
