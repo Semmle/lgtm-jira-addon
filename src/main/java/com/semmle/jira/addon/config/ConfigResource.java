@@ -40,6 +40,8 @@ public class ConfigResource {
   @ComponentImport private final PluginSettingsFactory pluginSettingsFactory;
   @ComponentImport private final TransactionTemplate transactionTemplate;
 
+  private final PluginSettings settings;
+
   @Inject
   public ConfigResource(
       UserManager userManager,
@@ -48,6 +50,8 @@ public class ConfigResource {
     this.userManager = userManager;
     this.pluginSettingsFactory = pluginSettingsFactory;
     this.transactionTemplate = transactionTemplate;
+
+    settings = pluginSettingsFactory.createGlobalSettings();
   }
 
   @GET
@@ -63,7 +67,6 @@ public class ConfigResource {
      * (and only) configuration, therefore, we cannot send it in the request. To solve that we store
      * it in the settings.
      */
-    PluginSettings settings = pluginSettingsFactory.createGlobalSettings();
     String configKey = (String) settings.get(KEY_SETTINGS_NAME);
 
     return Response.ok(Config.get(configKey, transactionTemplate, pluginSettingsFactory)).build();
@@ -94,7 +97,8 @@ public class ConfigResource {
 
     JiraUtils.addIssueTypeToProject(project, lgtmIssueType);
 
-    JiraUtils.addCustomFieldToProjectCreateScreen(project);
+    JiraUtils.addCustomFieldToProjectCreateScreen(
+        project, Long.parseLong((String) settings.get(Constants.CUSTOM_FIELD_CONFIG_KEY)));
 
     try {
       JiraUtils.configureWorkflowForProject(

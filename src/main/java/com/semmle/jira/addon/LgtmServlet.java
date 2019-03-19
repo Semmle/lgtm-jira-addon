@@ -5,16 +5,15 @@ import com.atlassian.jira.bc.issue.IssueService;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.IssueInputParameters;
 import com.atlassian.jira.issue.MutableIssue;
-import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.label.LabelManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.TransitionOptions;
 import com.atlassian.jira.workflow.TransitionOptions.Builder;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
+import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
-import com.google.common.collect.Iterables;
 import com.opensymphony.workflow.loader.ActionDescriptor;
 import com.semmle.jira.addon.Request.Transition;
 import com.semmle.jira.addon.config.Config;
@@ -38,12 +37,14 @@ public class LgtmServlet extends HttpServlet {
 
   @ComponentImport private final PluginSettingsFactory pluginSettingsFactory;
   @ComponentImport private final TransactionTemplate transactionTemplate;
+  private final PluginSettings settings;
 
   @Inject
   LgtmServlet(
       PluginSettingsFactory pluginSettingsFactory, TransactionTemplate transactionTemplate) {
     this.pluginSettingsFactory = pluginSettingsFactory;
     this.transactionTemplate = transactionTemplate;
+    this.settings = pluginSettingsFactory.createGlobalSettings();
   }
 
   @Override
@@ -153,12 +154,8 @@ public class LgtmServlet extends HttpServlet {
 
     issueInputParameters.addProperty(Constants.LGTM_PAYLOAD_PROPERTY, rawRequest);
 
-    CustomField customField =
-        Iterables.getOnlyElement(
-            ComponentAccessor.getCustomFieldManager()
-                .getCustomFieldObjectsByName(Constants.CUSTOM_FIELD_NAME));
-
-    issueInputParameters.addCustomFieldValue(customField.getIdAsLong(), config.getKey());
+    issueInputParameters.addCustomFieldValue(
+        Long.parseLong((String) settings.get(Constants.CUSTOM_FIELD_CONFIG_KEY)), config.getKey());
 
     issueInputParameters.setApplyDefaultValuesWhenParameterNotProvided(true);
 

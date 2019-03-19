@@ -14,4 +14,7 @@ public class Constants {
   public static final String LGTM_PAYLOAD_PROPERTY = "lgtm.request.payload";
 
   public static final String CONFIGURED_VERSION_KEY = "com.lgtm.addon.version";
+
+  public static final String CUSTOM_FIELD_CONFIG_KEY =
+      "com.lgtm.addon.config.configKeyCustomFieldId";
 }

@@ -3,15 +3,18 @@ package com.semmle.jira.addon.config.upgrades;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.context.GlobalIssueContext;
+import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
+import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.message.Message;
+import com.atlassian.sal.api.pluginsettings.PluginSettings;
+import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.upgrade.PluginUpgradeTask;
-import com.google.common.collect.Iterables;
 import com.semmle.jira.addon.util.Constants;
 import com.semmle.jira.addon.util.JiraUtils;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.NoSuchElementException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @ExportAsService(PluginUpgradeTask.class)
@@ -19,30 +22,34 @@ import org.springframework.stereotype.Component;
 public class UpgradeTask4CreateConfigKeyField implements PluginUpgradeTask {
 
   private static final int BUILD_NUMER = 4;
+  private PluginSettings settings;
+
+  @Autowired
+  public UpgradeTask4CreateConfigKeyField(
+      @ComponentImport final PluginSettingsFactory pluginSettingsFactory) {
+    this.settings = pluginSettingsFactory.createGlobalSettings();
+  }
 
   @Override
   public Collection<Message> doUpgrade() throws Exception {
 
-    CustomFieldManager customFieldManager = ComponentAccessor.getCustomFieldManager();
+    if (settings.get(Constants.CUSTOM_FIELD_CONFIG_KEY) == null) {
 
-    try {
+      CustomFieldManager customFieldManager = ComponentAccessor.getCustomFieldManager();
 
-      Iterables.getOnlyElement(
-          customFieldManager.getCustomFieldObjectsByName(Constants.CUSTOM_FIELD_NAME));
+      CustomField customField =
+          customFieldManager.createCustomField(
+              Constants.CUSTOM_FIELD_NAME,
+              Constants.CUSTOM_FIELD_NAME,
+              customFieldManager.getCustomFieldType(
+                  "com.atlassian.jira.plugin.system.customfieldtypes:textfield"),
+              customFieldManager.getCustomFieldSearcher(
+                  "com.atlassian.jira.plugin.system.customfieldtypes:exacttextsearcher"),
+              Collections.singletonList(GlobalIssueContext.getInstance()),
+              Collections.singletonList(JiraUtils.getLgtmIssueType()));
 
-    } catch (NoSuchElementException e) {
-
-      customFieldManager.createCustomField(
-          Constants.CUSTOM_FIELD_NAME,
-          Constants.CUSTOM_FIELD_NAME,
-          customFieldManager.getCustomFieldType(
-              "com.atlassian.jira.plugin.system.customfieldtypes:textfield"),
-          customFieldManager.getCustomFieldSearcher(
-              "com.atlassian.jira.plugin.system.customfieldtypes:exacttextsearcher"),
-          Collections.singletonList(GlobalIssueContext.getInstance()),
-          Collections.singletonList(JiraUtils.getLgtmIssueType()));
+      settings.put(Constants.CUSTOM_FIELD_CONFIG_KEY, customField.getIdAsLong().toString());
     }
-
     return Collections.emptyList();
   }
 

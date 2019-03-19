@@ -5,9 +5,9 @@ import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.workflow.function.issue.AbstractJiraFunctionProvider;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
+import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
-import com.google.common.collect.Iterables;
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.workflow.InvalidInputException;
 import com.opensymphony.workflow.WorkflowException;
@@ -39,11 +39,14 @@ public class LgtmTransitionNotificationFunction extends AbstractJiraFunctionProv
   @ComponentImport private final PluginSettingsFactory pluginSettingsFactory;
   @ComponentImport private final TransactionTemplate transactionTemplate;
 
+  private final PluginSettings settings;
+
   @Inject
   LgtmTransitionNotificationFunction(
       PluginSettingsFactory pluginSettingsFactory, TransactionTemplate transactionTemplate) {
     this.pluginSettingsFactory = pluginSettingsFactory;
     this.transactionTemplate = transactionTemplate;
+    this.settings = pluginSettingsFactory.createGlobalSettings();
   }
 
   @SuppressWarnings("rawtypes")
@@ -53,11 +56,14 @@ public class LgtmTransitionNotificationFunction extends AbstractJiraFunctionProv
     MutableIssue issue = getIssue(transientVars);
 
     CustomField customField =
-        Iterables.getOnlyElement(
-            ComponentAccessor.getCustomFieldManager()
-                .getCustomFieldObjectsByName(Constants.CUSTOM_FIELD_NAME));
+        ComponentAccessor.getCustomFieldManager()
+            .getCustomFieldObject(
+                Long.parseLong((String) settings.get(Constants.CUSTOM_FIELD_CONFIG_KEY)));
 
     String configKey = (String) issue.getCustomFieldValue(customField);
+
+    // for backwards compatibility
+    if (configKey == null) configKey = "webhook";
 
     Config config = Config.get(configKey, transactionTemplate, pluginSettingsFactory);
     URI url = config.getExternalHookUrl();
