@@ -1,11 +1,19 @@
 package com.semmle.jira.addon.workflow;
 
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.atlassian.jira.config.ConstantsManager;
+import com.atlassian.jira.config.managedconfiguration.ManagedConfigurationItem;
+import com.atlassian.jira.config.managedconfiguration.ManagedConfigurationItemService;
 import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.fields.CustomField;
+import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.junit.rules.AvailableInContainer;
 import com.atlassian.jira.junit.rules.MockitoContainer;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
@@ -25,6 +33,7 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.ofbiz.core.entity.GenericEntityException;
 
 public class LgtmTransitionNotificationFunctionTest {
 
@@ -32,6 +41,12 @@ public class LgtmTransitionNotificationFunctionTest {
 
   @AvailableInContainer
   private CustomFieldManager customFieldManager = mock(CustomFieldManager.class);
+
+  @AvailableInContainer
+  private ManagedConfigurationItemService managedConfigurationItemService =
+      mock(ManagedConfigurationItemService.class);
+
+  @AvailableInContainer private ConstantsManager constantsManager = mock(ConstantsManager.class);
 
   private LgtmTransitionNotificationFunction function;
   private MutableIssue issue;
@@ -100,6 +115,24 @@ public class LgtmTransitionNotificationFunctionTest {
             LgtmTransitionNotificationFunctionTest.this.requestBody = request;
           }
         };
+
+    ManagedConfigurationItem managedField = mock(ManagedConfigurationItem.class);
+    when(managedConfigurationItemService.getManagedCustomField(customField))
+        .thenReturn(managedField);
+
+    try {
+      when(customFieldManager.createCustomField(any(), any(), any(), any(), any(), any()))
+          .thenReturn(customField);
+    } catch (GenericEntityException e) {
+      fail("GenericEntityException");
+    }
+
+    IssueType lgtmIssueType = mock(IssueType.class);
+    when(lgtmIssueType.getName()).thenReturn(Constants.ISSUE_TYPE_NAME);
+    when(lgtmIssueType.getId()).thenReturn("1");
+    when(constantsManager.getIssueConstantByName(
+            eq(ConstantsManager.CONSTANT_TYPE.ISSUE_TYPE.getType()), anyString()))
+        .thenReturn(lgtmIssueType);
   }
 
   @Test(expected = InvalidInputException.class)

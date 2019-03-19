@@ -1,6 +1,5 @@
 package com.semmle.jira.addon.workflow;
 
-import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.workflow.function.issue.AbstractJiraFunctionProvider;
@@ -16,7 +15,7 @@ import com.semmle.jira.addon.Request;
 import com.semmle.jira.addon.Request.Transition;
 import com.semmle.jira.addon.Util;
 import com.semmle.jira.addon.config.Config;
-import com.semmle.jira.addon.util.Constants;
+import com.semmle.jira.addon.util.JiraUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -49,16 +48,14 @@ public class LgtmTransitionNotificationFunction extends AbstractJiraFunctionProv
     this.settings = pluginSettingsFactory.createGlobalSettings();
   }
 
+  @Override
   @SuppressWarnings("rawtypes")
   public void execute(Map transientVars, Map args, PropertySet ps) throws WorkflowException {
 
     Transition transition = getTransitionParam(args);
     MutableIssue issue = getIssue(transientVars);
 
-    CustomField customField =
-        ComponentAccessor.getCustomFieldManager()
-            .getCustomFieldObject(
-                Long.parseLong((String) settings.get(Constants.CUSTOM_FIELD_CONFIG_KEY)));
+    CustomField customField = JiraUtils.getConfigKeyCustomField();
 
     String configKey = (String) issue.getCustomFieldValue(customField);
 

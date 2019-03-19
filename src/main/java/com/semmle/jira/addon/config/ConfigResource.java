@@ -97,9 +97,6 @@ public class ConfigResource {
 
     JiraUtils.addIssueTypeToProject(project, lgtmIssueType);
 
-    JiraUtils.addCustomFieldToProjectCreateScreen(
-        project, Long.parseLong((String) settings.get(Constants.CUSTOM_FIELD_CONFIG_KEY)));
-
     try {
       JiraUtils.configureWorkflowForProject(
           project, lgtmIssueType, UserUtils.getUser(config.getUsername()));

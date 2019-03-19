@@ -4,15 +4,16 @@ import com.atlassian.jira.bc.issue.search.SearchService;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.ConstantsManager;
 import com.atlassian.jira.config.IssueTypeManager;
+import com.atlassian.jira.config.managedconfiguration.ConfigurationItemAccessLevel;
+import com.atlassian.jira.config.managedconfiguration.ManagedConfigurationItem;
+import com.atlassian.jira.config.managedconfiguration.ManagedConfigurationItemBuilder;
+import com.atlassian.jira.config.managedconfiguration.ManagedConfigurationItemService;
+import com.atlassian.jira.issue.CustomFieldManager;
+import com.atlassian.jira.issue.context.GlobalIssueContext;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.fields.config.FieldConfigScheme;
 import com.atlassian.jira.issue.fields.config.manager.IssueTypeSchemeManager;
-import com.atlassian.jira.issue.fields.screen.FieldScreen;
-import com.atlassian.jira.issue.fields.screen.FieldScreenScheme;
-import com.atlassian.jira.issue.fields.screen.FieldScreenTab;
-import com.atlassian.jira.issue.fields.screen.issuetype.IssueTypeScreenScheme;
 import com.atlassian.jira.issue.issuetype.IssueType;
-import com.atlassian.jira.issue.operation.IssueOperations;
 import com.atlassian.jira.issue.search.SearchException;
 import com.atlassian.jira.issue.search.SearchResults;
 import com.atlassian.jira.issue.status.Status;
@@ -25,6 +26,7 @@ import com.atlassian.jira.workflow.WorkflowManager;
 import com.atlassian.jira.workflow.WorkflowSchemeManager;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -145,24 +147,56 @@ public class JiraUtils {
     }
   }
 
-  public static void addCustomFieldToProjectCreateScreen(
-      Project project, Long configKeyCustomFieldId) {
+  public static CustomField getConfigKeyCustomField() {
 
-    CustomField customField =
-        ComponentAccessor.getCustomFieldManager()
-            .getCustomFieldObject((Long) configKeyCustomFieldId);
+    CustomFieldManager customFieldManager = ComponentAccessor.getCustomFieldManager();
 
-    IssueTypeScreenScheme screenScheme =
-        ComponentAccessor.getIssueTypeScreenSchemeManager().getIssueTypeScreenScheme(project);
+    ManagedConfigurationItemService managedConfigurationItemService =
+        ComponentAccessor.getComponentOfType(ManagedConfigurationItemService.class);
 
-    FieldScreenScheme fieldScreenScheme =
-        screenScheme.getEffectiveFieldScreenScheme(getLgtmIssueType());
+    ManagedConfigurationItem managedField;
 
-    FieldScreen screen = fieldScreenScheme.getFieldScreen(IssueOperations.CREATE_ISSUE_OPERATION);
+    for (CustomField customField :
+        customFieldManager.getCustomFieldObjectsByName(Constants.CUSTOM_FIELD_NAME)) {
 
-    if (!screen.containsField(customField.getId())) {
-      FieldScreenTab firstTab = screen.getTab(0);
-      firstTab.addFieldScreenLayoutItem(customField.getId());
+      managedField = managedConfigurationItemService.getManagedCustomField(customField);
+
+      if (managedField != null
+          && managedField.isManaged()
+          && managedField.getConfigurationItemAccessLevel()
+              == ConfigurationItemAccessLevel.LOCKED) {
+        return customField;
+      }
     }
+
+    CustomField customField;
+    try {
+      customField =
+          customFieldManager.createCustomField(
+              Constants.CUSTOM_FIELD_NAME,
+              Constants.CUSTOM_FIELD_NAME,
+              customFieldManager.getCustomFieldType(
+                  "com.atlassian.jira.plugin.system.customfieldtypes:textfield"),
+              customFieldManager.getCustomFieldSearcher(
+                  "com.atlassian.jira.plugin.system.customfieldtypes:exacttextsearcher"),
+              Collections.singletonList(GlobalIssueContext.getInstance()),
+              Collections.singletonList(JiraUtils.getLgtmIssueType()));
+    } catch (GenericEntityException e) {
+      e.printStackTrace(); // TODO deal with this exception
+      return null;
+    }
+
+    ManagedConfigurationItemBuilder builder;
+
+    managedField = managedConfigurationItemService.getManagedCustomField(customField);
+    if (managedField != null) {
+      builder = ManagedConfigurationItemBuilder.builder(managedField);
+      builder.setManaged(true);
+      builder.setConfigurationItemAccessLevel(ConfigurationItemAccessLevel.LOCKED);
+      managedField = builder.build();
+      managedConfigurationItemService.updateManagedConfigurationItem(managedField);
+    }
+
+    return customField;
   }
 }
