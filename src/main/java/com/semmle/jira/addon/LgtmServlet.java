@@ -175,7 +175,9 @@ public class LgtmServlet extends HttpServlet {
         return;
       }
 
-      JiraUtils.getConfigKeyCustomField()
+      ComponentAccessor.getCustomFieldManager()
+          .getCustomFieldObject(
+              Long.parseLong((String) settings.get(Constants.CUSTOM_FIELD_CONFIG_KEY)))
           .updateValue(
               null,
               issueResult.getIssue(),

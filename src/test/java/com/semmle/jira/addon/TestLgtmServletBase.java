@@ -21,6 +21,7 @@ public class TestLgtmServletBase {
   @Rule public MockitoContainer mockitoContainer = new MockitoContainer(this);
 
   PluginSettingsFactory pluginSettingsFactory;
+  protected MockPluginSettings pluginSettings;
   TransactionTemplate transactionTemplate;
   LgtmServlet servlet;
   List<String> log = new ArrayList<>();
@@ -28,6 +29,8 @@ public class TestLgtmServletBase {
   @Before
   public void setupServlet() {
     pluginSettingsFactory = mock(PluginSettingsFactory.class);
+    pluginSettings = new MockPluginSettings();
+    when(pluginSettingsFactory.createGlobalSettings()).thenReturn(pluginSettings);
     transactionTemplate = mock(TransactionTemplate.class);
     servlet =
         new LgtmServlet(pluginSettingsFactory, transactionTemplate) {

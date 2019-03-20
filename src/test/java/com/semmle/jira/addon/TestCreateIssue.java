@@ -1,10 +1,9 @@
 package com.semmle.jira.addon;
 
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -36,7 +35,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
-import org.ofbiz.core.entity.GenericEntityException;
 
 public class TestCreateIssue extends TestCreateAndTransitionBase {
 
@@ -83,12 +81,9 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
         .thenReturn(lgtmIssueType);
 
     when(customField.getIdAsLong()).thenReturn(CUSTOM_FIELD_ID);
-    try {
-      when(customFieldManager.createCustomField(any(), any(), any(), any(), any(), any()))
-          .thenReturn(customField);
-    } catch (GenericEntityException e) {
-      fail("GenericEntityException");
-    }
+
+    when(customFieldManager.getCustomFieldObject(CUSTOM_FIELD_ID)).thenReturn(customField);
+
     when(issueService.validateCreate(any(ApplicationUser.class), any(IssueInputParameters.class)))
         .thenReturn(createValidationResult);
 
@@ -107,6 +102,8 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
     ManagedConfigurationItem managedField = mock(ManagedConfigurationItem.class);
     when(managedConfigurationItemService.getManagedCustomField(customField))
         .thenReturn(managedField);
+
+    pluginSettings.put(Constants.CUSTOM_FIELD_CONFIG_KEY, (Object) CUSTOM_FIELD_ID.toString());
   }
 
   @SuppressWarnings("rawtypes")

@@ -21,6 +21,7 @@ import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.opensymphony.workflow.InvalidInputException;
+import com.semmle.jira.addon.MockPluginSettings;
 import com.semmle.jira.addon.Request;
 import com.semmle.jira.addon.Request.Transition;
 import com.semmle.jira.addon.config.Config;
@@ -54,26 +55,6 @@ public class LgtmTransitionNotificationFunctionTest {
   private URI requestURL;
   private String secret;
 
-  private static class MockPluginSettings implements PluginSettings {
-
-    private final Map<String, Object> settings = new LinkedHashMap<>();
-
-    @Override
-    public Object get(String key) {
-      return settings.get(key);
-    }
-
-    @Override
-    public Object put(String key, Object value) {
-      return settings.put(key, value);
-    }
-
-    @Override
-    public Object remove(String key) {
-      return settings.remove(key);
-    }
-  }
-
   @Before
   public void setup() {
     CustomField customField = mock(CustomField.class);
@@ -84,9 +65,14 @@ public class LgtmTransitionNotificationFunctionTest {
     when(issue.getId()).thenReturn(10L);
     String CONFIG_KEY = "webhook";
     when(issue.getCustomFieldValue(customField)).thenReturn(CONFIG_KEY);
+
     PluginSettingsFactory settingsFactory = mock(PluginSettingsFactory.class);
+
     PluginSettings settings = new MockPluginSettings();
+    settings.put(Constants.CUSTOM_FIELD_CONFIG_KEY, (Object) customField.getIdAsLong().toString());
+
     when(settingsFactory.createGlobalSettings()).thenReturn(settings);
+
     TransactionTemplate transaction =
         new TransactionTemplate() {
 

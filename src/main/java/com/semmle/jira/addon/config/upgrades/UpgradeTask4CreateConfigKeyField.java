@@ -18,9 +18,7 @@ public class UpgradeTask4CreateConfigKeyField implements PluginUpgradeTask {
   @Override
   public Collection<Message> doUpgrade() throws Exception {
 
-    if (JiraUtils.getConfigKeyCustomField() == null) {
-      throw new Exception(); // TODO should be a more suitable exception
-    }
+    JiraUtils.createConfigKeyCustomField();
 
     return Collections.emptyList();
   }

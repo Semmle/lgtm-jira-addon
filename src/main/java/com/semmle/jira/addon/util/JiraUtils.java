@@ -24,6 +24,8 @@ import com.atlassian.jira.web.bean.PagerFilter;
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.WorkflowManager;
 import com.atlassian.jira.workflow.WorkflowSchemeManager;
+import com.atlassian.sal.api.pluginsettings.PluginSettings;
+import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -147,30 +149,32 @@ public class JiraUtils {
     }
   }
 
-  public static CustomField getConfigKeyCustomField() {
+  public static void createConfigKeyCustomField() throws GenericEntityException {
 
     CustomFieldManager customFieldManager = ComponentAccessor.getCustomFieldManager();
 
     ManagedConfigurationItemService managedConfigurationItemService =
         ComponentAccessor.getComponentOfType(ManagedConfigurationItemService.class);
 
+    CustomField customField = null;
     ManagedConfigurationItem managedField;
 
-    for (CustomField customField :
+    for (CustomField candidateField :
         customFieldManager.getCustomFieldObjectsByName(Constants.CUSTOM_FIELD_NAME)) {
 
-      managedField = managedConfigurationItemService.getManagedCustomField(customField);
+      managedField = managedConfigurationItemService.getManagedCustomField(candidateField);
 
       if (managedField != null
           && managedField.isManaged()
-          && managedField.getConfigurationItemAccessLevel()
-              == ConfigurationItemAccessLevel.LOCKED) {
-        return customField;
+          && managedField.getConfigurationItemAccessLevel() == ConfigurationItemAccessLevel.LOCKED
+          && managedField.getSourceId() == Constants.PLUGIN_KEY) {
+        customField = candidateField;
+        break;
       }
     }
 
-    CustomField customField;
-    try {
+    if (customField == null) {
+
       customField =
           customFieldManager.createCustomField(
               Constants.CUSTOM_FIELD_NAME,
@@ -181,22 +185,26 @@ public class JiraUtils {
                   "com.atlassian.jira.plugin.system.customfieldtypes:exacttextsearcher"),
               Collections.singletonList(GlobalIssueContext.getInstance()),
               Collections.singletonList(JiraUtils.getLgtmIssueType()));
-    } catch (GenericEntityException e) {
-      e.printStackTrace(); // TODO deal with this exception
-      return null;
-    }
 
-    ManagedConfigurationItemBuilder builder;
+      managedField = managedConfigurationItemService.getManagedCustomField(customField);
 
-    managedField = managedConfigurationItemService.getManagedCustomField(customField);
-    if (managedField != null) {
-      builder = ManagedConfigurationItemBuilder.builder(managedField);
+      ManagedConfigurationItemBuilder builder =
+          ManagedConfigurationItemBuilder.builder(managedField);
+
       builder.setManaged(true);
       builder.setConfigurationItemAccessLevel(ConfigurationItemAccessLevel.LOCKED);
-      managedField = builder.build();
-      managedConfigurationItemService.updateManagedConfigurationItem(managedField);
+      builder.setSource(Constants.PLUGIN_KEY);
+
+      managedConfigurationItemService.updateManagedConfigurationItem(builder.build());
     }
 
-    return customField;
+    PluginSettingsFactory pluginSettingsFactory =
+        ComponentAccessor.getOSGiComponentInstanceOfType(PluginSettingsFactory.class);
+
+    PluginSettings settings = pluginSettingsFactory.createGlobalSettings();
+
+    settings.put(Constants.CUSTOM_FIELD_CONFIG_KEY, customField.getIdAsLong().toString());
+
+    return;
   }
 }
