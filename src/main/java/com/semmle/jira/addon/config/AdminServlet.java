@@ -1,6 +1,5 @@
 package com.semmle.jira.addon.config;
 
-import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.user.UserManager;
@@ -13,8 +12,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
 
-@Scanned
+@Component
 public class AdminServlet extends HttpServlet {
   private static final long serialVersionUID = 1L;
   @ComponentImport private final UserManager userManager;
