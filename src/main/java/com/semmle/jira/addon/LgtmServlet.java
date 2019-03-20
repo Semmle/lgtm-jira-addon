@@ -6,6 +6,7 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.IssueInputParameters;
 import com.atlassian.jira.issue.ModifiedValue;
 import com.atlassian.jira.issue.MutableIssue;
+import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.label.LabelManager;
 import com.atlassian.jira.issue.util.DefaultIssueChangeHolder;
 import com.atlassian.jira.user.ApplicationUser;
@@ -175,14 +176,18 @@ public class LgtmServlet extends HttpServlet {
         return;
       }
 
-      ComponentAccessor.getCustomFieldManager()
-          .getCustomFieldObject(
-              Long.parseLong((String) settings.get(Constants.CUSTOM_FIELD_CONFIG_KEY)))
-          .updateValue(
-              null,
-              issueResult.getIssue(),
-              new ModifiedValue<String>("", config.getKey()),
-              new DefaultIssueChangeHolder());
+      CustomField customField =
+          ComponentAccessor.getCustomFieldManager()
+              .getCustomFieldObject(
+                  Long.parseLong((String) settings.get(Constants.CUSTOM_FIELD_CONFIG_KEY)));
+
+      customField.updateValue(
+          ComponentAccessor.getFieldLayoutManager()
+              .getFieldLayout(issueResult.getIssue())
+              .getFieldLayoutItem(customField),
+          issueResult.getIssue(),
+          new ModifiedValue<String>("", config.getKey()),
+          new DefaultIssueChangeHolder());
 
       Response response = new Response(issueResult.getIssue().getId());
       sendJSON(resp, HttpServletResponse.SC_CREATED, response);

@@ -18,6 +18,9 @@ import com.atlassian.jira.issue.IssueInputParameters;
 import com.atlassian.jira.issue.ModifiedValue;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.fields.CustomField;
+import com.atlassian.jira.issue.fields.layout.field.FieldLayout;
+import com.atlassian.jira.issue.fields.layout.field.FieldLayoutItem;
+import com.atlassian.jira.issue.fields.layout.field.FieldLayoutManager;
 import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.issue.label.LabelManager;
 import com.atlassian.jira.issue.util.DefaultIssueChangeHolder;
@@ -51,12 +54,16 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
   @AvailableInContainer
   private CustomFieldManager customFieldManager = mock(CustomFieldManager.class);
 
+  @AvailableInContainer
+  private FieldLayoutManager fieldLayoutManager = mock(FieldLayoutManager.class);
+
   CreateValidationResult createValidationResult = mock(CreateValidationResult.class);
   ProcessedConfig config = mock(ProcessedConfig.class);
 
   private IssueResult issueResult = mock(IssueResult.class);
   private CustomField customField = mock(CustomField.class);
   private MutableIssue issue = mock(MutableIssue.class);
+  private FieldLayoutItem fieldLayoutItem = mock(FieldLayoutItem.class);
 
   public static Request createRequest(
       String projectName, String queryName, String alertFile, String alertMessage) {
@@ -104,6 +111,10 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
         .thenReturn(managedField);
 
     pluginSettings.put(Constants.CUSTOM_FIELD_CONFIG_KEY, (Object) CUSTOM_FIELD_ID.toString());
+
+    FieldLayout fieldLayout = mock(FieldLayout.class);
+    when(fieldLayoutManager.getFieldLayout(issueResult.getIssue())).thenReturn(fieldLayout);
+    when(fieldLayout.getFieldLayoutItem(customField)).thenReturn(fieldLayoutItem);
   }
 
   @SuppressWarnings("rawtypes")
@@ -119,7 +130,7 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
 
     verify(customField)
         .updateValue(
-            eq(null),
+            eq(fieldLayoutItem),
             eq(issue),
             argThat(
                 new ArgumentMatcher<ModifiedValue>() {
