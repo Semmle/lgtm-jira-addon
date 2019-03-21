@@ -4,11 +4,8 @@ import com.atlassian.jira.bc.ServiceResult;
 import com.atlassian.jira.bc.issue.IssueService;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.IssueInputParameters;
-import com.atlassian.jira.issue.ModifiedValue;
 import com.atlassian.jira.issue.MutableIssue;
-import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.label.LabelManager;
-import com.atlassian.jira.issue.util.DefaultIssueChangeHolder;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.TransitionOptions;
@@ -23,6 +20,7 @@ import com.semmle.jira.addon.config.Config;
 import com.semmle.jira.addon.config.InvalidConfigurationException;
 import com.semmle.jira.addon.config.ProcessedConfig;
 import com.semmle.jira.addon.util.Constants;
+import com.semmle.jira.addon.util.CustomFieldRetrievalException;
 import com.semmle.jira.addon.util.JiraUtils;
 import java.io.IOException;
 import java.util.Collection;
@@ -164,34 +162,34 @@ public class LgtmServlet extends HttpServlet {
 
     if (createValidationResult.getErrorCollection().hasAnyErrors()) {
       writeErrors(createValidationResult, resp);
-    } else {
-      IssueService.IssueResult issueResult =
-          ComponentAccessor.getIssueService().create(config.getUser(), createValidationResult);
-
-      LabelManager mgr = ComponentAccessor.getComponent(LabelManager.class);
-      mgr.addLabel(config.getUser(), issueResult.getIssue().getId(), request.project.name, false);
-
-      if (!issueResult.isValid()) {
-        writeErrors(issueResult, resp);
-        return;
-      }
-
-      CustomField customField =
-          ComponentAccessor.getCustomFieldManager()
-              .getCustomFieldObject(
-                  Long.parseLong((String) settings.get(Constants.CUSTOM_FIELD_CONFIG_KEY)));
-
-      customField.updateValue(
-          ComponentAccessor.getFieldLayoutManager()
-              .getFieldLayout(issueResult.getIssue())
-              .getFieldLayoutItem(customField),
-          issueResult.getIssue(),
-          new ModifiedValue<String>("", config.getKey()),
-          new DefaultIssueChangeHolder());
-
-      Response response = new Response(issueResult.getIssue().getId());
-      sendJSON(resp, HttpServletResponse.SC_CREATED, response);
+      return;
     }
+
+    try {
+      createValidationResult
+          .getIssue()
+          .setCustomFieldValue(JiraUtils.getConfigKeyCustomField(), config.getKey());
+    } catch (CustomFieldRetrievalException e) {
+      sendError(
+          resp,
+          HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+          "Retrieval of custom field for config key failed.");
+      return;
+    }
+
+    IssueService.IssueResult issueResult =
+        ComponentAccessor.getIssueService().create(config.getUser(), createValidationResult);
+
+    LabelManager mgr = ComponentAccessor.getComponent(LabelManager.class);
+    mgr.addLabel(config.getUser(), issueResult.getIssue().getId(), request.project.name, false);
+
+    if (!issueResult.isValid()) {
+      writeErrors(issueResult, resp);
+      return;
+    }
+
+    Response response = new Response(issueResult.getIssue().getId());
+    sendJSON(resp, HttpServletResponse.SC_CREATED, response);
   }
 
   void applyTransition(

@@ -198,13 +198,40 @@ public class JiraUtils {
       managedConfigurationItemService.updateManagedConfigurationItem(builder.build());
     }
 
+    getSettingsObject()
+        .put(Constants.CUSTOM_FIELD_CONFIG_KEY, customField.getIdAsLong().toString());
+
+    return;
+  }
+
+  private static PluginSettings getSettingsObject() {
+
     PluginSettingsFactory pluginSettingsFactory =
         ComponentAccessor.getOSGiComponentInstanceOfType(PluginSettingsFactory.class);
 
     PluginSettings settings = pluginSettingsFactory.createGlobalSettings();
 
-    settings.put(Constants.CUSTOM_FIELD_CONFIG_KEY, customField.getIdAsLong().toString());
+    return settings;
+  }
 
-    return;
+  public static CustomField getConfigKeyCustomField() throws CustomFieldRetrievalException {
+
+    long fieldId;
+    try {
+      fieldId = Long.parseLong((String) getSettingsObject().get(Constants.CUSTOM_FIELD_CONFIG_KEY));
+    } catch (ClassCastException | NumberFormatException e) {
+      log.error("Invalid custom field config key.", e);
+      throw new CustomFieldRetrievalException();
+    }
+
+    CustomField customField =
+        ComponentAccessor.getCustomFieldManager().getCustomFieldObject(fieldId);
+
+    if (customField == null) {
+      log.error("Custom field not found with specified id = " + String.valueOf(fieldId));
+      throw new CustomFieldRetrievalException();
+    }
+
+    return customField;
   }
 }
