@@ -11,9 +11,6 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.TransitionOptions;
 import com.atlassian.jira.workflow.TransitionOptions.Builder;
-import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
-import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
-import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.opensymphony.workflow.loader.ActionDescriptor;
 import com.semmle.jira.addon.Request.Transition;
 import com.semmle.jira.addon.config.Config;
@@ -25,7 +22,6 @@ import com.semmle.jira.addon.util.JiraUtils;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.stream.Collectors;
-import javax.inject.Inject;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,20 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LgtmServlet extends HttpServlet {
-  /** */
   private static final long serialVersionUID = -1528900525848515993L;
-
   private static final Logger log = LoggerFactory.getLogger(LgtmServlet.class);
-
-  @ComponentImport private final PluginSettingsFactory pluginSettingsFactory;
-  @ComponentImport private final TransactionTemplate transactionTemplate;
-
-  @Inject
-  LgtmServlet(
-      PluginSettingsFactory pluginSettingsFactory, TransactionTemplate transactionTemplate) {
-    this.pluginSettingsFactory = pluginSettingsFactory;
-    this.transactionTemplate = transactionTemplate;
-  }
 
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -116,7 +100,7 @@ public class LgtmServlet extends HttpServlet {
       String lgtmSignature, byte[] bytes, HttpServletResponse resp, String configKey)
       throws IOException {
 
-    Config config = Config.get(configKey, transactionTemplate, pluginSettingsFactory);
+    Config config = Config.get(configKey);
 
     // check that plugin has been configured at all
     if (config.getLgtmSecret() == null) {

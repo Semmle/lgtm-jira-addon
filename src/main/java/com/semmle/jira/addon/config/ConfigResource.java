@@ -69,7 +69,7 @@ public class ConfigResource {
      */
     String configKey = (String) settings.get(KEY_SETTINGS_NAME);
 
-    return Response.ok(Config.get(configKey, transactionTemplate, pluginSettingsFactory)).build();
+    return Response.ok(Config.get(configKey)).build();
   }
 
   @PUT
@@ -109,7 +109,7 @@ public class ConfigResource {
       return Response.status(Status.BAD_REQUEST).header("Error", "manual-migration-needed").build();
     }
 
-    Config.put(config, transactionTemplate, pluginSettingsFactory);
+    Config.put(config);
     PluginSettings settings = pluginSettingsFactory.createGlobalSettings();
     settings.put(KEY_SETTINGS_NAME, config.getKey());
 

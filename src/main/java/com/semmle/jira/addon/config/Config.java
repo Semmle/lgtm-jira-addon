@@ -1,5 +1,6 @@
 package com.semmle.jira.addon.config;
 
+import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionCallback;
@@ -68,10 +69,12 @@ public class Config {
     this.trackerKey = trackerKey;
   }
 
-  public static Config get(
-      String configKey,
-      TransactionTemplate transactionTemplate,
-      PluginSettingsFactory pluginSettingsFactory) {
+  public static Config get(String configKey) {
+
+    TransactionTemplate transactionTemplate =
+        ComponentAccessor.getOSGiComponentInstanceOfType(TransactionTemplate.class);
+    PluginSettingsFactory pluginSettingsFactory =
+        ComponentAccessor.getOSGiComponentInstanceOfType(PluginSettingsFactory.class);
     return transactionTemplate.execute(
         new TransactionCallback<Config>() {
           public Config doInTransaction() {
@@ -94,10 +97,11 @@ public class Config {
         });
   }
 
-  public static void put(
-      Config config,
-      TransactionTemplate transactionTemplate,
-      PluginSettingsFactory pluginSettingsFactory) {
+  public static void put(Config config) {
+    TransactionTemplate transactionTemplate =
+        ComponentAccessor.getOSGiComponentInstanceOfType(TransactionTemplate.class);
+    PluginSettingsFactory pluginSettingsFactory =
+        ComponentAccessor.getOSGiComponentInstanceOfType(PluginSettingsFactory.class);
     transactionTemplate.execute(
         new TransactionCallback<Void>() {
           public Void doInTransaction() {
