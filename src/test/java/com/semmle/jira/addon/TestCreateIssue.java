@@ -24,6 +24,7 @@ import com.atlassian.jira.issue.label.LabelManager;
 import com.atlassian.jira.junit.rules.AvailableInContainer;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.util.ErrorCollection;
+import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.semmle.jira.addon.Request.Alert;
 import com.semmle.jira.addon.Request.Alert.Query;
 import com.semmle.jira.addon.Request.Project;
@@ -53,6 +54,11 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
   @AvailableInContainer
   private FieldLayoutManager fieldLayoutManager = mock(FieldLayoutManager.class);
 
+  @AvailableInContainer
+  PluginSettingsFactory pluginSettingsFactory = mock(PluginSettingsFactory.class);
+
+  protected MockPluginSettings pluginSettings = new MockPluginSettings();
+
   CreateValidationResult createValidationResult = mock(CreateValidationResult.class);
   ProcessedConfig config = mock(ProcessedConfig.class);
 
@@ -75,6 +81,8 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
   @Before
   public void initTests() {
     super.initTests();
+
+    when(pluginSettingsFactory.createGlobalSettings()).thenReturn(pluginSettings);
 
     IssueType lgtmIssueType = mock(IssueType.class);
     when(lgtmIssueType.getName()).thenReturn(Constants.ISSUE_TYPE_NAME);

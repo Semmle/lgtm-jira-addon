@@ -16,6 +16,7 @@ import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.junit.rules.AvailableInContainer;
 import com.atlassian.jira.junit.rules.MockitoContainer;
+import com.atlassian.jira.junit.rules.MockitoMocksInContainer;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionCallback;
@@ -37,8 +38,7 @@ import org.junit.Test;
 import org.ofbiz.core.entity.GenericEntityException;
 
 public class LgtmTransitionNotificationFunctionTest {
-
-  @Rule public MockitoContainer mockitoContainer = new MockitoContainer(this);
+  @Rule public MockitoContainer mockitoContainer = MockitoMocksInContainer.rule(this);
 
   @AvailableInContainer
   private CustomFieldManager customFieldManager = mock(CustomFieldManager.class);
@@ -50,7 +50,16 @@ public class LgtmTransitionNotificationFunctionTest {
   @AvailableInContainer private ConstantsManager constantsManager = mock(ConstantsManager.class);
 
   @AvailableInContainer
-  private PluginSettingsFactory settingsFactory = mock(PluginSettingsFactory.class);
+  protected TransactionTemplate transactionTemplate =
+      new TransactionTemplate() {
+        @Override
+        public <T> T execute(TransactionCallback<T> action) {
+          return action.doInTransaction();
+        }
+      };
+
+  @AvailableInContainer
+  protected PluginSettingsFactory pluginSettingsFactory = mock(PluginSettingsFactory.class);
 
   private LgtmTransitionNotificationFunction function;
   private MutableIssue issue;
@@ -72,24 +81,16 @@ public class LgtmTransitionNotificationFunctionTest {
     PluginSettings settings = new MockPluginSettings();
     settings.put(Constants.CUSTOM_FIELD_CONFIG_KEY, (Object) customField.getIdAsLong().toString());
 
-    when(settingsFactory.createGlobalSettings()).thenReturn(settings);
+    when(pluginSettingsFactory.createGlobalSettings()).thenReturn(settings);
 
-    TransactionTemplate transaction =
-        new TransactionTemplate() {
-
-          @Override
-          public <T> T execute(TransactionCallback<T> action) {
-            return action.doInTransaction();
-          }
-        };
     Config config = new Config();
     config.setKey(CONFIG_KEY);
     config.setLgtmSecret("secret");
     config.setExternalHookUrl(URI.create("https://localhost:8080"));
-    Config.put(config, transaction, settingsFactory);
+    Config.put(config);
 
     function =
-        new LgtmTransitionNotificationFunction(settingsFactory, transaction) {
+        new LgtmTransitionNotificationFunction() {
           @Override
           protected MutableIssue getIssue(@SuppressWarnings("rawtypes") Map transientVars) {
             return issue;

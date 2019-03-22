@@ -3,9 +3,6 @@ package com.semmle.jira.addon.workflow;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.workflow.function.issue.AbstractJiraFunctionProvider;
-import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
-import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
-import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.workflow.InvalidInputException;
 import com.opensymphony.workflow.WorkflowException;
@@ -22,7 +19,6 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Map;
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import org.codehaus.jackson.JsonProcessingException;
 import org.slf4j.Logger;
@@ -34,16 +30,6 @@ public class LgtmTransitionNotificationFunction extends AbstractJiraFunctionProv
       LoggerFactory.getLogger(LgtmTransitionNotificationFunction.class);
 
   public static final String FIELD_TRANSITION = "transition";
-
-  @ComponentImport private final PluginSettingsFactory pluginSettingsFactory;
-  @ComponentImport private final TransactionTemplate transactionTemplate;
-
-  @Inject
-  LgtmTransitionNotificationFunction(
-      PluginSettingsFactory pluginSettingsFactory, TransactionTemplate transactionTemplate) {
-    this.pluginSettingsFactory = pluginSettingsFactory;
-    this.transactionTemplate = transactionTemplate;
-  }
 
   @Override
   @SuppressWarnings("rawtypes")
@@ -66,7 +52,8 @@ public class LgtmTransitionNotificationFunction extends AbstractJiraFunctionProv
     // for backwards compatibility
     if (configKey == null) configKey = "webhook";
 
-    Config config = Config.get(configKey, transactionTemplate, pluginSettingsFactory);
+    Config config = Config.get(configKey);
+
     URI url = config.getExternalHookUrl();
     // There is no external hook URL configured
     if (url == null) return;

@@ -1,6 +1,7 @@
 package com.semmle.jira.addon;
 
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -10,10 +11,13 @@ import com.atlassian.jira.config.ConstantsManager;
 import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.issue.status.Status;
 import com.atlassian.jira.junit.rules.AvailableInContainer;
+import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
+import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionCallback;
+import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.semmle.jira.addon.config.Config;
 import com.semmle.jira.addon.config.ProcessedConfig;
 import java.io.IOException;
@@ -29,6 +33,12 @@ public class TestValidateRequest extends TestLgtmServletBase {
   @AvailableInContainer private ProjectManager projectManager = mock(ProjectManager.class);
   @AvailableInContainer private ConstantsManager constantsManager = mock(ConstantsManager.class);
 
+  @AvailableInContainer
+  private TransactionTemplate transactionTemplate = mock(TransactionTemplate.class);
+
+  @AvailableInContainer
+  private PluginSettingsFactory pluginSettingsFactory = mock(PluginSettingsFactory.class);
+
   Config config;
 
   @Before
@@ -39,7 +49,7 @@ public class TestValidateRequest extends TestLgtmServletBase {
     when(userManager.getUserByName(any(String.class))).thenReturn(user);
 
     // Project Manager
-    com.atlassian.jira.project.Project project = mock(com.atlassian.jira.project.Project.class);
+    Project project = mock(Project.class);
     when(project.getId()).thenReturn(1l);
     when(projectManager.getProjectByCurrentKey(any(String.class))).thenReturn(project);
 
