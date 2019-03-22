@@ -8,6 +8,7 @@ import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
+import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.semmle.jira.addon.util.Constants;
 import com.semmle.jira.addon.util.JiraUtils;
@@ -57,8 +58,8 @@ public class ConfigResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   public Response get(@Context HttpServletRequest request) {
-    String username = userManager.getRemoteUsername(request);
-    if (username == null || !userManager.isSystemAdmin(username)) {
+    UserKey userKey = userManager.getRemoteUserKey(request);
+    if (userKey == null || !userManager.isSystemAdmin(userKey)) {
       return Response.status(Status.UNAUTHORIZED).build();
     }
 
@@ -75,8 +76,8 @@ public class ConfigResource {
   @PUT
   @Consumes(MediaType.APPLICATION_JSON)
   public Response put(final Config config, @Context HttpServletRequest request) {
-    String username = userManager.getRemoteUsername(request);
-    if (username == null || !userManager.isSystemAdmin(username)) {
+    UserKey userKey = userManager.getRemoteUserKey(request);
+    if (userKey == null || !userManager.isSystemAdmin(userKey)) {
       return Response.status(Status.UNAUTHORIZED).build();
     }
 

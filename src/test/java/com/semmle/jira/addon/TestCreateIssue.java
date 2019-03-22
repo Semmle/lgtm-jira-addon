@@ -122,7 +122,6 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
     when(fieldLayout.getFieldLayoutItem(customField)).thenReturn(fieldLayoutItem);
   }
 
-  @SuppressWarnings("rawtypes")
   @Test
   public void testCreateIssueSuccess() throws IOException {
     HttpServletResponse resp = mockResponse();

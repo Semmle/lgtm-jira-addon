@@ -15,7 +15,7 @@ public class UpgradeTask1CreateIssueType implements PluginUpgradeTask {
   private final int BUILD_NUMER = 1;
 
   @Override
-  public Collection<Message> doUpgrade() throws Exception {
+  public Collection<Message> doUpgrade() {
     JiraUtils.createLgtmIssueType();
 
     return Collections.emptySet();

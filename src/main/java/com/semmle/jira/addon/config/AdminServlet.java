@@ -2,13 +2,13 @@ package com.semmle.jira.addon.config;
 
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.auth.LoginUriProvider;
+import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.webresource.api.assembler.PageBuilderService;
 import java.io.IOException;
 import java.net.URI;
 import javax.inject.Inject;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,10 +35,9 @@ public class AdminServlet extends HttpServlet {
   }
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException {
-    String username = userManager.getRemoteUsername(request);
-    if (username == null || !userManager.isSystemAdmin(username)) {
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    UserKey userKey = userManager.getRemoteUserKey(request);
+    if (userKey == null || !userManager.isSystemAdmin(userKey)) {
       redirectToLogin(request, response);
       return;
     }

@@ -30,7 +30,7 @@ public class UpgradeTask3ConfigMigration implements PluginUpgradeTask {
   }
 
   @Override
-  public Collection<Message> doUpgrade() throws Exception {
+  public Collection<Message> doUpgrade() {
     String configKey = (String) settings.get(KEY_SETTINGS_NAME);
 
     if (configKey != null && !configKey.isEmpty()) {

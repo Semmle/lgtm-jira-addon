@@ -7,6 +7,7 @@ import com.semmle.jira.addon.util.Constants;
 import com.semmle.jira.addon.util.JiraUtils;
 import java.util.Collection;
 import java.util.Collections;
+import org.ofbiz.core.entity.GenericEntityException;
 import org.springframework.stereotype.Component;
 
 @ExportAsService(PluginUpgradeTask.class)
@@ -16,7 +17,7 @@ public class UpgradeTask4CreateConfigKeyField implements PluginUpgradeTask {
   private static final int BUILD_NUMER = 4;
 
   @Override
-  public Collection<Message> doUpgrade() throws Exception {
+  public Collection<Message> doUpgrade() throws GenericEntityException {
 
     JiraUtils.createConfigKeyCustomField();
 
