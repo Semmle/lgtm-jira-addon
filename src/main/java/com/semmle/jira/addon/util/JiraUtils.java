@@ -4,6 +4,13 @@ import com.atlassian.jira.bc.issue.search.SearchService;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.ConstantsManager;
 import com.atlassian.jira.config.IssueTypeManager;
+import com.atlassian.jira.config.managedconfiguration.ConfigurationItemAccessLevel;
+import com.atlassian.jira.config.managedconfiguration.ManagedConfigurationItem;
+import com.atlassian.jira.config.managedconfiguration.ManagedConfigurationItemBuilder;
+import com.atlassian.jira.config.managedconfiguration.ManagedConfigurationItemService;
+import com.atlassian.jira.issue.CustomFieldManager;
+import com.atlassian.jira.issue.context.GlobalIssueContext;
+import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.fields.config.FieldConfigScheme;
 import com.atlassian.jira.issue.fields.config.manager.IssueTypeSchemeManager;
 import com.atlassian.jira.issue.issuetype.IssueType;
@@ -17,8 +24,11 @@ import com.atlassian.jira.web.bean.PagerFilter;
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.WorkflowManager;
 import com.atlassian.jira.workflow.WorkflowSchemeManager;
+import com.atlassian.sal.api.pluginsettings.PluginSettings;
+import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -137,5 +147,90 @@ public class JiraUtils {
     } catch (IllegalStateException e) {
       // Issue Type already created
     }
+  }
+
+  public static void createConfigKeyCustomField() throws GenericEntityException {
+
+    CustomFieldManager customFieldManager = ComponentAccessor.getCustomFieldManager();
+
+    ManagedConfigurationItemService managedConfigurationItemService =
+        ComponentAccessor.getComponentOfType(ManagedConfigurationItemService.class);
+
+    CustomField customField = null;
+    ManagedConfigurationItem managedField;
+
+    for (CustomField candidateField :
+        customFieldManager.getCustomFieldObjectsByName(Constants.CUSTOM_FIELD_NAME)) {
+
+      managedField = managedConfigurationItemService.getManagedCustomField(candidateField);
+
+      if (managedField != null
+          && managedField.isManaged()
+          && managedField.getConfigurationItemAccessLevel() == ConfigurationItemAccessLevel.LOCKED
+          && managedField.getSourceId() == Constants.PLUGIN_KEY) {
+        customField = candidateField;
+        break;
+      }
+    }
+
+    if (customField == null) {
+
+      customField =
+          customFieldManager.createCustomField(
+              Constants.CUSTOM_FIELD_NAME,
+              Constants.CUSTOM_FIELD_NAME,
+              customFieldManager.getCustomFieldType(
+                  "com.atlassian.jira.plugin.system.customfieldtypes:textfield"),
+              customFieldManager.getCustomFieldSearcher(
+                  "com.atlassian.jira.plugin.system.customfieldtypes:exacttextsearcher"),
+              Collections.singletonList(GlobalIssueContext.getInstance()),
+              Collections.singletonList(JiraUtils.getLgtmIssueType()));
+
+      managedField = managedConfigurationItemService.getManagedCustomField(customField);
+
+      ManagedConfigurationItemBuilder builder =
+          ManagedConfigurationItemBuilder.builder(managedField);
+
+      builder.setManaged(true);
+      builder.setConfigurationItemAccessLevel(ConfigurationItemAccessLevel.LOCKED);
+      builder.setSource(Constants.PLUGIN_KEY);
+
+      managedConfigurationItemService.updateManagedConfigurationItem(builder.build());
+    }
+
+    getSettingsObject()
+        .put(Constants.CUSTOM_FIELD_CONFIG_KEY, customField.getIdAsLong().toString());
+
+    return;
+  }
+
+  private static PluginSettings getSettingsObject() {
+
+    PluginSettingsFactory pluginSettingsFactory =
+        ComponentAccessor.getOSGiComponentInstanceOfType(PluginSettingsFactory.class);
+
+    PluginSettings settings = pluginSettingsFactory.createGlobalSettings();
+
+    return settings;
+  }
+
+  public static CustomField getConfigKeyCustomField() throws CustomFieldRetrievalException {
+
+    long fieldId;
+    try {
+      fieldId = Long.parseLong((String) getSettingsObject().get(Constants.CUSTOM_FIELD_CONFIG_KEY));
+    } catch (ClassCastException | NumberFormatException e) {
+      throw new CustomFieldRetrievalException("Invalid custom field config key.", e);
+    }
+
+    CustomField customField =
+        ComponentAccessor.getCustomFieldManager().getCustomFieldObject(fieldId);
+
+    if (customField == null) {
+      throw new CustomFieldRetrievalException(
+          "Custom field not found with specified id = " + String.valueOf(fieldId));
+    }
+
+    return customField;
   }
 }

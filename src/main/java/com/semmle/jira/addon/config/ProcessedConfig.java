@@ -8,10 +8,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ProcessedConfig {
+  private String key;
   private ApplicationUser user;
   private Project project;
 
   public ProcessedConfig(Config config) throws InvalidConfigurationException {
+
+    key = config.getKey();
 
     List<String> configErrors = new ArrayList<>();
 
@@ -37,6 +40,10 @@ public class ProcessedConfig {
           configErrors.stream().collect(Collectors.joining(", ", "Invalid configuration – ", "."));
       throw new InvalidConfigurationException(message);
     }
+  }
+
+  public String getKey() {
+    return key;
   }
 
   public ApplicationUser getUser() {

@@ -186,7 +186,7 @@ public class IntegrationTest {
   private Config configurePlugin() throws ClientProtocolException, IOException {
 
     config = new Config();
-    config.setKey("webhook");
+    config.setKey("config_key");
     config.setLgtmSecret("12345678");
     config.setUsername("admin");
     config.setProjectKey("MKY");
@@ -210,7 +210,7 @@ public class IntegrationTest {
 
   private Issue postWebhookJson(Object request) throws ClientProtocolException, IOException {
     byte[] payload = Util.JSON.writeValueAsBytes(request);
-    HttpPost httpPost = new HttpPost(baseUrl + "/plugins/servlet/lgtm/webhook");
+    HttpPost httpPost = new HttpPost(baseUrl + "/plugins/servlet/lgtm/" + config.getKey());
 
     httpPost.setHeader("X-LGTM-Signature", Util.calculateHmac(config.getLgtmSecret(), payload));
 

@@ -10,7 +10,11 @@ public class Constants {
   public static final String WORKFLOW_CLOSE_TRANSITION_NAME = "LGTM.Close";
   public static final String WORKFLOW_SUPPRESS_TRANSITION_NAME = "LGTM.Suppress";
 
+  public static final String CUSTOM_FIELD_NAME = "LGTM Config Key";
   public static final String LGTM_PAYLOAD_PROPERTY = "lgtm.request.payload";
 
   public static final String CONFIGURED_VERSION_KEY = "com.lgtm.addon.version";
+
+  public static final String CUSTOM_FIELD_CONFIG_KEY =
+      "com.lgtm.addon.config.configKeyCustomFieldId";
 }

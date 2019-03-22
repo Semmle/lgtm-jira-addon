@@ -3,6 +3,7 @@ package com.semmle.jira.addon;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.atlassian.jira.junit.rules.AvailableInContainer;
 import com.atlassian.jira.junit.rules.MockitoContainer;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
@@ -20,14 +21,17 @@ public class TestLgtmServletBase {
 
   @Rule public MockitoContainer mockitoContainer = new MockitoContainer(this);
 
-  PluginSettingsFactory pluginSettingsFactory;
+  @AvailableInContainer
+  PluginSettingsFactory pluginSettingsFactory = mock(PluginSettingsFactory.class);;
+  protected MockPluginSettings pluginSettings;
   TransactionTemplate transactionTemplate;
   LgtmServlet servlet;
   List<String> log = new ArrayList<>();
 
   @Before
   public void setupServlet() {
-    pluginSettingsFactory = mock(PluginSettingsFactory.class);
+    pluginSettings = new MockPluginSettings();
+    when(pluginSettingsFactory.createGlobalSettings()).thenReturn(pluginSettings);
     transactionTemplate = mock(TransactionTemplate.class);
     servlet =
         new LgtmServlet(pluginSettingsFactory, transactionTemplate) {
