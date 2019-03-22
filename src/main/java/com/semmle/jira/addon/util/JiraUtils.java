@@ -167,7 +167,7 @@ public class JiraUtils {
       if (managedField != null
           && managedField.isManaged()
           && managedField.getConfigurationItemAccessLevel() == ConfigurationItemAccessLevel.LOCKED
-          && managedField.getSourceId() == Constants.PLUGIN_KEY) {
+          && managedField.getSourceId().equals(Constants.PLUGIN_KEY)) {
         customField = candidateField;
         break;
       }
