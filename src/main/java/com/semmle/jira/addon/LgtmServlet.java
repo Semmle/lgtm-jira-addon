@@ -78,22 +78,28 @@ public class LgtmServlet extends HttpServlet {
       return;
     }
 
-    switch (request.transition) {
-      case CREATE:
-        createIssue(jsonRequest, request, resp, config);
-        break;
-      case REOPEN:
-        applyTransition(issue, Constants.WORKFLOW_REOPEN_TRANSITION_NAME, true, user, resp);
-        break;
-      case CLOSE:
-        applyTransition(issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, true, user, resp);
-        break;
-      case SUPPRESS:
-        applyTransition(issue, Constants.WORKFLOW_SUPPRESS_TRANSITION_NAME, false, user, resp);
-        break;
-      case UNSUPPRESS:
-        applyTransition(issue, Constants.WORKFLOW_REOPEN_TRANSITION_NAME, true, user, resp);
-        break;
+    try {
+      switch (request.transition) {
+        case CREATE:
+          createIssue(jsonRequest, request, resp, config);
+          break;
+        case REOPEN:
+          applyTransition(issue, Constants.WORKFLOW_REOPEN_TRANSITION_NAME, true, user);
+          break;
+        case CLOSE:
+          applyTransition(issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, true, user);
+          break;
+        case SUPPRESS:
+          applyTransition(issue, Constants.WORKFLOW_SUPPRESS_TRANSITION_NAME, false, user);
+          break;
+        case UNSUPPRESS:
+          applyTransition(issue, Constants.WORKFLOW_REOPEN_TRANSITION_NAME, true, user);
+          break;
+      }
+      Response response = new Response(issue.getId());
+      sendJSON(resp, HttpServletResponse.SC_OK, response);
+    } catch (TransitionNotFoundException e) {
+      sendError(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "No valid transition found.");
     }
   }
 
@@ -183,12 +189,8 @@ public class LgtmServlet extends HttpServlet {
   }
 
   void applyTransition(
-      MutableIssue issue,
-      String transitionName,
-      boolean skipValidate,
-      ApplicationUser user,
-      HttpServletResponse resp)
-      throws IOException {
+      MutableIssue issue, String transitionName, boolean skipValidate, ApplicationUser user)
+      throws IOException, TransitionNotFoundException {
     IssueInputParameters issueInputParameters =
         ComponentAccessor.getIssueService().newIssueInputParameters();
     issueInputParameters.setRetainExistingValuesWhenParameterNotProvided(true, true);
@@ -223,8 +225,7 @@ public class LgtmServlet extends HttpServlet {
       }
     }
     if (!anyApplicable) {
-      sendError(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "No valid transition found.");
-      return;
+      throw new TransitionNotFoundException();
     }
     if (!success) {
       // There was an applicable transition, however, it could not be executed.
@@ -235,8 +236,6 @@ public class LgtmServlet extends HttpServlet {
               "Transition %s could not be applied for issue %s with status %s.",
               transitionName, issue.getId(), issue.getStatus().getName()));
     }
-    Response response = new Response(issue.getId());
-    sendJSON(resp, HttpServletResponse.SC_OK, response);
   }
 
   private void writeErrors(ServiceResult result, HttpServletResponse resp) throws IOException {
@@ -256,5 +255,9 @@ public class LgtmServlet extends HttpServlet {
     resp.setCharacterEncoding("UTF-8");
     resp.setStatus(code);
     Util.JSON.writeValue(resp.getOutputStream(), value);
+  }
+
+  class TransitionNotFoundException extends Exception {
+    private static final long serialVersionUID = 1L;
   }
 }

@@ -3,7 +3,6 @@ package com.semmle.jira.addon;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.atlassian.jira.bc.issue.IssueService.IssueResult;
@@ -18,6 +17,7 @@ import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.TransitionOptions;
 import com.atlassian.jira.workflow.WorkflowManager;
 import com.opensymphony.workflow.loader.ActionDescriptor;
+import com.semmle.jira.addon.LgtmServlet.TransitionNotFoundException;
 import com.semmle.jira.addon.config.ProcessedConfig;
 import com.semmle.jira.addon.util.Constants;
 import java.io.IOException;
@@ -58,8 +58,9 @@ public class TestApplyTransition extends TestCreateAndTransitionBase {
     when(config.getUser()).thenReturn(user);
   }
 
-  @Test
-  public void testApplyTransitionTransitionNotFound() throws IOException {
+  @Test(expected = TransitionNotFoundException.class)
+  public void testApplyTransitionTransitionNotFound()
+      throws IOException, TransitionNotFoundException {
     HttpServletResponse resp = mockResponse();
 
     when(transitionValidationResult.isValid()).thenReturn(false);
@@ -67,16 +68,11 @@ public class TestApplyTransition extends TestCreateAndTransitionBase {
     MutableIssue issue = mock(MutableIssue.class);
 
     servlet.applyTransition(
-        issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, true, config.getUser(), resp);
-
-    Assert.assertEquals(
-        "{\"code\":500,\"error\":\"No valid transition found.\"}",
-        resp.getOutputStream().toString());
-    verify(resp).setStatus(500);
+        issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, true, config.getUser());
   }
 
   @Test
-  public void testApplyTransitionInvalid() throws IOException {
+  public void testApplyTransitionInvalid() throws IOException, TransitionNotFoundException {
     HttpServletResponse resp = mockResponse();
 
     when(transitionValidationResult.isValid()).thenReturn(true);
@@ -90,17 +86,16 @@ public class TestApplyTransition extends TestCreateAndTransitionBase {
     when(issue.getStatus()).thenReturn(new MockStatus("100", "StatusName"));
 
     servlet.applyTransition(
-        issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, true, config.getUser(), resp);
+        issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, true, config.getUser());
     // There was an applicable transition, however, it could not be executed. We just log a message
     // if this happens.
     Assert.assertEquals(
         "Transition LGTM.Close could not be applied for issue 0 with status StatusName.",
         log.get(0));
-    verify(resp).setStatus(200);
   }
 
   @Test
-  public void testApplyTransitionSuccess() throws IOException {
+  public void testApplyTransitionSuccess() throws IOException, TransitionNotFoundException {
     HttpServletResponse resp = mockResponse();
 
     when(transitionValidationResult.isValid()).thenReturn(true);
@@ -113,8 +108,8 @@ public class TestApplyTransition extends TestCreateAndTransitionBase {
     when(issueResult.getIssue()).thenReturn(issue);
 
     servlet.applyTransition(
-        issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, true, config.getUser(), resp);
+        issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, true, config.getUser());
 
-    verify(resp).setStatus(200);
+    Assert.assertTrue(log.isEmpty());
   }
 }
