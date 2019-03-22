@@ -4,7 +4,6 @@ import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.workflow.function.issue.AbstractJiraFunctionProvider;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
-import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.opensymphony.module.propertyset.PropertySet;
@@ -39,14 +38,11 @@ public class LgtmTransitionNotificationFunction extends AbstractJiraFunctionProv
   @ComponentImport private final PluginSettingsFactory pluginSettingsFactory;
   @ComponentImport private final TransactionTemplate transactionTemplate;
 
-  private final PluginSettings settings;
-
   @Inject
   LgtmTransitionNotificationFunction(
       PluginSettingsFactory pluginSettingsFactory, TransactionTemplate transactionTemplate) {
     this.pluginSettingsFactory = pluginSettingsFactory;
     this.transactionTemplate = transactionTemplate;
-    this.settings = pluginSettingsFactory.createGlobalSettings();
   }
 
   @Override
@@ -60,7 +56,9 @@ public class LgtmTransitionNotificationFunction extends AbstractJiraFunctionProv
     try {
       customField = JiraUtils.getConfigKeyCustomField();
     } catch (CustomFieldRetrievalException e) {
-      throw new WorkflowException(e);
+      String message = "Retrieval of custom field for config key failed.";
+      log.error(message, e);
+      throw new WorkflowException(message, e);
     }
 
     String configKey = (String) issue.getCustomFieldValue(customField);

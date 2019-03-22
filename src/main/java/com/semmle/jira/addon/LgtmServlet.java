@@ -5,13 +5,13 @@ import com.atlassian.jira.bc.issue.IssueService;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.IssueInputParameters;
 import com.atlassian.jira.issue.MutableIssue;
+import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.label.LabelManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.TransitionOptions;
 import com.atlassian.jira.workflow.TransitionOptions.Builder;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
-import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.opensymphony.workflow.loader.ActionDescriptor;
@@ -31,21 +31,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LgtmServlet extends HttpServlet {
   /** */
   private static final long serialVersionUID = -1528900525848515993L;
 
+  private static final Logger log = LoggerFactory.getLogger(LgtmServlet.class);
+
   @ComponentImport private final PluginSettingsFactory pluginSettingsFactory;
   @ComponentImport private final TransactionTemplate transactionTemplate;
-  private final PluginSettings settings;
 
   @Inject
   LgtmServlet(
       PluginSettingsFactory pluginSettingsFactory, TransactionTemplate transactionTemplate) {
     this.pluginSettingsFactory = pluginSettingsFactory;
     this.transactionTemplate = transactionTemplate;
-    this.settings = pluginSettingsFactory.createGlobalSettings();
   }
 
   @Override
@@ -165,11 +167,11 @@ public class LgtmServlet extends HttpServlet {
       return;
     }
 
+    CustomField customField;
     try {
-      createValidationResult
-          .getIssue()
-          .setCustomFieldValue(JiraUtils.getConfigKeyCustomField(), config.getKey());
+      customField = JiraUtils.getConfigKeyCustomField();
     } catch (CustomFieldRetrievalException e) {
+      log.error("Retrieval of custom field for config key failed.", e);
       sendError(
           resp,
           HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
@@ -177,16 +179,18 @@ public class LgtmServlet extends HttpServlet {
       return;
     }
 
+    createValidationResult.getIssue().setCustomFieldValue(customField, config.getKey());
+
     IssueService.IssueResult issueResult =
         ComponentAccessor.getIssueService().create(config.getUser(), createValidationResult);
-
-    LabelManager mgr = ComponentAccessor.getComponent(LabelManager.class);
-    mgr.addLabel(config.getUser(), issueResult.getIssue().getId(), request.project.name, false);
 
     if (!issueResult.isValid()) {
       writeErrors(issueResult, resp);
       return;
     }
+
+    ComponentAccessor.getComponent(LabelManager.class)
+        .addLabel(config.getUser(), issueResult.getIssue().getId(), request.project.name, false);
 
     Response response = new Response(issueResult.getIssue().getId());
     sendJSON(resp, HttpServletResponse.SC_CREATED, response);

@@ -2,7 +2,6 @@ package com.semmle.jira.addon;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -15,7 +14,6 @@ import com.atlassian.jira.config.managedconfiguration.ManagedConfigurationItem;
 import com.atlassian.jira.config.managedconfiguration.ManagedConfigurationItemService;
 import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.IssueInputParameters;
-import com.atlassian.jira.issue.ModifiedValue;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.fields.layout.field.FieldLayout;
@@ -23,7 +21,6 @@ import com.atlassian.jira.issue.fields.layout.field.FieldLayoutItem;
 import com.atlassian.jira.issue.fields.layout.field.FieldLayoutManager;
 import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.issue.label.LabelManager;
-import com.atlassian.jira.issue.util.DefaultIssueChangeHolder;
 import com.atlassian.jira.junit.rules.AvailableInContainer;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.util.ErrorCollection;
@@ -37,7 +34,6 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentMatcher;
 
 public class TestCreateIssue extends TestCreateAndTransitionBase {
 
@@ -96,6 +92,7 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
 
     ErrorCollection errorCollection = mock(ErrorCollection.class);
     when(createValidationResult.getErrorCollection()).thenReturn(errorCollection);
+    when(createValidationResult.getIssue()).thenReturn(issue);
 
     when(issueService.create(any(), any())).thenReturn(issueResult);
     when(issueResult.getIssue()).thenReturn(issue);
@@ -128,18 +125,7 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
     servlet.createIssue(Util.JSON.valueToTree(request), request, resp, config);
     verify(resp).setStatus(201);
 
-    verify(customField)
-        .updateValue(
-            eq(fieldLayoutItem),
-            eq(issue),
-            argThat(
-                new ArgumentMatcher<ModifiedValue>() {
-                  @Override
-                  public boolean matches(ModifiedValue modifiedValue) {
-                    return modifiedValue.getNewValue() == CONFIG_KEY;
-                  }
-                }),
-            eq(new DefaultIssueChangeHolder()));
+    verify(issue).setCustomFieldValue(customField, config.getKey());
   }
 
   @Test

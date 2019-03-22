@@ -49,6 +49,9 @@ public class LgtmTransitionNotificationFunctionTest {
 
   @AvailableInContainer private ConstantsManager constantsManager = mock(ConstantsManager.class);
 
+  @AvailableInContainer
+  private PluginSettingsFactory settingsFactory = mock(PluginSettingsFactory.class);
+
   private LgtmTransitionNotificationFunction function;
   private MutableIssue issue;
   private Request requestBody;
@@ -58,15 +61,13 @@ public class LgtmTransitionNotificationFunctionTest {
   @Before
   public void setup() {
     CustomField customField = mock(CustomField.class);
-    when(customFieldManager.getCustomFieldObjectsByName(Constants.CUSTOM_FIELD_NAME))
-        .thenReturn(Collections.singletonList(customField));
+    when(customFieldManager.getCustomFieldObject(customField.getIdAsLong()))
+        .thenReturn(customField);
 
     issue = mock(MutableIssue.class);
     when(issue.getId()).thenReturn(10L);
     String CONFIG_KEY = "webhook";
     when(issue.getCustomFieldValue(customField)).thenReturn(CONFIG_KEY);
-
-    PluginSettingsFactory settingsFactory = mock(PluginSettingsFactory.class);
 
     PluginSettings settings = new MockPluginSettings();
     settings.put(Constants.CUSTOM_FIELD_CONFIG_KEY, (Object) customField.getIdAsLong().toString());

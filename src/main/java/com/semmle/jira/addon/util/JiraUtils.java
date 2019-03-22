@@ -220,16 +220,15 @@ public class JiraUtils {
     try {
       fieldId = Long.parseLong((String) getSettingsObject().get(Constants.CUSTOM_FIELD_CONFIG_KEY));
     } catch (ClassCastException | NumberFormatException e) {
-      log.error("Invalid custom field config key.", e);
-      throw new CustomFieldRetrievalException();
+      throw new CustomFieldRetrievalException("Invalid custom field config key.", e);
     }
 
     CustomField customField =
         ComponentAccessor.getCustomFieldManager().getCustomFieldObject(fieldId);
 
     if (customField == null) {
-      log.error("Custom field not found with specified id = " + String.valueOf(fieldId));
-      throw new CustomFieldRetrievalException();
+      throw new CustomFieldRetrievalException(
+          "Custom field not found with specified id = " + String.valueOf(fieldId));
     }
 
     return customField;
