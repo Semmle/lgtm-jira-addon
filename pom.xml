@@ -175,7 +175,7 @@
 					<instructions>
 						<Atlassian-Plugin-Key>${atlassian.plugin.key}</Atlassian-Plugin-Key>
 						<!-- Add package to export here -->
-						<Export-Package>com.semmle.jira.addon.config.upgrades</Export-Package>
+						<Export-Package></Export-Package>
 						<!-- Add package import here -->
 						<Import-Package>*</Import-Package>
 						<!-- Ensure plugin is spring powered -->
