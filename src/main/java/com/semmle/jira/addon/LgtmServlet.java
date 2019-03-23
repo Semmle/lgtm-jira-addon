@@ -6,7 +6,8 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.IssueInputParameters;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.fields.CustomField;
-import com.atlassian.jira.issue.label.LabelManager;
+import com.atlassian.jira.issue.fields.LabelsField;
+import com.atlassian.jira.issue.label.LabelParser;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.TransitionOptions;
@@ -165,6 +166,10 @@ public class LgtmServlet extends HttpServlet {
 
     createValidationResult.getIssue().setCustomFieldValue(customField, config.getKey());
 
+    // replace label separators (spaces) with underscores
+    String projectLabel = request.project.name.replace(LabelsField.SEPARATOR_CHAR, "_");
+    createValidationResult.getIssue().setLabels(LabelParser.buildFromString(projectLabel));
+
     IssueService.IssueResult issueResult =
         ComponentAccessor.getIssueService().create(config.getUser(), createValidationResult);
 
@@ -172,9 +177,6 @@ public class LgtmServlet extends HttpServlet {
       writeErrors(issueResult, resp);
       return;
     }
-
-    ComponentAccessor.getComponent(LabelManager.class)
-        .addLabel(config.getUser(), issueResult.getIssue().getId(), request.project.name, false);
 
     Response response = new Response(issueResult.getIssue().getId());
     sendJSON(resp, HttpServletResponse.SC_CREATED, response);
