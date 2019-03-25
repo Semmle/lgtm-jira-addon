@@ -3,11 +3,13 @@ package com.semmle.jira.addon.config.upgrades;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.message.Message;
 import com.atlassian.sal.api.upgrade.PluginUpgradeTask;
+import com.opensymphony.workflow.FactoryException;
 import com.semmle.jira.addon.Util;
 import com.semmle.jira.addon.util.Constants;
 import com.semmle.jira.addon.util.workflow.WorkflowResolution;
 import com.semmle.jira.addon.util.workflow.WorkflowStatus;
 import com.semmle.jira.addon.util.workflow.WorkflowUtils;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,7 +22,7 @@ public class UpgradeTask2CreateWorkflow implements PluginUpgradeTask {
   private final int BUILD_NUMER = 2;
 
   @Override
-  public Collection<Message> doUpgrade() throws Exception {
+  public Collection<Message> doUpgrade() throws IOException, FactoryException {
     ClassLoader classLoader = UpgradeTask2CreateWorkflow.class.getClassLoader();
     String workflowXml;
     try (InputStream is = classLoader.getResourceAsStream("workflow/workflow.xml")) {

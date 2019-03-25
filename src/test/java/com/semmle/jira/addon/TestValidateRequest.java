@@ -2,7 +2,6 @@ package com.semmle.jira.addon;
 
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -26,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 
 public class TestValidateRequest extends TestLgtmServletBase {
   @AvailableInContainer private UserManager userManager = mock(UserManager.class);
@@ -66,7 +65,7 @@ public class TestValidateRequest extends TestLgtmServletBase {
 
     // Config
     setupConfig();
-    when(transactionTemplate.execute(Matchers.<TransactionCallback<Config>>any()))
+    when(transactionTemplate.execute(ArgumentMatchers.<TransactionCallback<Config>>any()))
         .thenReturn(config);
   }
 
