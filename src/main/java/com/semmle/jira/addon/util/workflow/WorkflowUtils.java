@@ -4,6 +4,10 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.ResolutionManager;
 import com.atlassian.jira.config.StatusCategoryManager;
 import com.atlassian.jira.config.StatusManager;
+import com.atlassian.jira.config.managedconfiguration.ConfigurationItemAccessLevel;
+import com.atlassian.jira.config.managedconfiguration.ManagedConfigurationItem;
+import com.atlassian.jira.config.managedconfiguration.ManagedConfigurationItemBuilder;
+import com.atlassian.jira.config.managedconfiguration.ManagedConfigurationItemService;
 import com.atlassian.jira.issue.priority.Priority;
 import com.atlassian.jira.issue.resolution.Resolution;
 import com.atlassian.jira.issue.status.Status;
@@ -24,6 +28,7 @@ import com.opensymphony.workflow.loader.FunctionDescriptor;
 import com.opensymphony.workflow.loader.StepDescriptor;
 import com.opensymphony.workflow.loader.ValidatorDescriptor;
 import com.opensymphony.workflow.loader.WorkflowDescriptor;
+import com.semmle.jira.addon.util.Constants;
 import com.semmle.jira.addon.workflow.ResolutionCondition;
 import com.semmle.jira.addon.workflow.ResolutionValidator;
 import java.util.ArrayList;
@@ -63,6 +68,21 @@ public class WorkflowUtils {
     JiraWorkflow workflow = new ConfigurableJiraWorkflow(workflowName, descriptor, workflowManager);
     workflowManager.createWorkflow( // User is not needed for creating
         (ApplicationUser) null, workflow);
+
+    ManagedConfigurationItemService managedConfigurationItemService =
+        ComponentAccessor.getComponentOfType(ManagedConfigurationItemService.class);
+
+    ManagedConfigurationItem managedWorkflow =
+        managedConfigurationItemService.getManagedWorkflow(workflow);
+
+    ManagedConfigurationItemBuilder builder =
+        ManagedConfigurationItemBuilder.builder(managedWorkflow);
+
+    builder.setManaged(true);
+    builder.setConfigurationItemAccessLevel(ConfigurationItemAccessLevel.LOCKED);
+    builder.setSource(Constants.PLUGIN_KEY);
+
+    managedConfigurationItemService.updateManagedConfigurationItem(builder.build());
   }
 
   public static void addLayoutToWorkflow(String workflowName, String layoutJson) {
