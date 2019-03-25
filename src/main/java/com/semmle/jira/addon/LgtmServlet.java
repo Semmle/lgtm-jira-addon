@@ -1,6 +1,5 @@
 package com.semmle.jira.addon;
 
-import com.atlassian.jira.bc.ServiceResult;
 import com.atlassian.jira.bc.issue.IssueService;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.IssueInputParameters;
@@ -9,6 +8,7 @@ import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.fields.LabelsField;
 import com.atlassian.jira.issue.label.LabelParser;
 import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.TransitionOptions;
 import com.atlassian.jira.workflow.TransitionOptions.Builder;
@@ -21,7 +21,6 @@ import com.semmle.jira.addon.util.Constants;
 import com.semmle.jira.addon.util.CustomFieldRetrievalException;
 import com.semmle.jira.addon.util.JiraUtils;
 import com.semmle.jira.addon.util.Util;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -80,28 +79,46 @@ public class LgtmServlet extends HttpServlet {
       return;
     }
 
-    try {
-      switch (request.transition) {
-        case CREATE:
-          createIssue(jsonRequest, request, resp, config);
-          break;
-        case REOPEN:
-          applyTransition(issue, Constants.WORKFLOW_REOPEN_TRANSITION_NAME, true, user);
-          break;
-        case CLOSE:
-          applyTransition(issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, true, user);
-          break;
-        case SUPPRESS:
-          applyTransition(issue, Constants.WORKFLOW_SUPPRESS_TRANSITION_NAME, false, user);
-          break;
-        case UNSUPPRESS:
-          applyTransition(issue, Constants.WORKFLOW_REOPEN_TRANSITION_NAME, true, user);
-          break;
+    if (request.transition == Request.Transition.CREATE) {
+      try {
+        Long issueId = createIssue(jsonRequest, request, config);
+        Response response = new Response(issueId);
+        sendJSON(resp, HttpServletResponse.SC_CREATED, response);
+      } catch (CustomFieldRetrievalException e) {
+        log.error("Retrieval of custom field for config key failed.", e);
+        sendError(
+            resp,
+            HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+            "Retrieval of configuration key failed. Please check your add-on configuration.");
+      } catch (CreateIssueException e) {
+        sendError(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getErrors());
       }
-      Response response = new Response(issue.getId());
-      sendJSON(resp, HttpServletResponse.SC_OK, response);
-    } catch (TransitionNotFoundException e) {
-      sendError(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "No valid transition found.");
+    } else {
+      try {
+        switch (request.transition) {
+          case CREATE:
+            // Already handled
+            break;
+          case REOPEN:
+            applyTransition(issue, Constants.WORKFLOW_REOPEN_TRANSITION_NAME, true, user);
+            break;
+          case CLOSE:
+            applyTransition(issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, true, user);
+            break;
+          case SUPPRESS:
+            applyTransition(issue, Constants.WORKFLOW_SUPPRESS_TRANSITION_NAME, false, user);
+            break;
+          case UNSUPPRESS:
+            applyTransition(issue, Constants.WORKFLOW_REOPEN_TRANSITION_NAME, true, user);
+            break;
+        }
+
+        Response response = new Response(issue.getId());
+        sendJSON(resp, HttpServletResponse.SC_OK, response);
+
+      } catch (TransitionNotFoundException e) {
+        sendError(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "No valid transition found.");
+      }
     }
   }
 
@@ -136,9 +153,8 @@ public class LgtmServlet extends HttpServlet {
     return processedConfig;
   }
 
-  void createIssue(
-      JsonNode rawRequest, Request request, HttpServletResponse resp, ProcessedConfig config)
-      throws IOException {
+  Long createIssue(JsonNode rawRequest, Request request, ProcessedConfig config)
+      throws IOException, CustomFieldRetrievalException, CreateIssueException {
 
     IssueInputParameters issueInputParameters =
         ComponentAccessor.getIssueService().newIssueInputParameters();
@@ -156,21 +172,10 @@ public class LgtmServlet extends HttpServlet {
         ComponentAccessor.getIssueService().validateCreate(config.getUser(), issueInputParameters);
 
     if (createValidationResult.getErrorCollection().hasAnyErrors()) {
-      writeErrors(createValidationResult, resp);
-      return;
+      throw new CreateIssueException(createValidationResult.getErrorCollection());
     }
 
-    CustomField customField;
-    try {
-      customField = JiraUtils.getConfigKeyCustomField();
-    } catch (CustomFieldRetrievalException e) {
-      log.error("Retrieval of custom field for config key failed.", e);
-      sendError(
-          resp,
-          HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-          "Retrieval of configuration key failed. Please check your add-on configuration.");
-      return;
-    }
+    CustomField customField = JiraUtils.getConfigKeyCustomField();
 
     createValidationResult.getIssue().setCustomFieldValue(customField, config.getKey());
 
@@ -182,12 +187,10 @@ public class LgtmServlet extends HttpServlet {
         ComponentAccessor.getIssueService().create(config.getUser(), createValidationResult);
 
     if (!issueResult.isValid()) {
-      writeErrors(issueResult, resp);
-      return;
+      throw new CreateIssueException(issueResult.getErrorCollection());
     }
 
-    Response response = new Response(issueResult.getIssue().getId());
-    sendJSON(resp, HttpServletResponse.SC_CREATED, response);
+    return issueResult.getIssue().getId();
   }
 
   void applyTransition(
@@ -240,14 +243,6 @@ public class LgtmServlet extends HttpServlet {
     }
   }
 
-  private void writeErrors(ServiceResult result, HttpServletResponse resp) throws IOException {
-    String message =
-        result.getErrorCollection().getErrors().entrySet().stream()
-            .map(x -> x.getKey() + " : " + x.getValue())
-            .collect(Collectors.joining(", ", "Invalid configuration – ", ""));
-    sendError(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
-  }
-
   private void sendError(HttpServletResponse resp, int code, String message) throws IOException {
     sendJSON(resp, code, new JsonError(code, message));
   }
@@ -261,5 +256,20 @@ public class LgtmServlet extends HttpServlet {
 
   class TransitionNotFoundException extends Exception {
     private static final long serialVersionUID = 1L;
+  }
+
+  class CreateIssueException extends Exception {
+    private static final long serialVersionUID = 1L;
+    private ErrorCollection errorCollection;
+
+    public CreateIssueException(ErrorCollection errorCollection) {
+      this.errorCollection = errorCollection;
+    }
+
+    public String getErrors() {
+      return errorCollection.getErrors().entrySet().stream()
+          .map(x -> x.getKey() + " : " + x.getValue())
+          .collect(Collectors.joining(", ", "Invalid configuration – ", ""));
+    }
   }
 }
