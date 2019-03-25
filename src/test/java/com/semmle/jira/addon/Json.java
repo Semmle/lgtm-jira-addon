@@ -1,5 +1,6 @@
 package com.semmle.jira.addon;
 
+import com.semmle.jira.addon.util.Util;
 import com.semmle.jira.addon.util.workflow.WorkflowResolution;
 import com.semmle.jira.addon.util.workflow.WorkflowStatus;
 import java.io.IOException;

@@ -31,6 +31,7 @@ import com.semmle.jira.addon.Request.Project;
 import com.semmle.jira.addon.Request.Transition;
 import com.semmle.jira.addon.config.ProcessedConfig;
 import com.semmle.jira.addon.util.Constants;
+import com.semmle.jira.addon.util.Util;
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;

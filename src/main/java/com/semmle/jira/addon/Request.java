@@ -1,5 +1,6 @@
 package com.semmle.jira.addon;
 
+import com.semmle.jira.addon.util.Util;
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
