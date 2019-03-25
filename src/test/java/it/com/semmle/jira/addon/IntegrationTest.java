@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Collections;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -109,6 +110,7 @@ public class IntegrationTest {
             + "[View alert on LGTM|http://lgtm.example.com/issues/10000/language/8cdXzW\\+PyA3qiHBbWFomoMGtiIE=]";
 
     assertEquals(description, issueA.fields.description);
+    assertEquals(Collections.singletonList("example_user/example_repo"), issueA.fields.labels);
 
     // Close two issues
     postWebhookJson(new Request(Transition.CLOSE, Long.valueOf(issueB.id)));
