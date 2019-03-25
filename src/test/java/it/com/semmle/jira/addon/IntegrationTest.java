@@ -73,6 +73,7 @@ public class IntegrationTest {
     // Use TestKit to initialise a test instance of Jira
     testKit = new Backdoor(new TestKitLocalEnvironmentData());
     testKit.restoreBlankInstance(TimeBombLicence.LICENCE_FOR_TESTING);
+    testKit.issueLinking().enable();
 
     baseUrl = testKit.generalConfiguration().getEnvironmentData().getBaseUrl().toString();
     httpClient = HttpClientBuilder.create().build();
