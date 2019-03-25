@@ -12,8 +12,22 @@
 	</plugin-info>
 	<!-- add our i18n resource -->
 	<resource type="i18n" name="i18n" location="lgtm-addon" />
+	<servlet name="LGTM add-on for Jira" i18n-name-key="lgtm-servlet.name" 
+		key="lgtm-servlet" class="com.semmle.jira.addon.LgtmServlet">
+		<description key="lgtm-servlet.description">The main servlet of the LGTM add-on for Jira.</description>
+		<url-pattern>/lgtm/*</url-pattern>
+	</servlet>
+	<servlet name="LGTM configuration servlet" key="admin-servlet" i18n-name-key="admin-servlet.name"
+		class="com.semmle.jira.addon.config.AdminServlet">
+		<description key="admin-servlet.description">The LGTM add-on configuration servlet.</description>
+		<url-pattern>/lgtm</url-pattern>
+	</servlet>
+	<rest key="rest" path="/lgtm-config" version="1.0" name="LGTM configuration REST API" i18n-name-key="rest.name">
+		<description key="rest.description">REST API of the LGTM add-on configuration servlet.</description>
+	</rest>
 	<!-- add our web resources -->
-	<web-resource key="lgtm-addon-resources" name="lgtm-addon Web Resources">
+	<web-resource key="lgtm-addon-resources" name="LGTM add-on web resources"  i18n-name-key="lgtm-addon-resources.name">
+		<description key="lgtm-addon-resources.description">The web resources of the LGTM add-on for Jira.</description>
 		<dependency>com.atlassian.auiplugin:ajs</dependency>
 		<dependency>com.atlassian.auiplugin:aui-select2</dependency>
 		<resource type="download" name="lgtm-addon.css" location="/css/lgtm-addon.css" />
@@ -21,18 +35,6 @@
 		<resource type="download" name="images/" location="/images" />
 		<context>lgtm-addon</context>
 	</web-resource>
-	<servlet name="Lgtm Servlet" i18n-name-key="lgtm-servlet.name"
-		key="lgtm-servlet" class="com.semmle.jira.addon.LgtmServlet">
-		<description key="lgtm-servlet.description">The LGTM Add-on</description>
-		<url-pattern>/lgtm/*</url-pattern>
-	</servlet>
-	<servlet name="Lgtm Config Servlet" key="admin-servlet"
-		class="com.semmle.jira.addon.config.AdminServlet">
-		<url-pattern>/lgtm</url-pattern>
-	</servlet>
-	<rest key="rest" path="/lgtm-config" version="1.0">
-		<description>Provides REST resources for the admin UI.</description>
-	</rest>
 	<workflow-function key="lgtm-transition-notification" name="LGTM Transition Notification"
 		i18n-name-key="lgtm-transition-notification.name" class="com.semmle.jira.addon.workflow.LgtmTransitionNotificationFunctionFactory">
 		<description key="lgtm-transition-notification.description">Post-function that sends transition notifications to LGTM.
