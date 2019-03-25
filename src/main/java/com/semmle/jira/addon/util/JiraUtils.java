@@ -159,6 +159,7 @@ public class JiraUtils {
     CustomField customField = null;
     ManagedConfigurationItem managedField;
 
+    String owner = ManagedConfigurationItemService.SOURCE_PREFIX_PLUGIN + Constants.PLUGIN_KEY;
     for (CustomField candidateField :
         customFieldManager.getCustomFieldObjectsByName(Constants.CUSTOM_FIELD_NAME)) {
 
@@ -167,7 +168,7 @@ public class JiraUtils {
       if (managedField != null
           && managedField.isManaged()
           && managedField.getConfigurationItemAccessLevel() == ConfigurationItemAccessLevel.LOCKED
-          && managedField.getSourceId().equals(Constants.PLUGIN_KEY)) {
+          && managedField.getSourceId().equals(owner)) {
         customField = candidateField;
         break;
       }
@@ -193,7 +194,7 @@ public class JiraUtils {
 
       builder.setManaged(true);
       builder.setConfigurationItemAccessLevel(ConfigurationItemAccessLevel.LOCKED);
-      builder.setSource(Constants.PLUGIN_KEY);
+      builder.setSource(owner);
 
       managedConfigurationItemService.updateManagedConfigurationItem(builder.build());
     }
