@@ -199,7 +199,7 @@ function updateConfig() {
 				"and click to edit the scheme associated with your project chosen above.</li>" +
 			"<li>Select 'Add workflow' followed by 'Add existing'.</li>" +
 			"<li>On the first screen select 'LGTM workflow' then on the second select 'LGTM alert'. Click 'Finish'.</li>" +
-			"<li>Finally, click 'Publish' and Jira will guide you through mapping tickets to the new workflow.</li>" 
+			"<li>Finally, click 'Publish' and Jira will guide you through mapping tickets to the new workflow.</li>" +
 			"</ul>";
 			
 			AJS.messages.error("#message-context", {
