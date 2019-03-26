@@ -62,11 +62,6 @@ public class TestValidateRequest extends TestLgtmServletBase {
     when(constantsManager.getIssueType(any(String.class))).thenReturn(issueType);
     Status status = mock(Status.class);
     when(constantsManager.getStatus(any(String.class))).thenReturn(status);
-
-    // Config
-    setupConfig();
-    when(transactionTemplate.execute(ArgumentMatchers.<TransactionCallback<Config>>any()))
-        .thenReturn(config);
   }
 
   @Test
@@ -77,7 +72,10 @@ public class TestValidateRequest extends TestLgtmServletBase {
 
     HttpServletResponse resp = mockResponse();
 
-    config.setLgtmSecret(null); // Mocking the configuration is not set
+    // Config
+    config = new Config(); // Empty config
+    when(transactionTemplate.execute(ArgumentMatchers.<TransactionCallback<Config>>any()))
+        .thenReturn(config);
 
     servlet.validateRequest(lgtmSignature, bytes, resp, configKey);
 
@@ -94,6 +92,11 @@ public class TestValidateRequest extends TestLgtmServletBase {
     String configKey = "";
 
     HttpServletResponse resp = mockResponse();
+
+    // Config
+    setupConfig();
+    when(transactionTemplate.execute(ArgumentMatchers.<TransactionCallback<Config>>any()))
+        .thenReturn(config);
 
     servlet.validateRequest(lgtmSignature, bytes, resp, configKey);
 
@@ -112,6 +115,11 @@ public class TestValidateRequest extends TestLgtmServletBase {
 
     lgtmSignature = "0caf649feee4953d87bf903ac1176c45e028df16";
     bytes = "message".getBytes();
+
+    // Config
+    setupConfig();
+    when(transactionTemplate.execute(ArgumentMatchers.<TransactionCallback<Config>>any()))
+        .thenReturn(config);
 
     ProcessedConfig processedConfig =
         servlet.validateRequest(lgtmSignature, bytes, resp, configKey);

@@ -7,13 +7,13 @@ import com.atlassian.jira.user.UserUtils;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
-import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.semmle.jira.addon.util.Constants;
 import com.semmle.jira.addon.util.JiraUtils;
 import com.semmle.jira.addon.util.UsedIssueTypeException;
 import com.semmle.jira.addon.util.WorkflowNotFoundException;
+import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -39,18 +39,13 @@ public class ConfigResource {
 
   @ComponentImport private final UserManager userManager;
   @ComponentImport private final PluginSettingsFactory pluginSettingsFactory;
-  @ComponentImport private final TransactionTemplate transactionTemplate;
 
   private final PluginSettings settings;
 
   @Inject
-  public ConfigResource(
-      UserManager userManager,
-      PluginSettingsFactory pluginSettingsFactory,
-      TransactionTemplate transactionTemplate) {
+  public ConfigResource(UserManager userManager, PluginSettingsFactory pluginSettingsFactory) {
     this.userManager = userManager;
     this.pluginSettingsFactory = pluginSettingsFactory;
-    this.transactionTemplate = transactionTemplate;
 
     settings = pluginSettingsFactory.createGlobalSettings();
   }
@@ -75,11 +70,13 @@ public class ConfigResource {
 
   @PUT
   @Consumes(MediaType.APPLICATION_JSON)
-  public Response put(final Config config, @Context HttpServletRequest request) {
+  public Response put(final Map<String, String> configMap, @Context HttpServletRequest request) {
     UserKey userKey = userManager.getRemoteUserKey(request);
     if (userKey == null || !userManager.isSystemAdmin(userKey)) {
       return Response.status(Status.UNAUTHORIZED).build();
     }
+
+    Config config = new Config(configMap);
 
     if (!UserUtils.userExists(config.getUsername())) {
       return Response.status(Status.BAD_REQUEST).header("Error", "user-not-found").build();

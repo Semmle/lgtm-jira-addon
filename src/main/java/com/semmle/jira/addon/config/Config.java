@@ -6,67 +6,88 @@ import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import java.net.URI;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Map;
+import java.util.Properties;
 
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
 public class Config {
-  @XmlElement private String key;
-  @XmlElement private String lgtmSecret;
-  @XmlElement private String username;
-  @XmlElement private String projectKey;
-  @XmlElement private URI externalHookUrl;
-  @XmlElement private String trackerKey;
+  public static final String PROPERTY_NAME_KEY = "key";
+  public static final String PROPERTY_NAME_LGTM_SECRET = "lgtmSecret";
+  public static final String PROPERTY_NAME_USERNAME = "username";
+  public static final String PROPERTY_NAME_PROJECT_KEY = "projectKey";
+  public static final String PROPERTY_NAME_EXTERNAL_HOOK_URL = "externalHookUrl";
+  public static final String PROPERTY_NAME_TRACKER_KEY = "trackerKey";
+
+  private Properties properties = new Properties();
+
+  public Config() {}
+
+  public Config(Map<String, String> configMap) {
+    if (configMap.containsKey(PROPERTY_NAME_KEY))
+      properties.setProperty(PROPERTY_NAME_KEY, configMap.get(PROPERTY_NAME_KEY));
+
+    if (configMap.containsKey(PROPERTY_NAME_LGTM_SECRET))
+      properties.setProperty(PROPERTY_NAME_LGTM_SECRET, configMap.get(PROPERTY_NAME_LGTM_SECRET));
+
+    if (configMap.containsKey(PROPERTY_NAME_USERNAME))
+      properties.setProperty(PROPERTY_NAME_USERNAME, configMap.get(PROPERTY_NAME_USERNAME));
+
+    if (configMap.containsKey(PROPERTY_NAME_PROJECT_KEY))
+      properties.setProperty(PROPERTY_NAME_PROJECT_KEY, configMap.get(PROPERTY_NAME_PROJECT_KEY));
+
+    if (configMap.containsKey(PROPERTY_NAME_EXTERNAL_HOOK_URL))
+      properties.setProperty(
+          PROPERTY_NAME_EXTERNAL_HOOK_URL, configMap.get(PROPERTY_NAME_EXTERNAL_HOOK_URL));
+
+    if (configMap.containsKey(PROPERTY_NAME_TRACKER_KEY))
+      properties.setProperty(PROPERTY_NAME_TRACKER_KEY, configMap.get(PROPERTY_NAME_TRACKER_KEY));
+  }
 
   public String getKey() {
-    return key;
+    return properties.getProperty(PROPERTY_NAME_KEY);
   }
 
   public void setKey(String key) {
-    this.key = key;
+    this.properties.put(PROPERTY_NAME_KEY, key);
   }
 
   public String getLgtmSecret() {
-    return lgtmSecret;
+    return properties.getProperty(PROPERTY_NAME_LGTM_SECRET);
   }
 
   public void setLgtmSecret(String lgtmSecret) {
-    this.lgtmSecret = lgtmSecret;
+    this.properties.put(PROPERTY_NAME_LGTM_SECRET, lgtmSecret);
   }
 
   public String getUsername() {
-    return username;
+    return properties.getProperty(PROPERTY_NAME_USERNAME);
   }
 
   public void setUsername(String username) {
-    this.username = username;
+    this.properties.put(PROPERTY_NAME_USERNAME, username);
   }
 
   public String getProjectKey() {
-    return projectKey;
+    return properties.getProperty(PROPERTY_NAME_PROJECT_KEY);
   }
 
   public void setProjectKey(String projectKey) {
-    this.projectKey = projectKey;
+    this.properties.put(PROPERTY_NAME_PROJECT_KEY, projectKey);
   }
 
   public URI getExternalHookUrl() {
-    return externalHookUrl;
+    return URI.create(properties.getProperty("externalHookUrl"));
   }
 
-  public void setExternalHookUrl(URI url) {
-    this.externalHookUrl = url;
+  public void setExternalHookUrl(String hookUrl) {
+    this.properties.put(PROPERTY_NAME_EXTERNAL_HOOK_URL, hookUrl);
   }
 
   public String getTrackerKey() {
-    return trackerKey;
+    return properties.getProperty(PROPERTY_NAME_TRACKER_KEY);
   }
 
   public void setTrackerKey(String trackerKey) {
-    this.trackerKey = trackerKey;
+    this.properties.put(PROPERTY_NAME_TRACKER_KEY, trackerKey);
   }
 
   public static Config get(String configKey) {
@@ -80,18 +101,7 @@ public class Config {
           public Config doInTransaction() {
             PluginSettings settings = pluginSettingsFactory.createGlobalSettings();
             Config config = new Config();
-            config.setKey(configKey);
-            config.setLgtmSecret(
-                (String) settings.get("com.lgtm.addon.config." + configKey + ".lgtmSecret"));
-            config.setUsername(
-                (String) settings.get("com.lgtm.addon.config." + configKey + ".username"));
-            config.setProjectKey(
-                (String) settings.get("com.lgtm.addon.config." + configKey + ".projectKey"));
-            String externalHook =
-                (String) settings.get("com.lgtm.addon.config." + configKey + ".externalHookUrl");
-            config.setExternalHookUrl(externalHook == null ? null : URI.create(externalHook));
-            config.setTrackerKey(
-                (String) settings.get("com.lgtm.addon.config." + configKey + ".trackerKey"));
+            config.properties = (Properties) settings.get("com.lgtm.addon.config." + configKey);
             return config;
           }
         });
@@ -106,18 +116,7 @@ public class Config {
         new TransactionCallback<Void>() {
           public Void doInTransaction() {
             PluginSettings settings = pluginSettingsFactory.createGlobalSettings();
-            settings.put(
-                "com.lgtm.addon.config." + config.getKey() + ".lgtmSecret", config.getLgtmSecret());
-            settings.put(
-                "com.lgtm.addon.config." + config.getKey() + ".username", config.getUsername());
-            settings.put(
-                "com.lgtm.addon.config." + config.getKey() + ".projectKey", config.getProjectKey());
-            URI externalHook = config.getExternalHookUrl();
-            settings.put(
-                "com.lgtm.addon.config." + config.getKey() + ".externalHookUrl",
-                externalHook == null ? null : externalHook.toString());
-            settings.put(
-                "com.lgtm.addon.config." + config.getKey() + ".trackerKey", config.getTrackerKey());
+            settings.put("com.lgtm.addon.config." + config.getKey(), config.properties);
             return null;
           }
         });

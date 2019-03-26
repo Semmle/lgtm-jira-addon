@@ -55,9 +55,13 @@ public class LgtmTransitionNotificationFunction extends AbstractJiraFunctionProv
 
     Config config = Config.get(configKey);
 
-    URI url = config.getExternalHookUrl();
-    // There is no external hook URL configured
-    if (url == null) return;
+    URI url = null;
+    try {
+      url = config.getExternalHookUrl();
+    } catch (NullPointerException e) {
+      // There is no external hook URL configured
+      return;
+    }
 
     Request message = new Request(transition, issue.getId());
     WorkflowException exception = null;
