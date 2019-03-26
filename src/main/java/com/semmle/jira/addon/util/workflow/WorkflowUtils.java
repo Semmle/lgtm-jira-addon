@@ -106,7 +106,7 @@ public class WorkflowUtils {
     @SuppressWarnings("unchecked")
     List<ActionDescriptor> initialActions = workflow.getDescriptor().getInitialActions();
     for (ActionDescriptor action : initialActions) {
-      addFunction(action, setPriorityFunction);
+      addFunctionAsFirst(action, setPriorityFunction);
     }
   }
 
@@ -222,7 +222,7 @@ public class WorkflowUtils {
     }
   }
 
-  private static void addFunction(ActionDescriptor transition, FunctionDescriptor function) {
+  private static void addFunctionAsFirst(ActionDescriptor transition, FunctionDescriptor function) {
     @SuppressWarnings("unchecked")
     List<FunctionDescriptor> functions = transition.getUnconditionalResult().getPostFunctions();
     // remove existing functions with the same name
@@ -239,7 +239,7 @@ public class WorkflowUtils {
         }
       }
     }
-    functions.add(function);
+    functions.add(0, function);
   }
 
   private static Status getOrCreateStatus(
