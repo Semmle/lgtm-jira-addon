@@ -42,7 +42,8 @@ public class LgtmTransitionNotificationFunction extends AbstractJiraFunctionProv
     try {
       customField = JiraUtils.getConfigKeyCustomField();
     } catch (CustomFieldRetrievalException e) {
-      String message = "Retrieval of custom field for config key failed.";
+      String message =
+          "Retrieval of configuration key failed. Please check your add-on configuration and try again.";
       log.error(message, e);
       throw new WorkflowException(message, e);
     }
