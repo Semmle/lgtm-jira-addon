@@ -217,11 +217,14 @@ public class JiraUtils {
 
   public static CustomField getConfigKeyCustomField() throws CustomFieldRetrievalException {
 
+    Object settingsObject = getSettingsObject().get(Constants.CUSTOM_FIELD_CONFIG_KEY);
+
     long fieldId;
     try {
-      fieldId = Long.parseLong((String) getSettingsObject().get(Constants.CUSTOM_FIELD_CONFIG_KEY));
+      fieldId = Long.parseLong((String) settingsObject);
     } catch (ClassCastException | NumberFormatException e) {
-      throw new CustomFieldRetrievalException("Invalid custom field config key.", e);
+      throw new CustomFieldRetrievalException(
+          "Invalid custom field config key -> " + settingsObject.toString(), e);
     }
 
     CustomField customField =
