@@ -24,8 +24,7 @@
             </function>
             <function type="class">
               <arg name="eventTypeId">1</arg>
-              <arg name="class.name">com.atlassian.jira.workflow.function.event.FireIssueEventFunction
-                            </arg>
+              <arg name="class.name">com.atlassian.jira.workflow.function.event.FireIssueEventFunction</arg>
             </function>
           </post-functions>
         </unconditional-result>
