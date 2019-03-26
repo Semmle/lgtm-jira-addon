@@ -195,13 +195,12 @@ function updateConfig() {
 			
 			var body = '<p>There are existing tickets using an old workflow type, and hence a one-time manual migration is needed.</p>' +
 			'<ul>'+
-			'<li>Please go to the <a href="' + AJS.params.baseURL + '/plugins/servlet/project-config/'+
-				AJS.$('#project').select2('val') +
-				'/workflows" target="_blank">project workflow page</a> '+
-				"and select 'Add workflow' followed by 'Add existing'.</li>" +
+			'<li>Please go to the <a href="' + AJS.params.baseURL + '/secure/admin/ViewWorkflowSchemes.jspa" target="_blank">workflow schemes page</a> '+
+				"and click to edit the scheme associated with your project chosen above.</li>" +
+			"<li>Select 'Add workflow' followed by 'Add existing'.</li>" +
 			"<li>On the first screen select 'LGTM workflow' then on the second select 'LGTM alert'. Click 'Finish'.</li>" +
-			"<li>Finally, click 'Publish' and Jira will guide you through mapping tickets to the new workflow.</li>" +
-			'</ul>';
+			"<li>Finally, click 'Publish' and Jira will guide you through mapping tickets to the new workflow.</li>" 
+			"</ul>";
 			
 			AJS.messages.error("#message-context", {
 				title : 'A manual workflow migration is needed.',
