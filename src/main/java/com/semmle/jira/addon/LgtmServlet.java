@@ -160,7 +160,7 @@ public class LgtmServlet extends HttpServlet {
       sendError(
           resp,
           HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-          "Retrieval of custom field for config key failed.");
+          "Retrieval of configuration key failed. Please check your add-on configuration.");
       return;
     }
 

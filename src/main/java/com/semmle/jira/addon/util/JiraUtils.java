@@ -219,12 +219,24 @@ public class JiraUtils {
 
     Object settingsObject = getSettingsObject().get(Constants.CUSTOM_FIELD_CONFIG_KEY);
 
+    if (settingsObject == null) {
+      throw new CustomFieldRetrievalException(
+          "Null value found for plugin setting "
+              + Constants.CUSTOM_FIELD_CONFIG_KEY
+              + ". Indicates that the add-on has not yet been (re)configured.");
+    }
+
     long fieldId;
     try {
       fieldId = Long.parseLong((String) settingsObject);
     } catch (ClassCastException | NumberFormatException e) {
       throw new CustomFieldRetrievalException(
-          "Invalid custom field config key -> " + settingsObject.toString(), e);
+          "Invalid value for plugin setting "
+              + Constants.CUSTOM_FIELD_CONFIG_KEY
+              + " -> "
+              + settingsObject.toString()
+              + ". Should be long, corresponding to ID of LGTM custom field.",
+          e);
     }
 
     CustomField customField =
@@ -232,7 +244,9 @@ public class JiraUtils {
 
     if (customField == null) {
       throw new CustomFieldRetrievalException(
-          "Custom field not found with specified id = " + String.valueOf(fieldId));
+          "LGTM Custom Field not found for stored id ("
+              + String.valueOf(fieldId)
+              + "). Field has likely been unlocked and then deleted.");
     }
 
     return customField;
