@@ -1,35 +1,48 @@
 package com.semmle.jira.addon;
 
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import com.semmle.jira.addon.LgtmServlet.InvalidRequestException;
+import com.semmle.jira.addon.util.Util;
 import java.io.IOException;
-import javax.servlet.http.HttpServletResponse;
-import org.junit.Assert;
+import java.io.InputStream;
+import java.security.AccessControlException;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.io.IOUtils;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.junit.Before;
 import org.junit.Test;
 
 public class TestValidateRequest extends TestLgtmServletBase {
+  HttpServletRequest req = mock(HttpServletRequest.class);
 
-  @Test
-  public void testValidateRequestForbidden() throws IOException {
-    String lgtmSignature = "0caf649feee4953d87bf903ac1176c45e028df16";
-    byte[] bytes = "message".getBytes();
+  @Before
+  public void setup() throws JsonGenerationException, JsonMappingException, IOException {
+    Request request = TestCreateIssue.createRequest("test", "Query", "test.cpp", "Security Error");
+    InputStream byteArrayInputStream =
+        IOUtils.toInputStream(Util.JSON.writeValueAsString(request), "UTF-8");
+    ServletInputStream servletInputStream =
+        new ServletInputStream() {
+          public int read() throws IOException {
+            return byteArrayInputStream.read();
+          }
+        };
+    when(req.getInputStream()).thenReturn(servletInputStream);
+    when(req.getHeader("x-lgtm-signature")).thenReturn("ae3e7b2a5ce16d5a09d47e8155ae9adbcb60e263");
+  }
 
-    HttpServletResponse resp = mockResponse();
-
-    servlet.validateRequestSignature(lgtmSignature, bytes, "wrong_secret", resp);
-
-    verify(resp).setStatus(403);
-    Assert.assertEquals(
-        "{\"code\":403,\"error\":\"Forbidden.\"}", resp.getOutputStream().toString());
+  @Test(expected = AccessControlException.class)
+  public void testValidateRequestForbidden()
+      throws IOException, AccessControlException, InvalidRequestException {
+    servlet.validateRequest(req, "wrong_secret");
   }
 
   @Test
-  public void testValidateRequestSuccess() throws IOException {
-    String lgtmSignature = "0caf649feee4953d87bf903ac1176c45e028df16";
-    byte[] bytes = "message".getBytes();
-
-    HttpServletResponse resp = mockResponse();
-
-    servlet.validateRequestSignature(lgtmSignature, bytes, "secret", resp);
+  public void testValidateRequestSuccess()
+      throws IOException, AccessControlException, InvalidRequestException {
+    servlet.validateRequest(req, "secret");
   }
 }

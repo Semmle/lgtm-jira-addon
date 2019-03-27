@@ -13,7 +13,6 @@ import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.TransitionOptions;
 import com.atlassian.jira.workflow.TransitionOptions.Builder;
 import com.opensymphony.workflow.loader.ActionDescriptor;
-import com.semmle.jira.addon.Request.Transition;
 import com.semmle.jira.addon.config.Config;
 import com.semmle.jira.addon.config.Config.Error;
 import com.semmle.jira.addon.util.Constants;
@@ -21,6 +20,7 @@ import com.semmle.jira.addon.util.CustomFieldRetrievalException;
 import com.semmle.jira.addon.util.JiraUtils;
 import com.semmle.jira.addon.util.Util;
 import java.io.IOException;
+import java.security.AccessControlException;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -64,41 +64,23 @@ public class LgtmServlet extends HttpServlet {
       }
     }
 
-    byte[] bytes = IOUtils.toByteArray(req.getInputStream());
-
-    validateRequestSignature(
-        req.getHeader("x-lgtm-signature"), bytes, config.getLgtmSecret(), resp);
-
-    Request request;
-    JsonNode jsonRequest;
+    Request request = null;
     try {
-      jsonRequest = Util.JSON.readTree(bytes);
-      request = Util.JSON.readValue(jsonRequest, Request.class);
-    } catch (IOException e) {
-      String message = e.getCause() != null ? " - " + e.getCause().getMessage() : "";
-      sendError(
-          resp, HttpServletResponse.SC_BAD_REQUEST, "Syntax error in request body: " + message);
+      request = validateRequest(req, config.getLgtmSecret());
+    } catch (AccessControlException e) {
+      sendError(resp, HttpServletResponse.SC_FORBIDDEN, "Forbidden.");
       return;
-    }
-
-    if (!request.isValid()) {
-      sendError(resp, HttpServletResponse.SC_BAD_REQUEST, "Invalid request.");
+    } catch (InvalidRequestException e) {
+      sendError(resp, HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
       return;
     }
 
     ApplicationUser user = config.getUser();
     ComponentAccessor.getJiraAuthenticationContext().setLoggedInUser(user);
 
-    MutableIssue issue =
-        ComponentAccessor.getIssueService().getIssue(user, request.issueId).getIssue();
-    if (issue == null && request.transition != Transition.CREATE) {
-      sendError(resp, HttpServletResponse.SC_GONE, "Issue " + request.issueId + " not found.");
-      return;
-    }
-
     if (request.transition == Request.Transition.CREATE) {
       try {
-        Long issueId = createIssue(jsonRequest, request, config);
+        Long issueId = createIssue(request, config);
         Response response = new Response(issueId);
         sendJSON(resp, HttpServletResponse.SC_CREATED, response);
       } catch (CustomFieldRetrievalException e) {
@@ -111,6 +93,13 @@ public class LgtmServlet extends HttpServlet {
         sendError(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getErrors());
       }
     } else {
+      MutableIssue issue =
+          ComponentAccessor.getIssueService().getIssue(user, request.issueId).getIssue();
+      if (issue == null) {
+        sendError(resp, HttpServletResponse.SC_GONE, "Issue " + request.issueId + " not found.");
+        return;
+      }
+
       try {
         switch (request.transition) {
           case CREATE:
@@ -139,15 +128,32 @@ public class LgtmServlet extends HttpServlet {
     }
   }
 
-  void validateRequestSignature(
-      String lgtmSignature, byte[] bytes, String secret, HttpServletResponse resp)
-      throws IOException {
-    if (!Util.signatureIsValid(secret, bytes, lgtmSignature)) {
-      sendError(resp, HttpServletResponse.SC_FORBIDDEN, "Forbidden.");
+  Request validateRequest(HttpServletRequest req, String secret)
+      throws IOException, AccessControlException, InvalidRequestException {
+    byte[] bytes = IOUtils.toByteArray(req.getInputStream());
+
+    if (!Util.signatureIsValid(secret, bytes, req.getHeader("x-lgtm-signature"))) {
+      throw new AccessControlException("Forbidden");
     }
+
+    Request request;
+    JsonNode jsonRequest;
+    try {
+      jsonRequest = Util.JSON.readTree(bytes);
+      request = new Request(jsonRequest);
+    } catch (IOException e) {
+      String message = e.getCause() != null ? " - " + e.getCause().getMessage() : "";
+      throw new InvalidRequestException("Syntax error in request body: " + message);
+    }
+
+    if (!request.isValid()) {
+      throw new InvalidRequestException("Invalid request.");
+    }
+
+    return request;
   }
 
-  Long createIssue(JsonNode rawRequest, Request request, Config config)
+  Long createIssue(Request request, Config config)
       throws IOException, CustomFieldRetrievalException, CreateIssueException {
 
     IssueInputParameters issueInputParameters =
@@ -158,7 +164,7 @@ public class LgtmServlet extends HttpServlet {
     issueInputParameters.setProjectId(config.getProject().getId());
     issueInputParameters.setIssueTypeId(JiraUtils.getLgtmIssueType().getId());
 
-    issueInputParameters.addProperty(Constants.LGTM_PAYLOAD_PROPERTY, rawRequest);
+    issueInputParameters.addProperty(Constants.LGTM_PAYLOAD_PROPERTY, request.jsonRequest);
 
     issueInputParameters.setApplyDefaultValuesWhenParameterNotProvided(true);
 
@@ -202,7 +208,8 @@ public class LgtmServlet extends HttpServlet {
     if (skipValidate) optionsBuilder.skipValidators();
     TransitionOptions transitionOptions = optionsBuilder.build();
 
-    // is there any transition with matching name that is applicable for the current issue status?
+    // is there any transition with matching name that is applicable for the current
+    // issue status?
     boolean anyApplicable = false;
     boolean success = false;
     for (ActionDescriptor action : candidateActions) {
@@ -228,7 +235,8 @@ public class LgtmServlet extends HttpServlet {
     }
     if (!success) {
       // There was an applicable transition, however, it could not be executed.
-      // This is expected if a Validator Function rejects the transition. There is no point
+      // This is expected if a Validator Function rejects the transition. There is no
+      // point
       // telling LGTM about this so return 200 OK nevertheless and log a message.
       log(
           String.format(
@@ -246,6 +254,14 @@ public class LgtmServlet extends HttpServlet {
     resp.setCharacterEncoding("UTF-8");
     resp.setStatus(code);
     Util.JSON.writeValue(resp.getOutputStream(), value);
+  }
+
+  class InvalidRequestException extends Exception {
+    private static final long serialVersionUID = 1L;
+
+    public InvalidRequestException(String message) {
+      super(message);
+    }
   }
 
   class TransitionNotFoundException extends Exception {

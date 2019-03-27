@@ -34,7 +34,6 @@ import com.semmle.jira.addon.Request.Transition;
 import com.semmle.jira.addon.config.Config;
 import com.semmle.jira.addon.util.Constants;
 import com.semmle.jira.addon.util.CustomFieldRetrievalException;
-import com.semmle.jira.addon.util.Util;
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
@@ -79,7 +78,7 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
     Query query = new Query(queryName, url + "/" + queryName);
     Alert alert = new Alert(alertFile, alertMessage, url + "/alert", query);
 
-    return new Request(transition, 1l, project, alert);
+    return new Request(transition, null, project, alert);
   }
 
   @Before
@@ -137,7 +136,7 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
 
     when(createValidationResult.getErrorCollection().hasAnyErrors()).thenReturn(false);
     when(issueResult.isValid()).thenReturn(true);
-    Long issueId = servlet.createIssue(Util.JSON.valueToTree(request), request, config);
+    Long issueId = servlet.createIssue(request, config);
     Long expected = 1l;
     assertEquals(expected, issueId);
 
@@ -153,6 +152,6 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
 
     when(createValidationResult.getErrorCollection().hasAnyErrors()).thenReturn(true);
 
-    servlet.createIssue(Util.JSON.valueToTree(request), request, config);
+    servlet.createIssue(request, config);
   }
 }
