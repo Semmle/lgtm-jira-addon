@@ -9,10 +9,12 @@ import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
+import com.semmle.jira.addon.config.Config.Error;
 import com.semmle.jira.addon.util.Constants;
 import com.semmle.jira.addon.util.JiraUtils;
 import com.semmle.jira.addon.util.UsedIssueTypeException;
 import com.semmle.jira.addon.util.WorkflowNotFoundException;
+import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -77,22 +79,27 @@ public class ConfigResource {
     }
 
     Config config = new Config(configMap);
-
-    if (!UserUtils.userExists(config.getUsername())) {
-      return Response.status(Status.BAD_REQUEST).header("Error", "user-not-found").build();
+    List<Error> errors = config.validate();
+    for (Error error : errors) {
+      switch (error) {
+        case MISSING_CONFIG_KEY:
+        case MISSING_PROJECT_KEY:
+        case MISSING_SECRET:
+        case MISSING_USERNAME:
+          // Should not happen as the JS checks for it
+          return Response.status(Status.BAD_REQUEST).header("Error", "missing-fields").build();
+        case PROJECT_NOT_FOUND:
+          return Response.status(Status.BAD_REQUEST).header("Error", "project-not-found").build();
+        case USER_NOT_FOUND:
+          return Response.status(Status.BAD_REQUEST).header("Error", "user-not-found").build();
+      }
     }
 
-    Project project =
-        ComponentAccessor.getProjectManager().getProjectByCurrentKey(config.getProjectKey());
-    if (project == null) {
-      return Response.status(Status.BAD_REQUEST).header("Error", "project-not-found").build();
-    }
-
+    Project project = config.getProject();
     IssueType lgtmIssueType = JiraUtils.getIssueTypeByName(Constants.ISSUE_TYPE_NAME);
     if (lgtmIssueType == null) {
       return Response.status(Status.BAD_REQUEST).header("Error", "issueType-not-found").build();
     }
-
     JiraUtils.addIssueTypeToProject(project, lgtmIssueType);
 
     try {

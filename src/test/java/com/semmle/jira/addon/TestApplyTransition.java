@@ -18,7 +18,7 @@ import com.atlassian.jira.workflow.TransitionOptions;
 import com.atlassian.jira.workflow.WorkflowManager;
 import com.opensymphony.workflow.loader.ActionDescriptor;
 import com.semmle.jira.addon.LgtmServlet.TransitionNotFoundException;
-import com.semmle.jira.addon.config.ProcessedConfig;
+import com.semmle.jira.addon.config.Config;
 import com.semmle.jira.addon.util.Constants;
 import java.io.IOException;
 import java.util.Collection;
@@ -34,7 +34,7 @@ public class TestApplyTransition extends TestCreateAndTransitionBase {
 
   TransitionValidationResult transitionValidationResult = mock(TransitionValidationResult.class);
 
-  ProcessedConfig config = mock(ProcessedConfig.class);
+  Config config = mock(Config.class);
 
   @Before
   public void initTests() {

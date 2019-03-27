@@ -31,7 +31,7 @@ import com.semmle.jira.addon.Request.Alert;
 import com.semmle.jira.addon.Request.Alert.Query;
 import com.semmle.jira.addon.Request.Project;
 import com.semmle.jira.addon.Request.Transition;
-import com.semmle.jira.addon.config.ProcessedConfig;
+import com.semmle.jira.addon.config.Config;
 import com.semmle.jira.addon.util.Constants;
 import com.semmle.jira.addon.util.CustomFieldRetrievalException;
 import com.semmle.jira.addon.util.Util;
@@ -64,7 +64,7 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
   protected MockPluginSettings pluginSettings = new MockPluginSettings();
 
   CreateValidationResult createValidationResult = mock(CreateValidationResult.class);
-  ProcessedConfig config = mock(ProcessedConfig.class);
+  Config config = mock(Config.class);
 
   private IssueResult issueResult = mock(IssueResult.class);
   private CustomField customField = mock(CustomField.class);

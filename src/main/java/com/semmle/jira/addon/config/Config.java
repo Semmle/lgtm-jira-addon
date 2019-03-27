@@ -1,15 +1,26 @@
 package com.semmle.jira.addon.config;
 
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.project.Project;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
-import com.atlassian.sal.api.transaction.TransactionCallback;
-import com.atlassian.sal.api.transaction.TransactionTemplate;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 public class Config {
+  public enum Error {
+    MISSING_CONFIG_KEY,
+    MISSING_SECRET,
+    MISSING_USERNAME,
+    MISSING_PROJECT_KEY,
+    USER_NOT_FOUND,
+    PROJECT_NOT_FOUND
+  }
+
   public static final String PROPERTY_NAME_KEY = "key";
   public static final String PROPERTY_NAME_LGTM_SECRET = "lgtmSecret";
   public static final String PROPERTY_NAME_USERNAME = "username";
@@ -90,35 +101,55 @@ public class Config {
     this.properties.put(PROPERTY_NAME_TRACKER_KEY, trackerKey);
   }
 
-  public static Config get(String configKey) {
+  public List<Error> validate() {
+    List<Error> errors = new ArrayList<Error>();
+    if (getKey() == null) {
+      errors.add(Error.MISSING_CONFIG_KEY);
+    }
 
-    TransactionTemplate transactionTemplate =
-        ComponentAccessor.getOSGiComponentInstanceOfType(TransactionTemplate.class);
+    if (getLgtmSecret() == null) {
+      errors.add(Error.MISSING_SECRET);
+    }
+
+    if (getUsername() != null) {
+      ApplicationUser user = ComponentAccessor.getUserManager().getUserByName(getUsername());
+      if (user == null) errors.add(Error.USER_NOT_FOUND);
+    } else {
+      errors.add(Error.MISSING_USERNAME);
+    }
+
+    if (getProjectKey() != null) {
+      Project project =
+          ComponentAccessor.getProjectManager().getProjectByCurrentKey(getProjectKey());
+      if (project == null) errors.add(Error.PROJECT_NOT_FOUND);
+    } else {
+      errors.add(Error.MISSING_PROJECT_KEY);
+    }
+
+    return errors;
+  }
+
+  public ApplicationUser getUser() {
+    return ComponentAccessor.getUserManager().getUserByName(getUsername());
+  }
+
+  public Project getProject() {
+    return ComponentAccessor.getProjectManager().getProjectByCurrentKey(getProjectKey());
+  }
+
+  public static Config get(String configKey) {
     PluginSettingsFactory pluginSettingsFactory =
         ComponentAccessor.getOSGiComponentInstanceOfType(PluginSettingsFactory.class);
-    return transactionTemplate.execute(
-        new TransactionCallback<Config>() {
-          public Config doInTransaction() {
-            PluginSettings settings = pluginSettingsFactory.createGlobalSettings();
-            Config config = new Config();
-            config.properties = (Properties) settings.get("com.lgtm.addon.config." + configKey);
-            return config;
-          }
-        });
+    PluginSettings settings = pluginSettingsFactory.createGlobalSettings();
+    Config config = new Config();
+    config.properties = (Properties) settings.get("com.lgtm.addon.config." + configKey);
+    return config;
   }
 
   public static void put(Config config) {
-    TransactionTemplate transactionTemplate =
-        ComponentAccessor.getOSGiComponentInstanceOfType(TransactionTemplate.class);
     PluginSettingsFactory pluginSettingsFactory =
         ComponentAccessor.getOSGiComponentInstanceOfType(PluginSettingsFactory.class);
-    transactionTemplate.execute(
-        new TransactionCallback<Void>() {
-          public Void doInTransaction() {
-            PluginSettings settings = pluginSettingsFactory.createGlobalSettings();
-            settings.put("com.lgtm.addon.config." + config.getKey(), config.properties);
-            return null;
-          }
-        });
+    PluginSettings settings = pluginSettingsFactory.createGlobalSettings();
+    settings.put("com.lgtm.addon.config." + config.getKey(), config.properties);
   }
 }

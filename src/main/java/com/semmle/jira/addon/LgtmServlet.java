@@ -15,14 +15,14 @@ import com.atlassian.jira.workflow.TransitionOptions.Builder;
 import com.opensymphony.workflow.loader.ActionDescriptor;
 import com.semmle.jira.addon.Request.Transition;
 import com.semmle.jira.addon.config.Config;
-import com.semmle.jira.addon.config.InvalidConfigurationException;
-import com.semmle.jira.addon.config.ProcessedConfig;
+import com.semmle.jira.addon.config.Config.Error;
 import com.semmle.jira.addon.util.Constants;
 import com.semmle.jira.addon.util.CustomFieldRetrievalException;
 import com.semmle.jira.addon.util.JiraUtils;
 import com.semmle.jira.addon.util.Util;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -44,13 +44,30 @@ public class LgtmServlet extends HttpServlet {
     String[] pathParts = pathInfo.split("/");
     String configKey = pathParts[1];
 
+    Config config = Config.get(configKey);
+    List<Error> configErrors = config.validate();
+    for (Error error : configErrors) {
+      switch (error) {
+        case MISSING_CONFIG_KEY:
+          sendError(
+              resp,
+              HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+              "Configuration needed – see documentation.");
+          return;
+        case MISSING_PROJECT_KEY:
+        case MISSING_SECRET:
+        case MISSING_USERNAME:
+        case PROJECT_NOT_FOUND:
+        case USER_NOT_FOUND:
+          sendError(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Invalid configuration");
+          return;
+      }
+    }
+
     byte[] bytes = IOUtils.toByteArray(req.getInputStream());
 
-    ProcessedConfig config =
-        validateRequest(req.getHeader("x-lgtm-signature"), bytes, resp, configKey);
-    if (config == null) {
-      return;
-    }
+    validateRequestSignature(
+        req.getHeader("x-lgtm-signature"), bytes, config.getLgtmSecret(), resp);
 
     Request request;
     JsonNode jsonRequest;
@@ -122,38 +139,15 @@ public class LgtmServlet extends HttpServlet {
     }
   }
 
-  ProcessedConfig validateRequest(
-      String lgtmSignature, byte[] bytes, HttpServletResponse resp, String configKey)
+  void validateRequestSignature(
+      String lgtmSignature, byte[] bytes, String secret, HttpServletResponse resp)
       throws IOException {
-
-    Config config = Config.get(configKey);
-
-    // check that plugin has been configured at all
-    if (config.getLgtmSecret() == null) {
-      sendError(
-          resp,
-          HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-          "Configuration needed – see documentation.");
-      return null;
-    }
-
-    if (!Util.signatureIsValid(config.getLgtmSecret(), bytes, lgtmSignature)) {
+    if (!Util.signatureIsValid(secret, bytes, lgtmSignature)) {
       sendError(resp, HttpServletResponse.SC_FORBIDDEN, "Forbidden.");
-      return null;
     }
-
-    ProcessedConfig processedConfig = null;
-    try {
-      processedConfig = new ProcessedConfig(config);
-    } catch (InvalidConfigurationException e) {
-      log(e.getMessage(), e);
-      sendError(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Invalid configuration");
-    }
-
-    return processedConfig;
   }
 
-  Long createIssue(JsonNode rawRequest, Request request, ProcessedConfig config)
+  Long createIssue(JsonNode rawRequest, Request request, Config config)
       throws IOException, CustomFieldRetrievalException, CreateIssueException {
 
     IssueInputParameters issueInputParameters =
