@@ -28,11 +28,14 @@ public class Config {
   public static final String PROPERTY_NAME_EXTERNAL_HOOK_URL = "externalHookUrl";
   public static final String PROPERTY_NAME_TRACKER_KEY = "trackerKey";
 
-  private Properties properties = new Properties();
+  private final Properties properties;
 
-  public Config() {}
+  public Config() {
+    properties = new Properties();
+  }
 
   public Config(Map<String, String> configMap) {
+    properties = new Properties();
     if (configMap.containsKey(PROPERTY_NAME_KEY))
       properties.setProperty(PROPERTY_NAME_KEY, configMap.get(PROPERTY_NAME_KEY));
 
@@ -51,6 +54,14 @@ public class Config {
 
     if (configMap.containsKey(PROPERTY_NAME_TRACKER_KEY))
       properties.setProperty(PROPERTY_NAME_TRACKER_KEY, configMap.get(PROPERTY_NAME_TRACKER_KEY));
+  }
+
+  public Config(Properties properties) {
+	  if (properties == null) {
+		  this.properties = new Properties();
+	  } else {
+		  this.properties = properties;
+	  }
   }
 
   public String getKey() {
@@ -141,8 +152,7 @@ public class Config {
     PluginSettingsFactory pluginSettingsFactory =
         ComponentAccessor.getOSGiComponentInstanceOfType(PluginSettingsFactory.class);
     PluginSettings settings = pluginSettingsFactory.createGlobalSettings();
-    Config config = new Config();
-    config.properties = (Properties) settings.get("com.lgtm.addon.config." + configKey);
+    Config config = new Config((Properties) settings.get("com.lgtm.addon.config." + configKey));
     return config;
   }
 
