@@ -55,10 +55,8 @@ public class LgtmTransitionNotificationFunction extends AbstractJiraFunctionProv
 
     Config config = Config.get(configKey);
 
-    URI url = null;
-    try {
-      url = config.getExternalHookUrl();
-    } catch (NullPointerException e) {
+    URI url = config.getExternalHookUrl();
+    if (url == null) {
       // There is no external hook URL configured
       return;
     }

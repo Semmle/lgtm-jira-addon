@@ -13,6 +13,7 @@ import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.TransitionOptions;
 import com.atlassian.jira.workflow.TransitionOptions.Builder;
 import com.opensymphony.workflow.loader.ActionDescriptor;
+import com.semmle.jira.addon.Request.Transition;
 import com.semmle.jira.addon.config.Config;
 import com.semmle.jira.addon.config.Config.Error;
 import com.semmle.jira.addon.util.Constants;
@@ -22,13 +23,13 @@ import com.semmle.jira.addon.util.Util;
 import java.io.IOException;
 import java.security.AccessControlException;
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,9 +46,9 @@ public class LgtmServlet extends HttpServlet {
     String configKey = pathParts[1];
 
     Config config = Config.get(configKey);
-    List<Error> configErrors = config.validate();
-    for (Error error : configErrors) {
-      switch (error) {
+    Error configError = config.validate();
+    if (configError != null) {
+      switch (configError) {
         case MISSING_CONFIG_KEY:
           sendError(
               resp,
@@ -90,7 +91,7 @@ public class LgtmServlet extends HttpServlet {
             HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
             "Retrieval of configuration key failed. Please check your add-on configuration.");
       } catch (CreateIssueException e) {
-        sendError(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getErrors());
+        sendError(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
       }
     } else {
       MutableIssue issue =
@@ -100,28 +101,31 @@ public class LgtmServlet extends HttpServlet {
         return;
       }
 
+      boolean skipValidation = request.transition != Transition.SUPPRESS;
+      String transitionName = null;
+      switch (request.transition) {
+        case CREATE:
+          // Already handled
+          break;
+        case REOPEN:
+          transitionName = Constants.WORKFLOW_REOPEN_TRANSITION_NAME;
+          break;
+        case CLOSE:
+          transitionName = Constants.WORKFLOW_CLOSE_TRANSITION_NAME;
+          break;
+        case SUPPRESS:
+          transitionName = Constants.WORKFLOW_SUPPRESS_TRANSITION_NAME;
+          break;
+        case UNSUPPRESS:
+          transitionName = Constants.WORKFLOW_REOPEN_TRANSITION_NAME;
+          break;
+        default:
+          throw new RuntimeException("Unexpected transition: " + request.transition);
+      }
       try {
-        switch (request.transition) {
-          case CREATE:
-            // Already handled
-            break;
-          case REOPEN:
-            applyTransition(issue, Constants.WORKFLOW_REOPEN_TRANSITION_NAME, true, user);
-            break;
-          case CLOSE:
-            applyTransition(issue, Constants.WORKFLOW_CLOSE_TRANSITION_NAME, true, user);
-            break;
-          case SUPPRESS:
-            applyTransition(issue, Constants.WORKFLOW_SUPPRESS_TRANSITION_NAME, false, user);
-            break;
-          case UNSUPPRESS:
-            applyTransition(issue, Constants.WORKFLOW_REOPEN_TRANSITION_NAME, true, user);
-            break;
-        }
-
+        applyTransition(issue, transitionName, skipValidation, user);
         Response response = new Response(issue.getId());
         sendJSON(resp, HttpServletResponse.SC_OK, response);
-
       } catch (TransitionNotFoundException e) {
         sendError(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "No valid transition found.");
       }
@@ -141,9 +145,8 @@ public class LgtmServlet extends HttpServlet {
     try {
       jsonRequest = Util.JSON.readTree(bytes);
       request = new Request(jsonRequest);
-    } catch (IOException e) {
-      String message = e.getCause() != null ? " - " + e.getCause().getMessage() : "";
-      throw new InvalidRequestException("Syntax error in request body: " + message);
+    } catch (JsonParseException e) {
+      throw new InvalidRequestException("Syntax error in request body: " + e.getMessage());
     }
 
     if (!request.isValid()) {
@@ -231,12 +234,11 @@ public class LgtmServlet extends HttpServlet {
       }
     }
     if (!anyApplicable) {
-      throw new TransitionNotFoundException();
+      throw new TransitionNotFoundException(transitionName);
     }
     if (!success) {
       // There was an applicable transition, however, it could not be executed.
-      // This is expected if a Validator Function rejects the transition. There is no
-      // point
+      // This is expected if a Validator Function rejects the transition. There is no point
       // telling LGTM about this so return 200 OK nevertheless and log a message.
       log(
           String.format(
@@ -256,7 +258,7 @@ public class LgtmServlet extends HttpServlet {
     Util.JSON.writeValue(resp.getOutputStream(), value);
   }
 
-  class InvalidRequestException extends Exception {
+  static class InvalidRequestException extends Exception {
     private static final long serialVersionUID = 1L;
 
     public InvalidRequestException(String message) {
@@ -264,22 +266,23 @@ public class LgtmServlet extends HttpServlet {
     }
   }
 
-  class TransitionNotFoundException extends Exception {
+  static class TransitionNotFoundException extends Exception {
     private static final long serialVersionUID = 1L;
+
+    public TransitionNotFoundException(String transition) {
+      super("Transition '" + transition + "' not found in workflow");
+    }
   }
 
-  class CreateIssueException extends Exception {
+  static class CreateIssueException extends Exception {
     private static final long serialVersionUID = 1L;
-    private ErrorCollection errorCollection;
 
     public CreateIssueException(ErrorCollection errorCollection) {
-      this.errorCollection = errorCollection;
-    }
-
-    public String getErrors() {
-      return errorCollection.getErrors().entrySet().stream()
-          .map(x -> x.getKey() + " : " + x.getValue())
-          .collect(Collectors.joining(", ", "Invalid configuration – ", ""));
+      super(
+          "Could not create issue due to: "
+              + errorCollection.getErrors().entrySet().stream()
+                  .map(x -> x.getKey() + " : " + x.getValue())
+                  .collect(Collectors.joining(", ", "Invalid configuration – ", "")));
     }
   }
 }

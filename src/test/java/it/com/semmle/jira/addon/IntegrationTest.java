@@ -21,8 +21,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -189,11 +187,11 @@ public class IntegrationTest {
 
   private Config configurePlugin() throws ClientProtocolException, IOException {
 
-    Map<String, String> uiConfig = new LinkedHashMap<String, String>();
-    uiConfig.put(Config.PROPERTY_NAME_KEY, "config_key");
-    uiConfig.put(Config.PROPERTY_NAME_LGTM_SECRET, "12345678");
-    uiConfig.put(Config.PROPERTY_NAME_USERNAME, "admin");
-    uiConfig.put(Config.PROPERTY_NAME_PROJECT_KEY, "MKY");
+    config = new Config();
+    config.setKey("config_key");
+    config.setLgtmSecret("12345678");
+    config.setUsername("admin");
+    config.setProjectKey("MKY");
 
     HttpPut httpPut = new HttpPut(baseUrl + "/rest/lgtm-config/1.0/");
     httpPut.setHeader("Content-type", "application/json");
@@ -202,17 +200,11 @@ public class IntegrationTest {
         "Basic "
             + Base64.getEncoder().encodeToString(("admin:admin").getBytes(StandardCharsets.UTF_8)));
 
-    httpPut.setEntity(new StringEntity(Util.JSON.writeValueAsString(uiConfig)));
+    httpPut.setEntity(new StringEntity(Util.JSON.writeValueAsString(config)));
     HttpResponse response = httpClient.execute(httpPut);
 
     assertEquals("Failed to configure plugin", 204, response.getStatusLine().getStatusCode());
     HttpClientUtils.closeQuietly(response);
-
-    Config config = new Config();
-    config.setKey(uiConfig.get(Config.PROPERTY_NAME_KEY));
-    config.setLgtmSecret(uiConfig.get(Config.PROPERTY_NAME_LGTM_SECRET));
-    config.setUsername(uiConfig.get(Config.PROPERTY_NAME_USERNAME));
-    config.setProjectKey(uiConfig.get(Config.PROPERTY_NAME_PROJECT_KEY));
 
     return config;
   }

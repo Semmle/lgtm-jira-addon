@@ -6,8 +6,6 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -21,12 +19,12 @@ public class Config {
     PROJECT_NOT_FOUND
   }
 
-  public static final String PROPERTY_NAME_KEY = "key";
-  public static final String PROPERTY_NAME_LGTM_SECRET = "lgtmSecret";
-  public static final String PROPERTY_NAME_USERNAME = "username";
-  public static final String PROPERTY_NAME_PROJECT_KEY = "projectKey";
-  public static final String PROPERTY_NAME_EXTERNAL_HOOK_URL = "externalHookUrl";
-  public static final String PROPERTY_NAME_TRACKER_KEY = "trackerKey";
+  private static final String PROPERTY_NAME_KEY = "key";
+  private static final String PROPERTY_NAME_LGTM_SECRET = "lgtmSecret";
+  private static final String PROPERTY_NAME_USERNAME = "username";
+  private static final String PROPERTY_NAME_PROJECT_KEY = "projectKey";
+  private static final String PROPERTY_NAME_EXTERNAL_HOOK_URL = "externalHookUrl";
+  private static final String PROPERTY_NAME_TRACKER_KEY = "trackerKey";
 
   private final Properties properties;
 
@@ -104,32 +102,31 @@ public class Config {
     this.properties.put(PROPERTY_NAME_TRACKER_KEY, trackerKey);
   }
 
-  public List<Error> validate() {
-    List<Error> errors = new ArrayList<Error>();
+  public Error validate() {
     if (getKey() == null) {
-      errors.add(Error.MISSING_CONFIG_KEY);
+      return Error.MISSING_CONFIG_KEY;
     }
 
     if (getLgtmSecret() == null) {
-      errors.add(Error.MISSING_SECRET);
+      return Error.MISSING_SECRET;
     }
 
     if (getUsername() != null) {
       ApplicationUser user = ComponentAccessor.getUserManager().getUserByName(getUsername());
-      if (user == null) errors.add(Error.USER_NOT_FOUND);
+      if (user == null) return Error.USER_NOT_FOUND;
     } else {
-      errors.add(Error.MISSING_USERNAME);
+      return Error.MISSING_USERNAME;
     }
 
     if (getProjectKey() != null) {
       Project project =
           ComponentAccessor.getProjectManager().getProjectByCurrentKey(getProjectKey());
-      if (project == null) errors.add(Error.PROJECT_NOT_FOUND);
+      if (project == null) return Error.PROJECT_NOT_FOUND;
     } else {
-      errors.add(Error.MISSING_PROJECT_KEY);
+      return Error.MISSING_PROJECT_KEY;
     }
 
-    return errors;
+    return null;
   }
 
   public ApplicationUser getUser() {

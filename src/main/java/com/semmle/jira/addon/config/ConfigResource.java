@@ -14,7 +14,6 @@ import com.semmle.jira.addon.util.Constants;
 import com.semmle.jira.addon.util.JiraUtils;
 import com.semmle.jira.addon.util.UsedIssueTypeException;
 import com.semmle.jira.addon.util.WorkflowNotFoundException;
-import java.util.List;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -77,9 +76,9 @@ public class ConfigResource {
       return Response.status(Status.UNAUTHORIZED).build();
     }
 
-    List<Error> errors = config.validate();
-    for (Error error : errors) {
-      switch (error) {
+    Error configError = config.validate();
+    if (configError != null) {
+      switch (configError) {
         case MISSING_CONFIG_KEY:
         case MISSING_PROJECT_KEY:
         case MISSING_SECRET:
