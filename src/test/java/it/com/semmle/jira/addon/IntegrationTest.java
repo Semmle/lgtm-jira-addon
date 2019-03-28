@@ -208,7 +208,13 @@ public class IntegrationTest {
     assertEquals("Failed to configure plugin", 204, response.getStatusLine().getStatusCode());
     HttpClientUtils.closeQuietly(response);
 
-    return new Config(uiConfig);
+    Config config = new Config();
+    config.setKey(uiConfig.get(Config.PROPERTY_NAME_KEY));
+    config.setLgtmSecret(uiConfig.get(Config.PROPERTY_NAME_LGTM_SECRET));
+    config.setUsername(uiConfig.get(Config.PROPERTY_NAME_USERNAME));
+    config.setProjectKey(uiConfig.get(Config.PROPERTY_NAME_PROJECT_KEY));
+
+    return config;
   }
 
   private Issue postWebhookJson(Object request) throws ClientProtocolException, IOException {

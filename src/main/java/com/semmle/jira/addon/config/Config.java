@@ -8,8 +8,8 @@ import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 public class Config {
   public enum Error {
@@ -34,80 +34,72 @@ public class Config {
     properties = new Properties();
   }
 
-  public Config(Map<String, String> configMap) {
-    properties = new Properties();
-    if (configMap.containsKey(PROPERTY_NAME_KEY))
-      properties.setProperty(PROPERTY_NAME_KEY, configMap.get(PROPERTY_NAME_KEY));
-
-    if (configMap.containsKey(PROPERTY_NAME_LGTM_SECRET))
-      properties.setProperty(PROPERTY_NAME_LGTM_SECRET, configMap.get(PROPERTY_NAME_LGTM_SECRET));
-
-    if (configMap.containsKey(PROPERTY_NAME_USERNAME))
-      properties.setProperty(PROPERTY_NAME_USERNAME, configMap.get(PROPERTY_NAME_USERNAME));
-
-    if (configMap.containsKey(PROPERTY_NAME_PROJECT_KEY))
-      properties.setProperty(PROPERTY_NAME_PROJECT_KEY, configMap.get(PROPERTY_NAME_PROJECT_KEY));
-
-    if (configMap.containsKey(PROPERTY_NAME_EXTERNAL_HOOK_URL))
-      properties.setProperty(
-          PROPERTY_NAME_EXTERNAL_HOOK_URL, configMap.get(PROPERTY_NAME_EXTERNAL_HOOK_URL));
-
-    if (configMap.containsKey(PROPERTY_NAME_TRACKER_KEY))
-      properties.setProperty(PROPERTY_NAME_TRACKER_KEY, configMap.get(PROPERTY_NAME_TRACKER_KEY));
-  }
-
   public Config(Properties properties) {
-	  if (properties == null) {
-		  this.properties = new Properties();
-	  } else {
-		  this.properties = properties;
-	  }
+    if (properties == null) {
+      this.properties = new Properties();
+    } else {
+      this.properties = properties;
+    }
   }
 
+  @JsonProperty
   public String getKey() {
     return properties.getProperty(PROPERTY_NAME_KEY);
   }
 
+  @JsonProperty
   public void setKey(String key) {
     this.properties.put(PROPERTY_NAME_KEY, key);
   }
 
+  @JsonProperty
   public String getLgtmSecret() {
     return properties.getProperty(PROPERTY_NAME_LGTM_SECRET);
   }
 
+  @JsonProperty
   public void setLgtmSecret(String lgtmSecret) {
     this.properties.put(PROPERTY_NAME_LGTM_SECRET, lgtmSecret);
   }
 
+  @JsonProperty
   public String getUsername() {
     return properties.getProperty(PROPERTY_NAME_USERNAME);
   }
 
+  @JsonProperty
   public void setUsername(String username) {
     this.properties.put(PROPERTY_NAME_USERNAME, username);
   }
 
+  @JsonProperty
   public String getProjectKey() {
     return properties.getProperty(PROPERTY_NAME_PROJECT_KEY);
   }
 
+  @JsonProperty
   public void setProjectKey(String projectKey) {
     this.properties.put(PROPERTY_NAME_PROJECT_KEY, projectKey);
   }
 
+  @JsonProperty
   public URI getExternalHookUrl() {
-    return URI.create(properties.getProperty("externalHookUrl"));
+    if (properties.containsKey(PROPERTY_NAME_EXTERNAL_HOOK_URL))
+      return URI.create(properties.getProperty(PROPERTY_NAME_EXTERNAL_HOOK_URL));
+    return null;
   }
 
-  public void setExternalHookUrl(String hookUrl) {
-    this.properties.put(PROPERTY_NAME_EXTERNAL_HOOK_URL, hookUrl);
+  @JsonProperty
+  public void setExternalHookUrl(String externalHookUrl) {
+    this.properties.put(PROPERTY_NAME_EXTERNAL_HOOK_URL, externalHookUrl);
   }
 
+  @JsonProperty
   public String getTrackerKey() {
     return properties.getProperty(PROPERTY_NAME_TRACKER_KEY);
   }
 
+  @JsonProperty
   public void setTrackerKey(String trackerKey) {
     this.properties.put(PROPERTY_NAME_TRACKER_KEY, trackerKey);
   }

@@ -15,7 +15,6 @@ import com.semmle.jira.addon.util.JiraUtils;
 import com.semmle.jira.addon.util.UsedIssueTypeException;
 import com.semmle.jira.addon.util.WorkflowNotFoundException;
 import java.util.List;
-import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -72,13 +71,12 @@ public class ConfigResource {
 
   @PUT
   @Consumes(MediaType.APPLICATION_JSON)
-  public Response put(final Map<String, String> configMap, @Context HttpServletRequest request) {
+  public Response put(Config config, @Context HttpServletRequest request) {
     UserKey userKey = userManager.getRemoteUserKey(request);
     if (userKey == null || !userManager.isSystemAdmin(userKey)) {
       return Response.status(Status.UNAUTHORIZED).build();
     }
 
-    Config config = new Config(configMap);
     List<Error> errors = config.validate();
     for (Error error : errors) {
       switch (error) {
