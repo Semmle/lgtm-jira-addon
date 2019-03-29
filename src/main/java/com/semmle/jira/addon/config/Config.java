@@ -7,6 +7,7 @@ import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import java.net.URI;
 import java.util.Properties;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 public class Config {
@@ -129,10 +130,12 @@ public class Config {
     return null;
   }
 
+  @JsonIgnore
   public ApplicationUser getUser() {
     return ComponentAccessor.getUserManager().getUserByName(getUsername());
   }
 
+  @JsonIgnore
   public Project getProject() {
     return ComponentAccessor.getProjectManager().getProjectByCurrentKey(getProjectKey());
   }
