@@ -5,12 +5,12 @@ import static org.mockito.Mockito.when;
 
 import com.semmle.jira.addon.LgtmServlet.InvalidRequestException;
 import com.semmle.jira.addon.util.Util;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.AccessControlException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.junit.Before;
@@ -22,8 +22,9 @@ public class TestValidateRequest extends TestLgtmServletBase {
   @Before
   public void setup() throws JsonGenerationException, JsonMappingException, IOException {
     Request request = TestCreateIssue.createRequest("test", "Query", "test.cpp", "Security Error");
+
     InputStream byteArrayInputStream =
-        IOUtils.toInputStream(Util.JSON.writeValueAsString(request), "UTF-8");
+        new ByteArrayInputStream(Util.JSON.writeValueAsBytes(request));
     ServletInputStream servletInputStream =
         new ServletInputStream() {
           public int read() throws IOException {

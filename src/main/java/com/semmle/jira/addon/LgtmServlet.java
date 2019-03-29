@@ -65,7 +65,7 @@ public class LgtmServlet extends HttpServlet {
       }
     }
 
-    Request request = null;
+    Request request;
     try {
       request = validateRequest(req, config.getLgtmSecret());
     } catch (AccessControlException e) {
@@ -104,9 +104,6 @@ public class LgtmServlet extends HttpServlet {
       boolean skipValidation = request.transition != Transition.SUPPRESS;
       String transitionName = null;
       switch (request.transition) {
-        case CREATE:
-          // Already handled
-          break;
         case REOPEN:
           transitionName = Constants.WORKFLOW_REOPEN_TRANSITION_NAME;
           break;

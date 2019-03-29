@@ -86,7 +86,7 @@ public class LgtmTransitionNotificationFunctionTest {
     Config config = new Config();
     config.setKey(CONFIG_KEY);
     config.setLgtmSecret("secret");
-    config.setExternalHookUrl("https://localhost:8080");
+    config.setExternalHookUrl(URI.create("https://localhost:8080"));
     Config.put(config);
 
     function =

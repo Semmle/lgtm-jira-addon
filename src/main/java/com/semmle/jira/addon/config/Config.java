@@ -89,8 +89,9 @@ public class Config {
   }
 
   @JsonProperty
-  public void setExternalHookUrl(String externalHookUrl) {
-    this.properties.put(PROPERTY_NAME_EXTERNAL_HOOK_URL, externalHookUrl);
+  public void setExternalHookUrl(URI externalHookUrl) {
+    if (externalHookUrl == null) this.properties.put(PROPERTY_NAME_EXTERNAL_HOOK_URL, null);
+    else this.properties.put(PROPERTY_NAME_EXTERNAL_HOOK_URL, externalHookUrl.toString());
   }
 
   @JsonProperty
