@@ -1,5 +1,6 @@
 package com.semmle.jira.addon;
 
+import com.semmle.jira.addon.config.Config;
 import com.semmle.jira.addon.util.Util;
 import com.semmle.jira.addon.util.workflow.WorkflowResolution;
 import com.semmle.jira.addon.util.workflow.WorkflowStatus;
@@ -45,6 +46,10 @@ public class Json {
     text =
         "{\"originalId\":\"id\",\"name\":\"name\",\"description\":\"desc\",\"statusCategoryId\":\"category\"}";
     testJsonRoundTrip(text, WorkflowStatus.class, false);
+
+    text =
+        "{\"key\":\"config_key\",\"lgtmSecret\":\"12345678\",\"username\":\"admin\",\"projectKey\":\"MKY\",\"externalHookUrl\":\"www.lgtm.com\",\"trackerKey\":\"trackerKey\"}";
+    testJsonRoundTrip(text, Config.class, false);
   }
 
   private static <T> void testJsonRoundTrip(String input, Class<T> cls, boolean unknownFields)
