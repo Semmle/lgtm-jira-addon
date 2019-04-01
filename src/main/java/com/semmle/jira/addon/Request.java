@@ -1,5 +1,8 @@
 package com.semmle.jira.addon;
 
+import com.semmle.jira.addon.util.Util;
+import java.io.IOException;
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -16,6 +19,18 @@ public class Request {
   @JsonProperty public final Project project;
   @JsonProperty public final Alert alert;
 
+  public final JsonNode jsonRequest;
+
+  public Request(JsonNode jsonRequest) throws IOException {
+    Request request = Util.JSON.readValue(jsonRequest, Request.class);
+    this.transition = request.transition;
+    this.issueId = request.issueId;
+    this.project = request.project;
+    this.alert = request.alert;
+
+    this.jsonRequest = jsonRequest;
+  }
+
   public Request(Transition transition, Long issueId) {
     this(transition, issueId, null, null);
   }
@@ -30,6 +45,8 @@ public class Request {
     this.issueId = issueId;
     this.project = project;
     this.alert = alert;
+
+    this.jsonRequest = null;
   }
 
   boolean isValid() {

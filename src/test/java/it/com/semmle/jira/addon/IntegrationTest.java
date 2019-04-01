@@ -14,8 +14,8 @@ import com.google.common.collect.Iterables;
 import com.semmle.jira.addon.Request;
 import com.semmle.jira.addon.Request.Transition;
 import com.semmle.jira.addon.Response;
-import com.semmle.jira.addon.Util;
 import com.semmle.jira.addon.config.Config;
+import com.semmle.jira.addon.util.Util;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -201,7 +201,6 @@ public class IntegrationTest {
             + Base64.getEncoder().encodeToString(("admin:admin").getBytes(StandardCharsets.UTF_8)));
 
     httpPut.setEntity(new StringEntity(Util.JSON.writeValueAsString(config)));
-
     HttpResponse response = httpClient.execute(httpPut);
 
     assertEquals("Failed to configure plugin", 204, response.getStatusLine().getStatusCode());

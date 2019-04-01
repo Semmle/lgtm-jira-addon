@@ -9,10 +9,10 @@ import com.opensymphony.workflow.WorkflowException;
 import com.semmle.jira.addon.JsonError;
 import com.semmle.jira.addon.Request;
 import com.semmle.jira.addon.Request.Transition;
-import com.semmle.jira.addon.Util;
 import com.semmle.jira.addon.config.Config;
 import com.semmle.jira.addon.util.CustomFieldRetrievalException;
 import com.semmle.jira.addon.util.JiraUtils;
+import com.semmle.jira.addon.util.Util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -56,8 +56,10 @@ public class LgtmTransitionNotificationFunction extends AbstractJiraFunctionProv
     Config config = Config.get(configKey);
 
     URI url = config.getExternalHookUrl();
-    // There is no external hook URL configured
-    if (url == null) return;
+    if (url == null) {
+      // There is no external hook URL configured
+      return;
+    }
 
     Request message = new Request(transition, issue.getId());
     WorkflowException exception = null;

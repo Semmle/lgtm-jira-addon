@@ -1,4 +1,4 @@
-package com.semmle.jira.addon;
+package com.semmle.jira.addon.util;
 
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;

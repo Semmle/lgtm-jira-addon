@@ -1,5 +1,6 @@
 package com.semmle.jira.addon;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -25,12 +26,14 @@ import com.atlassian.jira.junit.rules.AvailableInContainer;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
+import com.semmle.jira.addon.LgtmServlet.CreateIssueException;
 import com.semmle.jira.addon.Request.Alert;
 import com.semmle.jira.addon.Request.Alert.Query;
 import com.semmle.jira.addon.Request.Project;
 import com.semmle.jira.addon.Request.Transition;
-import com.semmle.jira.addon.config.ProcessedConfig;
+import com.semmle.jira.addon.config.Config;
 import com.semmle.jira.addon.util.Constants;
+import com.semmle.jira.addon.util.CustomFieldRetrievalException;
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
@@ -60,7 +63,7 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
   protected MockPluginSettings pluginSettings = new MockPluginSettings();
 
   CreateValidationResult createValidationResult = mock(CreateValidationResult.class);
-  ProcessedConfig config = mock(ProcessedConfig.class);
+  Config config = mock(Config.class);
 
   private IssueResult issueResult = mock(IssueResult.class);
   private CustomField customField = mock(CustomField.class);
@@ -75,7 +78,7 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
     Query query = new Query(queryName, url + "/" + queryName);
     Alert alert = new Alert(alertFile, alertMessage, url + "/alert", query);
 
-    return new Request(transition, 1l, project, alert);
+    return new Request(transition, null, project, alert);
   }
 
   @Before
@@ -105,6 +108,8 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
     when(issueService.create(any(), any())).thenReturn(issueResult);
     when(issueResult.getIssue()).thenReturn(issue);
 
+    when(issue.getId()).thenReturn(1l);
+
     ApplicationUser user = mock(ApplicationUser.class);
     when(config.getUser()).thenReturn(user);
     com.atlassian.jira.project.Project project = mock(com.atlassian.jira.project.Project.class);
@@ -123,26 +128,30 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
   }
 
   @Test
-  public void testCreateIssueSuccess() throws IOException {
+  public void testCreateIssueSuccess()
+      throws IOException, IllegalArgumentException, CustomFieldRetrievalException,
+          CreateIssueException {
     HttpServletResponse resp = mockResponse();
     Request request = createRequest("test", "Query", "test.cpp", "Security Error");
 
     when(createValidationResult.getErrorCollection().hasAnyErrors()).thenReturn(false);
     when(issueResult.isValid()).thenReturn(true);
-    servlet.createIssue(Util.JSON.valueToTree(request), request, resp, config);
-    verify(resp).setStatus(201);
+    Long issueId = servlet.createIssue(request, config);
+    Long expected = 1l;
+    assertEquals(expected, issueId);
 
     verify(issue).setCustomFieldValue(customField, config.getKey());
   }
 
-  @Test
-  public void testCreateIssueFailure() throws IOException {
+  @Test(expected = CreateIssueException.class)
+  public void testCreateIssueFailure()
+      throws IOException, IllegalArgumentException, CustomFieldRetrievalException,
+          CreateIssueException {
     HttpServletResponse resp = mockResponse();
     Request request = createRequest("test", "Query", "test.cpp", "Security Error");
 
     when(createValidationResult.getErrorCollection().hasAnyErrors()).thenReturn(true);
 
-    servlet.createIssue(Util.JSON.valueToTree(request), request, resp, config);
-    verify(resp).setStatus(500);
+    servlet.createIssue(request, config);
   }
 }

@@ -7,9 +7,9 @@ import com.atlassian.jira.user.UserUtils;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
-import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
+import com.semmle.jira.addon.config.Config.Error;
 import com.semmle.jira.addon.util.Constants;
 import com.semmle.jira.addon.util.JiraUtils;
 import com.semmle.jira.addon.util.UsedIssueTypeException;
@@ -39,18 +39,13 @@ public class ConfigResource {
 
   @ComponentImport private final UserManager userManager;
   @ComponentImport private final PluginSettingsFactory pluginSettingsFactory;
-  @ComponentImport private final TransactionTemplate transactionTemplate;
 
   private final PluginSettings settings;
 
   @Inject
-  public ConfigResource(
-      UserManager userManager,
-      PluginSettingsFactory pluginSettingsFactory,
-      TransactionTemplate transactionTemplate) {
+  public ConfigResource(UserManager userManager, PluginSettingsFactory pluginSettingsFactory) {
     this.userManager = userManager;
     this.pluginSettingsFactory = pluginSettingsFactory;
-    this.transactionTemplate = transactionTemplate;
 
     settings = pluginSettingsFactory.createGlobalSettings();
   }
@@ -75,27 +70,33 @@ public class ConfigResource {
 
   @PUT
   @Consumes(MediaType.APPLICATION_JSON)
-  public Response put(final Config config, @Context HttpServletRequest request) {
+  public Response put(Config config, @Context HttpServletRequest request) {
     UserKey userKey = userManager.getRemoteUserKey(request);
     if (userKey == null || !userManager.isSystemAdmin(userKey)) {
       return Response.status(Status.UNAUTHORIZED).build();
     }
 
-    if (!UserUtils.userExists(config.getUsername())) {
-      return Response.status(Status.BAD_REQUEST).header("Error", "user-not-found").build();
+    Error configError = config.validate();
+    if (configError != null) {
+      switch (configError) {
+        case MISSING_CONFIG_KEY:
+        case MISSING_PROJECT_KEY:
+        case MISSING_SECRET:
+        case MISSING_USERNAME:
+          // Should not happen as the JS checks for it
+          return Response.status(Status.BAD_REQUEST).header("Error", "missing-fields").build();
+        case PROJECT_NOT_FOUND:
+          return Response.status(Status.BAD_REQUEST).header("Error", "project-not-found").build();
+        case USER_NOT_FOUND:
+          return Response.status(Status.BAD_REQUEST).header("Error", "user-not-found").build();
+      }
     }
 
-    Project project =
-        ComponentAccessor.getProjectManager().getProjectByCurrentKey(config.getProjectKey());
-    if (project == null) {
-      return Response.status(Status.BAD_REQUEST).header("Error", "project-not-found").build();
-    }
-
+    Project project = config.getProject();
     IssueType lgtmIssueType = JiraUtils.getIssueTypeByName(Constants.ISSUE_TYPE_NAME);
     if (lgtmIssueType == null) {
       return Response.status(Status.BAD_REQUEST).header("Error", "issueType-not-found").build();
     }
-
     JiraUtils.addIssueTypeToProject(project, lgtmIssueType);
 
     try {
