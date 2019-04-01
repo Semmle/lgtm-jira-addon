@@ -154,7 +154,7 @@ public class LgtmServlet extends HttpServlet {
   }
 
   Long createIssue(Request request, Config config)
-      throws IOException, CustomFieldRetrievalException, CreateIssueException {
+      throws CustomFieldRetrievalException, CreateIssueException {
 
     IssueInputParameters issueInputParameters =
         ComponentAccessor.getIssueService().newIssueInputParameters();
@@ -195,7 +195,7 @@ public class LgtmServlet extends HttpServlet {
 
   void applyTransition(
       MutableIssue issue, String transitionName, boolean skipValidate, ApplicationUser user)
-      throws IOException, TransitionNotFoundException {
+      throws TransitionNotFoundException {
     IssueInputParameters issueInputParameters =
         ComponentAccessor.getIssueService().newIssueInputParameters();
     issueInputParameters.setRetainExistingValuesWhenParameterNotProvided(true, true);

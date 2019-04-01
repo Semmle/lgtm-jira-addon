@@ -34,8 +34,6 @@ import com.semmle.jira.addon.Request.Transition;
 import com.semmle.jira.addon.config.Config;
 import com.semmle.jira.addon.util.Constants;
 import com.semmle.jira.addon.util.CustomFieldRetrievalException;
-import java.io.IOException;
-import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -129,9 +127,7 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
 
   @Test
   public void testCreateIssueSuccess()
-      throws IOException, IllegalArgumentException, CustomFieldRetrievalException,
-          CreateIssueException {
-    HttpServletResponse resp = mockResponse();
+      throws IllegalArgumentException, CustomFieldRetrievalException, CreateIssueException {
     Request request = createRequest("test", "Query", "test.cpp", "Security Error");
 
     when(createValidationResult.getErrorCollection().hasAnyErrors()).thenReturn(false);
@@ -145,9 +141,7 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
 
   @Test(expected = CreateIssueException.class)
   public void testCreateIssueFailure()
-      throws IOException, IllegalArgumentException, CustomFieldRetrievalException,
-          CreateIssueException {
-    HttpServletResponse resp = mockResponse();
+      throws IllegalArgumentException, CustomFieldRetrievalException, CreateIssueException {
     Request request = createRequest("test", "Query", "test.cpp", "Security Error");
 
     when(createValidationResult.getErrorCollection().hasAnyErrors()).thenReturn(true);
