@@ -25,15 +25,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import org.ofbiz.core.entity.GenericEntityException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 @Path("/")
 public class ConfigResource {
-  private static final Logger log = LoggerFactory.getLogger(ConfigResource.class);
 
   private static final String KEY_SETTINGS_NAME = "com.lgtm.addon.config.key";
 
@@ -104,9 +100,6 @@ public class ConfigResource {
           project, lgtmIssueType, UserUtils.getUser(config.getUsername()));
     } catch (WorkflowNotFoundException e) {
       return Response.status(Status.BAD_REQUEST).header("Error", "workflow-not-found").build();
-    } catch (GenericEntityException e) {
-      log.error("Error while adding the LGTM workflow to the project", e);
-      return Response.status(Status.BAD_REQUEST).header("Error", "workflow-generic-error").build();
     } catch (UsedIssueTypeException e) {
       return Response.status(Status.BAD_REQUEST).header("Error", "manual-migration-needed").build();
     }
