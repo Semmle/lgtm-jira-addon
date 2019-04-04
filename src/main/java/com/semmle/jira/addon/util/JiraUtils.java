@@ -19,8 +19,10 @@ import com.atlassian.jira.issue.search.SearchResults;
 import com.atlassian.jira.issue.status.Status;
 import com.atlassian.jira.jql.builder.JqlQueryBuilder;
 import com.atlassian.jira.project.Project;
+import com.atlassian.jira.scheme.Scheme;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.web.bean.PagerFilter;
+import com.atlassian.jira.workflow.AssignableWorkflowScheme;
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.WorkflowManager;
 import com.atlassian.jira.workflow.WorkflowSchemeManager;
@@ -33,7 +35,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import org.ofbiz.core.entity.GenericEntityException;
-import org.ofbiz.core.entity.GenericValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +71,7 @@ public class JiraUtils {
 
   public static void configureWorkflowForProject(
       Project project, IssueType issueType, ApplicationUser user)
-      throws GenericEntityException, UsedIssueTypeException, WorkflowNotFoundException {
+      throws UsedIssueTypeException, WorkflowNotFoundException {
 
     WorkflowManager workflowManager = ComponentAccessor.getWorkflowManager();
     JiraWorkflow currentWorkflow = workflowManager.getWorkflow(project.getId(), issueType.getId());
@@ -94,13 +95,27 @@ public class JiraUtils {
       throw new UsedIssueTypeException();
     }
 
-    WorkflowSchemeManager workflowSchemeManager = ComponentAccessor.getWorkflowSchemeManager();
-    GenericValue workflowScheme = workflowSchemeManager.getWorkflowScheme(project);
     JiraWorkflow workflow = workflowManager.getWorkflow(Constants.WORKFLOW_NAME);
     if (workflow == null) throw new WorkflowNotFoundException();
 
-    workflowSchemeManager.addWorkflowToScheme(
-        workflowScheme, workflow.getName(), issueType.getId());
+    WorkflowSchemeManager workflowSchemeManager = ComponentAccessor.getWorkflowSchemeManager();
+    AssignableWorkflowScheme workflowScheme = workflowSchemeManager.getWorkflowSchemeObj(project);
+    boolean update = !workflowScheme.isDefault() && workflowScheme.getId() != null;
+    AssignableWorkflowScheme.Builder schemeBuilder =
+        update
+            ? workflowScheme.builder()
+            : workflowSchemeManager
+                .assignableBuilder()
+                .setName(project.getKey() + ": LGTM Workflow Scheme");
+    schemeBuilder.setMapping(issueType.getId(), workflow.getName());
+    workflowScheme = schemeBuilder.build();
+    if (update) {
+      workflowSchemeManager.updateWorkflowScheme(workflowScheme);
+    } else {
+      workflowScheme = workflowSchemeManager.createScheme(schemeBuilder.build());
+      Scheme scheme = workflowSchemeManager.getSchemeObject(workflowScheme.getId());
+      workflowSchemeManager.addSchemeToProject(project, scheme);
+    }
   }
 
   private static boolean isCompatible(JiraWorkflow workflow) {

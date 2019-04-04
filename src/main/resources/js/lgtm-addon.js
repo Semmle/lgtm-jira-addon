@@ -176,14 +176,6 @@ function updateConfig() {
 				fadeout : true
 			});
 			return;
-		} else if (jqXHR.getResponseHeader("Error") === "workflow-generic-error") {
-			AJS.messages.error("#message-context", {
-				title : "An error occurred when adding the 'LGTM alert' workflow to the project.",
-				body : 'If this problem persist please contact your Jira administrator.',
-				closeable : true,
-				fadeout : true
-			});
-			return;
 		} else if (jqXHR.getResponseHeader("Error") === "workflow-not-found") {
 			AJS.messages.error("#message-context", {
 				title : 'The LGTM alert workflow does not exists. Please re-enable add-on.',
