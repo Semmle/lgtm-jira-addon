@@ -48,7 +48,14 @@ public class Config {
 
   @JsonProperty
   public void setKey(String key) {
-    this.properties.put(PROPERTY_NAME_KEY, key);
+    putProperty(PROPERTY_NAME_KEY, key);
+  }
+
+  private void putProperty(String key, String value) {
+    // Null values are not allowed in a Properties object,
+    // so we remove the entry instead.
+    if (value == null) properties.remove(key);
+    else properties.put(key, value);
   }
 
   @JsonProperty
@@ -58,7 +65,7 @@ public class Config {
 
   @JsonProperty
   public void setLgtmSecret(String lgtmSecret) {
-    this.properties.put(PROPERTY_NAME_LGTM_SECRET, lgtmSecret);
+    putProperty(PROPERTY_NAME_LGTM_SECRET, lgtmSecret);
   }
 
   @JsonProperty
@@ -68,7 +75,7 @@ public class Config {
 
   @JsonProperty
   public void setUsername(String username) {
-    this.properties.put(PROPERTY_NAME_USERNAME, username);
+    putProperty(PROPERTY_NAME_USERNAME, username);
   }
 
   @JsonProperty
@@ -78,7 +85,7 @@ public class Config {
 
   @JsonProperty
   public void setProjectKey(String projectKey) {
-    this.properties.put(PROPERTY_NAME_PROJECT_KEY, projectKey);
+    putProperty(PROPERTY_NAME_PROJECT_KEY, projectKey);
   }
 
   @JsonProperty
@@ -89,9 +96,8 @@ public class Config {
   }
 
   @JsonProperty
-  public void setExternalHookUrl(URI externalHookUrl) {
-    if (externalHookUrl == null) this.properties.put(PROPERTY_NAME_EXTERNAL_HOOK_URL, null);
-    else this.properties.put(PROPERTY_NAME_EXTERNAL_HOOK_URL, externalHookUrl.toString());
+  public void setExternalHookUrl(URI url) {
+    putProperty(PROPERTY_NAME_EXTERNAL_HOOK_URL, url == null ? null : url.toString());
   }
 
   @JsonProperty
@@ -101,7 +107,7 @@ public class Config {
 
   @JsonProperty
   public void setTrackerKey(String trackerKey) {
-    this.properties.put(PROPERTY_NAME_TRACKER_KEY, trackerKey);
+    putProperty(PROPERTY_NAME_TRACKER_KEY, trackerKey);
   }
 
   public Error validate() {

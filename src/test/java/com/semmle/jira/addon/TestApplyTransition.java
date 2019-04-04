@@ -20,10 +20,8 @@ import com.opensymphony.workflow.loader.ActionDescriptor;
 import com.semmle.jira.addon.LgtmServlet.TransitionNotFoundException;
 import com.semmle.jira.addon.config.Config;
 import com.semmle.jira.addon.util.Constants;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
-import javax.servlet.http.HttpServletResponse;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,9 +57,7 @@ public class TestApplyTransition extends TestCreateAndTransitionBase {
   }
 
   @Test(expected = TransitionNotFoundException.class)
-  public void testApplyTransitionTransitionNotFound()
-      throws IOException, TransitionNotFoundException {
-    HttpServletResponse resp = mockResponse();
+  public void testApplyTransitionTransitionNotFound() throws TransitionNotFoundException {
 
     when(transitionValidationResult.isValid()).thenReturn(false);
 
@@ -72,8 +68,7 @@ public class TestApplyTransition extends TestCreateAndTransitionBase {
   }
 
   @Test
-  public void testApplyTransitionInvalid() throws IOException, TransitionNotFoundException {
-    HttpServletResponse resp = mockResponse();
+  public void testApplyTransitionInvalid() throws TransitionNotFoundException {
 
     when(transitionValidationResult.isValid()).thenReturn(true);
 
@@ -95,8 +90,7 @@ public class TestApplyTransition extends TestCreateAndTransitionBase {
   }
 
   @Test
-  public void testApplyTransitionSuccess() throws IOException, TransitionNotFoundException {
-    HttpServletResponse resp = mockResponse();
+  public void testApplyTransitionSuccess() throws TransitionNotFoundException {
 
     when(transitionValidationResult.isValid()).thenReturn(true);
 
