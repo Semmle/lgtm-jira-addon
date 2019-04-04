@@ -21,7 +21,6 @@ import com.atlassian.jira.issue.fields.layout.field.FieldLayout;
 import com.atlassian.jira.issue.fields.layout.field.FieldLayoutItem;
 import com.atlassian.jira.issue.fields.layout.field.FieldLayoutManager;
 import com.atlassian.jira.issue.issuetype.IssueType;
-import com.atlassian.jira.issue.label.LabelManager;
 import com.atlassian.jira.junit.rules.AvailableInContainer;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.util.ErrorCollection;
@@ -43,7 +42,6 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
   private static final String CONFIG_KEY = "config_key";
 
   @AvailableInContainer private ConstantsManager constantsManager = mock(ConstantsManager.class);
-  @AvailableInContainer private LabelManager labelManager = mock(LabelManager.class);
 
   @AvailableInContainer
   private ManagedConfigurationItemService managedConfigurationItemService =
