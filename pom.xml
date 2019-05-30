@@ -287,6 +287,12 @@
 			<url>https://repo.spring.io/libs-release/</url>
 			<layout>default</layout>
 		</repository>
+                <repository>
+                        <id>mulesoft-public</id>
+                        <name>Mulesoft Repository</name>
+                        <url>https://repository.mulesoft.org/nexus/content/repositories/public/</url>
+                        <layout>default</layout>
+                </repository>
 		<repository>
 			<id>atlassian-3rdparty</id>
 			<name>Atlassian 3rd-P Old Repository</name>
@@ -314,8 +320,20 @@
 			</snapshots>
 		</pluginRepository>
 		<pluginRepository>
+			<id>springio-plugins-release</id>
+			<name>Spring Plugins Repository</name>
+			<url>https://repo.spring.io/plugins-release/</url>
+			<layout>default</layout>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
 			<id>atlassian-public</id>
-			<url>https://m2proxy.atlassian.com/repository/public/</url>
+			<url>https://packages.atlassian.com/repository/public/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
