@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
+import com.atlassian.jira.permission.ProjectPermissions;
 import com.atlassian.jira.testkit.client.Backdoor;
 import com.atlassian.jira.testkit.client.restclient.Issue;
 import com.atlassian.jira.testkit.client.restclient.SearchRequest;
@@ -78,8 +79,12 @@ public class IntegrationTest {
     testKit.usersAndGroups().addUser("developer", "password", "Developer", "developer@example.com");
     testKit.usersAndGroups().addUser("lgtm", "password", "LGTM", "lgtm@example.com");
     testKit.usersAndGroups().addUserToGroup("developer", "jira-developers");
-    testKit.project().addProject("Apollo", "AP", "developer");
 
+    long projectId = testKit.project().addProject("Apollo", "AP", "developer");
+    long schemeId = testKit.permissionSchemes().copyDefaultScheme("AP permissions");
+
+    testKit.permissionSchemes().addEveryonePermission(schemeId, ProjectPermissions.LINK_ISSUES);
+    testKit.project().setPermissionScheme(projectId, schemeId);
     baseUrl = testKit.generalConfiguration().getEnvironmentData().getBaseUrl().toString();
     httpClient = HttpClientBuilder.create().build();
 

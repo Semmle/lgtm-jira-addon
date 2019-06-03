@@ -8,6 +8,7 @@ import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.link.RemoteIssueLink;
 import com.atlassian.jira.issue.link.RemoteIssueLinkBuilder;
+import com.atlassian.jira.permission.ProjectPermissions;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.workflow.function.issue.AbstractJiraFunctionProvider;
 import com.opensymphony.module.propertyset.PropertySet;
@@ -53,7 +54,13 @@ public class LgtmIssueLinkFunction extends AbstractJiraFunctionProvider {
 
         ApplicationUser user = getCallerUser(transientVars, args);
         MutableIssue issue = getIssue(transientVars);
-        createRemoteLink(user, issue, request);
+        if (ComponentAccessor.getPermissionManager()
+            .hasPermission(ProjectPermissions.LINK_ISSUES, issue.getProjectObject(), user)) {
+          createRemoteLink(user, issue, request);
+        } else {
+          log.debug(
+              "LgtmIssueLinkFunction: Remote issue link creation skipped, because user has no LINK_ISSUES permission.");
+        }
       }
     }
   }
