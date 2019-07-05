@@ -6,7 +6,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.semmle</groupId>
 	<artifactId>lgtm-jira-addon</artifactId>
-	<version>0.2.0</version>
+	<version>0.2.1-SNAPSHOT</version>
 	<organization>
 		<name>Semmle</name>
 		<url>https://semmle.com</url>
@@ -334,6 +334,7 @@
 		<pluginRepository>
 			<id>atlassian-public</id>
 			<url>https://packages.atlassian.com/repository/public/</url>
+			<layout>default</layout>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
