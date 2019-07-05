@@ -82,7 +82,7 @@ public class LgtmIssueLinkFunctionTest {
     Map<String, Object> transientVars = new LinkedHashMap<>();
     Project project =
         new Project(1L, "example/project", "Example project", "http://lgtm.example.com/projects/1");
-    Query query = new Query("Query name", "http://lgtm.example.com/rules/1");
+    Query query = new Query("Query name", null, "http://lgtm.example.com/rules/1");
     Alert alert = new Alert("file", "some error", "http://lgtm.example.com/issues/...", query);
     Request request = new Request(Transition.CREATE, null, project, alert);
     JsonNode json = Util.JSON.valueToTree(request);

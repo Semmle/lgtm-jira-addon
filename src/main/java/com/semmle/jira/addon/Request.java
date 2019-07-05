@@ -183,11 +183,25 @@ public class Request {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Query {
       @JsonProperty public final String name;
+      @JsonProperty public final Properties properties;
       @JsonProperty public final String url;
 
+      public static class Properties {
+        @JsonProperty public final String severity;
+
+        @JsonCreator
+        public Properties(@JsonProperty("severity") String severity) {
+          this.severity = severity;
+        }
+      }
+
       @JsonCreator
-      public Query(@JsonProperty("name") String name, @JsonProperty("url") String url) {
+      public Query(
+          @JsonProperty("name") String name,
+          @JsonProperty("properties") Properties properties,
+          @JsonProperty("url") String url) {
         this.name = name;
+        this.properties = properties;
         this.url = url;
       }
 
