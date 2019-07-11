@@ -1,0 +1,10 @@
+<div>
+<table>
+#foreach ($field in $fields.entrySet())
+<tr>
+  <th align="left"><label for="$field.getKey().id()">$field.getKey().displayName(): </label></th>
+  <td align="center"><input type="checkbox" name="$field.getKey().id()" id="$field.getKey().id()" value="true"#if ($field.getValue()) checked#end></td>
+</tr>
+#end
+</table>
+</div>
