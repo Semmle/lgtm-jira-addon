@@ -68,7 +68,7 @@ public class LgtmIssueLinkFunction extends AbstractJiraFunctionProvider {
   private void createRemoteLink(ApplicationUser user, Issue issue, Request request)
       throws WorkflowException {
     String url = request.alert.url;
-    String title = request.alert.query.name;
+    String title = request.alert.query.getName();
 
     RemoteIssueLinkService issueLinkService =
         ComponentAccessor.getComponent(RemoteIssueLinkService.class);
