@@ -34,6 +34,7 @@ public class TestApplyTransition extends TestCreateAndTransitionBase {
 
   Config config = mock(Config.class);
 
+  @Override
   @Before
   public void initTests() {
     super.initTests();

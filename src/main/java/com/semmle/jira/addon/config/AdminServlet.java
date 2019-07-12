@@ -55,7 +55,7 @@ public class AdminServlet extends HttpServlet {
     response.sendRedirect(loginUriProvider.getLoginUri(getUri(request)).toASCIIString());
   }
 
-  private URI getUri(HttpServletRequest request) {
+  private static URI getUri(HttpServletRequest request) {
     StringBuffer builder = request.getRequestURL();
     if (request.getQueryString() != null) {
       builder.append("?");

@@ -116,6 +116,7 @@ public class Request {
       throw new IllegalArgumentException("Invalid transition:" + value);
     }
 
+    @Override
     @JsonValue
     public String toString() {
       return value;

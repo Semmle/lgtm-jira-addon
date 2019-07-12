@@ -79,7 +79,7 @@ public class LgtmTransitionNotificationFunctionTest {
     when(issue.getCustomFieldValue(customField)).thenReturn(CONFIG_KEY);
 
     PluginSettings settings = new MockPluginSettings();
-    settings.put(Constants.CUSTOM_FIELD_CONFIG_KEY, (Object) customField.getIdAsLong().toString());
+    settings.put(Constants.CUSTOM_FIELD_CONFIG_KEY, customField.getIdAsLong().toString());
 
     when(pluginSettingsFactory.createGlobalSettings()).thenReturn(settings);
 
@@ -92,13 +92,13 @@ public class LgtmTransitionNotificationFunctionTest {
     function =
         new LgtmTransitionNotificationFunction() {
           @Override
-          protected MutableIssue getIssue(@SuppressWarnings("rawtypes") Map transientVars) {
+          protected MutableIssue getIssue(Map transientVars) {
             return issue;
           }
 
           @Override
-          protected void postMessage(String secret, URI url, Request request) {
-            LgtmTransitionNotificationFunctionTest.this.secret = secret;
+          protected void postMessage(String sharedSecret, URI url, Request request) {
+            LgtmTransitionNotificationFunctionTest.this.secret = sharedSecret;
             LgtmTransitionNotificationFunctionTest.this.requestURL = url;
             LgtmTransitionNotificationFunctionTest.this.requestBody = request;
           }

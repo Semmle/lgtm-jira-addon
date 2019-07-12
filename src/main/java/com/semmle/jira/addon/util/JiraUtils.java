@@ -46,7 +46,7 @@ public class JiraUtils {
 
     Collection<IssueType> currentIssueTypes =
         issueTypeSchemeManager.getIssueTypesForProject(project);
-    Set<String> issueTypeIds = new LinkedHashSet<String>();
+    Set<String> issueTypeIds = new LinkedHashSet<>();
     for (IssueType issueType : currentIssueTypes) {
       issueTypeIds.add(issueType.getId());
     }

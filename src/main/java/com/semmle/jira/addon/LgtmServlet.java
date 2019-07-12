@@ -129,7 +129,7 @@ public class LgtmServlet extends HttpServlet {
     }
   }
 
-  Request validateRequest(HttpServletRequest req, String secret)
+  static Request validateRequest(HttpServletRequest req, String secret)
       throws IOException, AccessControlException, InvalidRequestException {
     byte[] bytes = IOUtils.toByteArray(req.getInputStream());
 
@@ -153,7 +153,7 @@ public class LgtmServlet extends HttpServlet {
     return request;
   }
 
-  Long createIssue(Request request, Config config)
+  static Long createIssue(Request request, Config config)
       throws CustomFieldRetrievalException, CreateIssueException {
 
     IssueInputParameters issueInputParameters =
@@ -244,11 +244,13 @@ public class LgtmServlet extends HttpServlet {
     }
   }
 
-  private void sendError(HttpServletResponse resp, int code, String message) throws IOException {
+  private static void sendError(HttpServletResponse resp, int code, String message)
+      throws IOException {
     sendJSON(resp, code, new JsonError(code, message));
   }
 
-  private void sendJSON(HttpServletResponse resp, int code, Object value) throws IOException {
+  private static void sendJSON(HttpServletResponse resp, int code, Object value)
+      throws IOException {
     resp.setContentType("application/json");
     resp.setCharacterEncoding("UTF-8");
     resp.setStatus(code);

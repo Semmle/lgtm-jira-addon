@@ -27,6 +27,7 @@ public class TestValidateRequest extends TestLgtmServletBase {
         new ByteArrayInputStream(Util.JSON.writeValueAsBytes(request));
     ServletInputStream servletInputStream =
         new ServletInputStream() {
+          @Override
           public int read() throws IOException {
             return byteArrayInputStream.read();
           }
@@ -38,12 +39,12 @@ public class TestValidateRequest extends TestLgtmServletBase {
   @Test(expected = AccessControlException.class)
   public void testValidateRequestForbidden()
       throws IOException, AccessControlException, InvalidRequestException {
-    servlet.validateRequest(req, "wrong_secret");
+    LgtmServlet.validateRequest(req, "wrong_secret");
   }
 
   @Test
   public void testValidateRequestSuccess()
       throws IOException, AccessControlException, InvalidRequestException {
-    servlet.validateRequest(req, "secret");
+    LgtmServlet.validateRequest(req, "secret");
   }
 }

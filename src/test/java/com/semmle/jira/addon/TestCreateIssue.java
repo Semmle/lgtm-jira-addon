@@ -77,6 +77,7 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
     return new Request(transition, null, project, alert);
   }
 
+  @Override
   @Before
   public void initTests() {
     super.initTests();
@@ -116,7 +117,7 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
     when(managedConfigurationItemService.getManagedCustomField(customField))
         .thenReturn(managedField);
 
-    pluginSettings.put(Constants.CUSTOM_FIELD_CONFIG_KEY, (Object) CUSTOM_FIELD_ID.toString());
+    pluginSettings.put(Constants.CUSTOM_FIELD_CONFIG_KEY, CUSTOM_FIELD_ID.toString());
 
     FieldLayout fieldLayout = mock(FieldLayout.class);
     when(fieldLayoutManager.getFieldLayout(issueResult.getIssue())).thenReturn(fieldLayout);
@@ -130,7 +131,7 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
 
     when(createValidationResult.getErrorCollection().hasAnyErrors()).thenReturn(false);
     when(issueResult.isValid()).thenReturn(true);
-    Long issueId = servlet.createIssue(request, config);
+    Long issueId = LgtmServlet.createIssue(request, config);
     Long expected = 1l;
     assertEquals(expected, issueId);
 
@@ -144,6 +145,6 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
 
     when(createValidationResult.getErrorCollection().hasAnyErrors()).thenReturn(true);
 
-    servlet.createIssue(request, config);
+    LgtmServlet.createIssue(request, config);
   }
 }

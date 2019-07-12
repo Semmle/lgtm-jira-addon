@@ -32,7 +32,6 @@ public class LgtmTransitionNotificationFunction extends AbstractJiraFunctionProv
   public static final String FIELD_TRANSITION = "transition";
 
   @Override
-  @SuppressWarnings("rawtypes")
   public void execute(Map transientVars, Map args, PropertySet ps) throws WorkflowException {
 
     Transition transition = getTransitionParam(args);
@@ -97,19 +96,18 @@ public class LgtmTransitionNotificationFunction extends AbstractJiraFunctionProv
         if (connection.getResponseCode() != HttpServletResponse.SC_OK) {
           String error = null;
           if ("application/json".equals(connection.getContentType())) {
-            InputStream input = connection.getErrorStream();
-            if (input == null) {
-              error = connection.getResponseMessage();
-            } else {
-              try {
-                JsonError jsonError = Util.JSON.readValue(input, JsonError.class);
-                if (jsonError.error != null) {
-                  error = jsonError.error;
+            try (InputStream input = connection.getErrorStream()) {
+              if (input == null) {
+                error = connection.getResponseMessage();
+              } else {
+                try {
+                  JsonError jsonError = Util.JSON.readValue(input, JsonError.class);
+                  if (jsonError.error != null) {
+                    error = jsonError.error;
+                  }
+                } catch (JsonProcessingException e) {
+                  log.warn("Invalid response for notification: " + e, e);
                 }
-              } catch (JsonProcessingException e) {
-                log.warn("Invalid response for notification: " + e, e);
-              } finally {
-                input.close();
               }
             }
           } else {
@@ -128,7 +126,7 @@ public class LgtmTransitionNotificationFunction extends AbstractJiraFunctionProv
     }
   }
 
-  private Transition getTransitionParam(Map<?, ?> args) throws InvalidInputException {
+  private static Transition getTransitionParam(Map<String, ?> args) throws InvalidInputException {
     String transitionArg = (String) args.get(FIELD_TRANSITION);
     if (transitionArg == null)
       throw new InvalidInputException("Missing value for 'transition' parameter");

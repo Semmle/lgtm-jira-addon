@@ -55,7 +55,8 @@ public class LgtmTransitionNotificationFunctionFactory extends AbstractWorkflowP
     velocityParams.put(FIELD_TRANSITION_NAME, transitionName);
   }
 
-  public Map<String, ?> getDescriptorParams(Map<String, Object> formParams) {
+  @Override
+  public Map<String, String> getDescriptorParams(Map<String, Object> formParams) {
     Map<String, String> params = new LinkedHashMap<>();
 
     String transition =
