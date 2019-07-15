@@ -1,0 +1,29 @@
+<div>
+<table>
+<tr><th>Severity</th><th>Priority</th></tr>
+<tr><td>Error: </td>
+<td>
+<select  name="error" id="error">
+  #foreach ($entry in $priorities.entrySet())
+    <option value="$entry.getKey()"#if ($entry.getKey().equals($error)) selected#end>$entry.getValue()</option>
+  #end
+</select>
+</td></tr>
+<tr><td>Warning: </td>
+<td>
+<select  name="warning" id="warning">
+  #foreach ($entry in $priorities.entrySet())
+    <option value="$entry.getKey()"#if ($entry.getKey().equals($warning)) selected#end>$entry.getValue()</option>
+  #end
+</select>
+</td></tr>
+<tr><td>Recommendation: </td>
+<td>
+<select  name="recommendation" id="recommendation">
+  #foreach ($entry in $priorities.entrySet())
+    <option value="$entry.getKey()"#if ($entry.getKey().equals($recommendation)) selected#end>$entry.getValue()</option>
+  #end
+</select>
+</td></tr>
+</table>
+</div>

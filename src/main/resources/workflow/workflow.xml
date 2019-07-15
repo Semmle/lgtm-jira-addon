@@ -17,6 +17,10 @@
         <unconditional-result old-status="null" status="open" step="11">
           <post-functions>
             <function type="class">
+              <arg name="full.module.key">com.semmle.lgtm-jira-addonlgtm-severity-priority</arg>
+              <arg name="class.name">com.semmle.jira.addon.workflow.LgtmSeverityPriorityFunction</arg>
+            </function>
+            <function type="class">
               <arg name="class.name">com.atlassian.jira.workflow.function.issue.IssueCreateFunction</arg>
             </function>
             <function type="class">

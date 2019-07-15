@@ -63,6 +63,23 @@
 		<resource type="velocity" name="view"
 			location="templates/postfunctions/lgtm-issue-link.vm" />
 	</workflow-function>
+	<workflow-function key="lgtm-severity-priority"
+		name="LGTM Set Issue Priority" i18n-name-key="lgtm-severity-priority.name"
+		class="com.semmle.jira.addon.workflow.LgtmSeverityPriorityFunctionFactory">
+		<description key="lgtm-severity-priority.description">Post-function that sets priority based LGTM alert severity.</description>
+		<function-class>com.semmle.jira.addon.workflow.LgtmSeverityPriorityFunction
+		</function-class>
+		<orderable>true</orderable>
+		<unique>true</unique>
+		<weight>10</weight>
+		<deletable>true</deletable>
+		<addable>initial</addable>
+		<resource type="velocity" name="view" location="templates/postfunctions/lgtm-severity-priority.vm" />
+		<resource type="velocity" name="input-parameters"
+			location="templates/postfunctions/lgtm-severity-priority-input.vm" />
+		<resource type="velocity" name="edit-parameters"
+			location="templates/postfunctions/lgtm-severity-priority-input.vm" />
+	</workflow-function>
 	<workflow-validator key="resolution-validator" name="Resolution Validator"
 		i18n-name-key="resolution-validator.name" class="com.semmle.jira.addon.workflow.CheckResolutionFunctionFactory">
 		<description key="resolution-validator.description">Validates that the issue ticket has or
