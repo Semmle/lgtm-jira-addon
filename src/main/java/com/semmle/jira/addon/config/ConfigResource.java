@@ -105,7 +105,6 @@ public class ConfigResource {
     }
 
     Config.put(config);
-    PluginSettings settings = pluginSettingsFactory.createGlobalSettings();
     settings.put(KEY_SETTINGS_NAME, config.getKey());
 
     String version =

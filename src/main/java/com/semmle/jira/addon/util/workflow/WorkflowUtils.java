@@ -92,7 +92,6 @@ public class WorkflowUtils {
     setPriorityFunction.setType("class");
     setPriorityFunction.setName("Priority");
 
-    @SuppressWarnings("unchecked")
     Map<String, String> args = setPriorityFunction.getArgs();
     args.put(
         "full.module.key", "com.atlassian.jira.plugin.system.workflowupdate-issue-field-function");
@@ -103,14 +102,12 @@ public class WorkflowUtils {
     WorkflowManager workflowManager = ComponentAccessor.getWorkflowManager();
     JiraWorkflow workflow = workflowManager.getWorkflow(workflowName);
 
-    @SuppressWarnings("unchecked")
     List<ActionDescriptor> initialActions = workflow.getDescriptor().getInitialActions();
     for (ActionDescriptor action : initialActions) {
       addFunctionAsFirst(action, setPriorityFunction);
     }
   }
 
-  @SuppressWarnings("unchecked")
   private static void updateStatuses(WorkflowDescriptor descriptor, WorkflowStatus[] statusesJson) {
     Map<String, WorkflowStatus> statuses = mapStatuses(statusesJson);
 
@@ -136,7 +133,6 @@ public class WorkflowUtils {
     }
   }
 
-  @SuppressWarnings("unchecked")
   private static void updateResolutions(
       WorkflowDescriptor descriptor, WorkflowResolution[] resolutions) {
 
@@ -158,7 +154,7 @@ public class WorkflowUtils {
       resolutionsMap.put(resolution.originalId, newId);
     }
 
-    List<ActionDescriptor> actions = new ArrayList<ActionDescriptor>();
+    List<ActionDescriptor> actions = new ArrayList<>();
     actions.addAll(descriptor.getInitialActions());
     actions.addAll(descriptor.getGlobalActions());
     List<StepDescriptor> steps = descriptor.getSteps();
@@ -186,7 +182,6 @@ public class WorkflowUtils {
     }
   }
 
-  @SuppressWarnings("unchecked")
   private static void updateResolutions(
       AbstractDescriptor function, Map<String, String> resolutionsMap) {
 
@@ -210,20 +205,19 @@ public class WorkflowUtils {
     Object name = args.get("class.name");
     if (UPDATE_FIELD_FUNCTION_ID.equals(name)) {
       if ("resolution".equals(args.get("field.name"))) {
-        String oldValue = (String) args.get("field.value");
+        String oldValue = args.get("field.value");
         String newValue = resolutionsMap.get(oldValue);
         if (newValue != null) args.put("field.value", newValue);
       }
     } else if (RESOLUTION_VALIDATOR_FUNCTION_ID.equals(name)
         || RESOLUTION_CONDITION_FUNCTION_ID.equals(name)) {
-      String oldValue = (String) args.get("resolution");
+      String oldValue = args.get("resolution");
       String newValue = resolutionsMap.get(oldValue);
       if (newValue != null) args.put("resolution", newValue);
     }
   }
 
   private static void addFunctionAsFirst(ActionDescriptor transition, FunctionDescriptor function) {
-    @SuppressWarnings("unchecked")
     List<FunctionDescriptor> functions = transition.getUnconditionalResult().getPostFunctions();
     // remove existing functions with the same name
     String name = function.getName();
@@ -260,7 +254,7 @@ public class WorkflowUtils {
 
   private static Map<String, WorkflowStatus> mapStatuses(WorkflowStatus[] statuses) {
 
-    Map<String, WorkflowStatus> statusesMap = new LinkedHashMap<String, WorkflowStatus>();
+    Map<String, WorkflowStatus> statusesMap = new LinkedHashMap<>();
     for (WorkflowStatus status : statuses) {
       statusesMap.put(status.name, status);
     }

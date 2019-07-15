@@ -7,7 +7,6 @@ import java.util.Map;
 
 public class ResolutionCondition extends CheckResolutionFunction implements Condition {
 
-  @SuppressWarnings("rawtypes")
   @Override
   public boolean passesCondition(Map transientVars, Map args, PropertySet ps) {
     try {

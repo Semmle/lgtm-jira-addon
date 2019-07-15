@@ -40,7 +40,7 @@ public class ResolutionValidatorTest {
     validator =
         new ResolutionValidator() {
           @Override
-          protected MutableIssue getIssue(@SuppressWarnings("rawtypes") Map map) {
+          protected MutableIssue getIssue(Map map) {
             return issue;
           }
         };
@@ -73,8 +73,8 @@ public class ResolutionValidatorTest {
       String resolution, ComparisonOperator op, String ticketResolution, boolean expected)
       throws InvalidInputException {
     Map<String, String> args = new LinkedHashMap<>();
-    args.put(ResolutionValidator.FIELD_RESOLUTION, resolution);
-    args.put(ResolutionValidator.FIELD_OPERATOR, op.name());
+    args.put(CheckResolutionFunction.FIELD_RESOLUTION, resolution);
+    args.put(CheckResolutionFunction.FIELD_OPERATOR, op.name());
     when(issue.getResolutionId()).thenReturn(ticketResolution);
     try {
       validator.validate(Collections.emptyMap(), args, null);

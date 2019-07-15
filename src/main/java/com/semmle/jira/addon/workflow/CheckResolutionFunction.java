@@ -9,7 +9,6 @@ import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.workflow.InvalidInputException;
 import java.util.Map;
 
-@SuppressWarnings("rawtypes")
 class CheckResolutionFunction extends AbstractJiraFunctionProvider {
   public static final String FIELD_RESOLUTION = "resolution";
   public static final String FIELD_OPERATOR = "operator";
