@@ -2,6 +2,7 @@ package com.semmle.jira.addon;
 
 import com.semmle.jira.addon.util.Util;
 import java.io.IOException;
+import java.util.List;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -73,7 +74,7 @@ public class Request {
     // Rule name with link to rule help
     description
         .append("*[")
-        .append(Util.escape(this.alert.query.name))
+        .append(Util.escape(this.alert.query.getName()))
         .append("|")
         .append(Util.escape(this.alert.query.url))
         .append("]*\n\n");
@@ -92,7 +93,7 @@ public class Request {
   }
 
   String getSummary() {
-    return String.format("%s (%s)", this.alert.query.name, this.project.name);
+    return String.format("%s (%s)", this.alert.query.getName(), this.project.name);
   }
 
   public static enum Transition {
@@ -183,33 +184,51 @@ public class Request {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Query {
-      @JsonProperty public final String name;
+      @Deprecated @JsonProperty private final String name;
+      @JsonProperty public final String language;
       @JsonProperty public final Properties properties;
       @JsonProperty public final String url;
 
       public static class Properties {
+        @JsonProperty public final String id;
+        @JsonProperty public final String name;
         @JsonProperty public final String severity;
+        @JsonProperty public final List<String> tags;
 
         @JsonCreator
-        public Properties(@JsonProperty("severity") String severity) {
+        public Properties(
+            @JsonProperty("id") String id,
+            @JsonProperty("name") String name,
+            @JsonProperty("severity") String severity,
+            @JsonProperty("tags") List<String> tags) {
+          this.id = id;
+          this.name = name;
           this.severity = severity;
+          this.tags = tags;
         }
       }
 
       @JsonCreator
       public Query(
           @JsonProperty("name") String name,
+          @JsonProperty("language") String language,
           @JsonProperty("properties") Properties properties,
           @JsonProperty("url") String url) {
+        this.language = language;
         this.name = name;
         this.properties = properties;
         this.url = url;
       }
 
       boolean isValid() {
-        if (name == null) return false;
+        if (getName() == null) return false;
         if (url == null) return false;
         return true;
+      }
+
+      public String getName() {
+        if (properties != null && properties.name != null) return properties.name;
+        return name;
       }
     }
   }

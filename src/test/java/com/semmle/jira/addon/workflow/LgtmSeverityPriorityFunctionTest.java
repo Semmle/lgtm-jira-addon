@@ -51,8 +51,8 @@ public class LgtmSeverityPriorityFunctionTest {
     Map<String, Object> transientVars = new LinkedHashMap<>();
     Project project =
         new Project(1L, "example/project", "Example project", "http://lgtm.example.com/projects/1");
-    Properties properties = severity == null ? null : new Properties(severity);
-    Query query = new Query("Query name", properties, "http://lgtm.example.com/rules/1");
+    Properties properties = severity == null ? null : new Properties(null, null, severity, null);
+    Query query = new Query("Query name", null, properties, "http://lgtm.example.com/rules/1");
     Alert alert = new Alert("file", "some error", "http://lgtm.example.com/issues/...", query);
     Request request = new Request(Transition.CREATE, null, project, alert);
     JsonNode json = Util.JSON.valueToTree(request);

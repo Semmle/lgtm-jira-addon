@@ -71,7 +71,7 @@ public class TestCreateIssue extends TestCreateAndTransitionBase {
     Transition transition = Transition.CREATE;
     String url = "www." + projectName + ".com";
     Project project = new Project(1l, "g/" + projectName, projectName, url);
-    Query query = new Query(queryName, null, url + "/" + queryName);
+    Query query = new Query(queryName, null, null, url + "/" + queryName);
     Alert alert = new Alert(alertFile, alertMessage, url + "/alert", query);
 
     return new Request(transition, null, project, alert);
