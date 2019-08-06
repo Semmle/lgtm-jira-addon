@@ -35,7 +35,7 @@
 		<resource type="download" name="images/" location="/images" />
 		<context>lgtm-addon</context>
 	</web-resource>
-	<workflow-function key="lgtm-transition-notification" name="LGTM Transition Notification"
+	<workflow-function key="lgtm-transition-notification" name="Advanced: LGTM Transition Notification"
 		i18n-name-key="lgtm-transition-notification.name" class="com.semmle.jira.addon.workflow.LgtmTransitionNotificationFunctionFactory">
 		<description key="lgtm-transition-notification.description">Post-function that sends transition notifications to LGTM.
 		</description>
