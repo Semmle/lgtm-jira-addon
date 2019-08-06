@@ -6,7 +6,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.semmle</groupId>
 	<artifactId>lgtm-jira-addon</artifactId>
-	<version>0.2.1</version>
+	<version>0.2.2-SNAPSHOT</version>
 	<organization>
 		<name>Semmle</name>
 		<url>https://semmle.com</url>
