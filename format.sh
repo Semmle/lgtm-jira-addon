@@ -4,4 +4,3 @@ if [ ! -f ./google-java-format.jar ]; then
 fi
 
 find src -name '*.java' -exec java -jar google-java-format.jar --replace '{}' '+'
-
