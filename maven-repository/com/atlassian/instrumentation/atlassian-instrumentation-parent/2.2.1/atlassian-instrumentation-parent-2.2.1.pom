@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <artifactId>closedsource-pom</artifactId>
+        <groupId>com.atlassian.pom</groupId>
+        <version>4.0.7</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.atlassian.instrumentation</groupId>
+    <artifactId>atlassian-instrumentation-parent</artifactId>
+    <name>Atlassian Instrumentation Parent POM</name>
+    <packaging>pom</packaging>
+    <version>2.2.1</version>
+
+    <description>
+        Parent POM for a series of libraries that give systems the ability to instrument their internal state through
+        the use of counters / gauges and general operation profiling
+    </description>
+
+    <issueManagement>
+        <system>Jira</system>
+        <url>https://ecosystem.atlassian.net/browse/AIN</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>Bamboo</system>
+        <url>https://engservices-bamboo.internal.atlassian.com/browse/INS</url>
+    </ciManagement>
+
+    <scm>
+        <connection>scm:git:git@bitbucket.org:atlassian/atlassian-instrumentation.git</connection>
+        <developerConnection>scm:git:git@bitbucket.org:atlassian/atlassian-instrumentation.git</developerConnection>
+        <url>https://bitbucket.org/atlassian/atlassian-instrumentation</url>
+      <tag>atlassian-instrumentation-parent-2.2.1</tag>
+  </scm>
+
+    <modules>
+        <module>atlassian-instrumentation-core</module>
+        <module>atlassian-instrumentation-expose-jmx</module>
+        <module>atlassian-instrumentation-expose-rest</module>
+        <module>atlassian-instrumentation-expose-rrd</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemProperties>
+                        <property>
+                            <name>java.awt.headless</name>
+                            <value>true</value>
+                        </property>
+                    </systemProperties>
+                </configuration>
+            </plugin>
+        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>net.sf.alchim</groupId>
+                    <artifactId>yuicompressor-maven-plugin</artifactId>
+                    <version>0.7.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.twdata.maven</groupId>
+                    <artifactId>cargo-maven2-plugin</artifactId>
+                    <version>1.0-beta-2-db2</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.atlassian.maven.plugins</groupId>
+                    <artifactId>maven-amps-plugin</artifactId>
+                    <version>5.1.12</version>
+                    <extensions>true</extensions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>${commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.util.concurrent</groupId>
+                <artifactId>atlassian-util-concurrent</artifactId>
+                <version>${concurrent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.collections</groupId>
+                <artifactId>google-collections</artifactId>
+                <version>${google.collections.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.jmx</groupId>
+                <artifactId>jmxri</artifactId>
+                <version>${jmx.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>${javax.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.ws.rs</groupId>
+                <artifactId>jsr311-api</artifactId>
+                <version>${jsr311.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-core-asl</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openjdk.jmh</groupId>
+                <artifactId>jmh-core</artifactId>
+                <version>${jmh.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.rrd4j</groupId>
+                <artifactId>rrd4j</artifactId>
+                <version>${rrd4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <!--
+            ===============================================================================================================
+
+            There is a bug whereby if we use the platform include mechanism then we cant include that plugin in a product like JIRA
+
+            http://jira.codehaus.org/browse/MNG-4148
+
+            http://confluence.atlassian.com/display/DEVNET/Using+the+Plugin+Development+Platform+Dependency+Management+POMs
+
+            So we repeat then here and publicly curse maven and all that sail on her!
+
+            ===============================================================================================================
+            -->
+
+            <!-- SAL -->
+            <dependency>
+                <groupId>com.atlassian.sal</groupId>
+                <artifactId>sal-api</artifactId>
+                <version>${sal.version}</version>
+            </dependency>
+
+            <!-- PLUG -->
+            <dependency>
+                <groupId>com.atlassian.plugins</groupId>
+                <artifactId>atlassian-plugins-osgi</artifactId>
+                <version>${plug.version}</version>
+            </dependency>
+
+            <!-- REST -->
+            <dependency>
+                <groupId>com.atlassian.plugins.rest</groupId>
+                <artifactId>atlassian-rest-common</artifactId>
+                <version>${rest.version}</version>
+            </dependency>
+
+            <!-- dynamic OSGi service support -->
+            <dependency>
+                <groupId>com.atlassian.pocketknife</groupId>
+                <artifactId>atlassian-pocketknife-dynamic-modules</artifactId>
+                <version>${pocketknife.dynamic.modules.version}</version>
+            </dependency>
+
+            <!-- end of inclusion
+            ===============================================================================================================
+            -->
+
+        </dependencies>
+    </dependencyManagement>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+
+        <refapp.version>2.9.1</refapp.version>
+
+        <commons.version>2.5</commons.version>
+        <concurrent.version>2.1.0</concurrent.version>
+        <google.collections.version>1.0</google.collections.version>
+        <jackson.version>1.4.4</jackson.version>
+        <javax.version>2.4</javax.version>
+        <junit.version>4.8.2</junit.version>
+        <jmh.version>1.0</jmh.version>
+        <jmx.version>1.2.1</jmx.version>
+        <jsr311.version>1.0</jsr311.version>
+        <log4j.version>1.2.15</log4j.version>
+        <mockito.version>1.7</mockito.version>
+        <rrd4j.version>2.2-atlassian-1</rrd4j.version>
+        <slf4j.version>1.5.8</slf4j.version>
+        <spring.version>2.5.6</spring.version>
+
+        <!-- see the bug above and why we have repeated the version info here for platform -->
+        <plug.version>2.7.3</plug.version>
+        <sal.version>2.10.9</sal.version>
+        <rest.version>2.4.0</rest.version>
+        <ajs.version>3.3.1</ajs.version>
+        <event.version>2.0.5</event.version>
+        <pocketknife.dynamic.modules.version>1.0</pocketknife.dynamic.modules.version>
+    </properties>
+</project>

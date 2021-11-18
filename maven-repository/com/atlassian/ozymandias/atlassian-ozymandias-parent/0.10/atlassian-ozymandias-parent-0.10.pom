@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+    <groupId>com.atlassian.pom</groupId>
+    <artifactId>closedsource-pom</artifactId>
+    <version>3.0.2</version>
+    </parent>
+
+    <groupId>com.atlassian.ozymandias</groupId>
+    <artifactId>atlassian-ozymandias-parent</artifactId>
+    <version>0.10</version>
+    <modules>
+        <module>ozymandias</module>
+    </modules>
+    <name>Atlassian Ozymandias Parent</name>
+    <description>
+        I met a traveller from an antique land
+        Who said: "Two vast and trunkless legs of stone
+        Stand in the desert. Near them on the sand,
+        Half sunk, a shattered visage lies, whose frown
+        And wrinkled lip and sneer of cold command
+        Tell that its sculptor well those passions read
+        Which yet survive, stamped on these lifeless things,
+        The hand that mocked them and the heart that fed.
+        And on the pedestal these words appear:
+        `My name is Ozymandias, King of Plugins:
+        Look on your lack of try catches, ye mighty, and despair!'
+
+        Nothing beside remains. Round the decay
+        Of that colossal wreck, boundless and bare
+        The lone and level sands stretch far away
+    </description>
+    <packaging>pom</packaging>
+
+    <scm>
+        <connection>scm:git:ssh://git@bitbucket.org/atlassian/atlassian-ozymandias.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.org/atlassian/atlassian-ozymandias.git</developerConnection>
+        <url>https://bitbucket.org/atlassian/atlassian-ozymandias</url>
+    </scm>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version> 3.1</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.atlassian.maven.plugins</groupId>
+                <artifactId>maven-amps-plugin</artifactId>
+                <version>${amps.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>com.atlassian.maven.plugins</groupId>
+                <artifactId>maven-amps-dispatcher-plugin</artifactId>
+                <version>4.2.2</version>
+            </plugin>
+        </plugins>
+    </build>
+    <properties>
+        <amps.version>4.2.10</amps.version>
+        <atlassian.plugins.version>2.5.4</atlassian.plugins.version>
+        <guava.version>10.0.1</guava.version>
+    </properties>
+
+</project>

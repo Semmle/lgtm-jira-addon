@@ -1,0 +1,114 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>atlassian-public-pom</artifactId>
+        <version>29.2</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.atlassian.buildeng.hallelujah</groupId>
+    <artifactId>hallelujah-parent</artifactId>
+    <version>3.6</version>
+    
+    <modules>
+	    <module>client</module>
+	    <module>server</module>
+		<module>client-server-tests</module>
+        <module>api</module>
+        <module>utils</module>
+    </modules>
+
+    <organization>
+        <name>Atlassian</name>
+        <url>http://www.atlassian.com/</url>
+    </organization>
+
+    <name>hallelujah</name>
+    <description>Hallelujah</description>
+    <packaging>pom</packaging>
+
+    <scm>
+        <connection>scm:git:ssh://git@bitbucket.org/atlassian/hallelujah</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.org/atlassian/hallelujah</developerConnection>
+        <url>https://bitbucket.org/atlassian/hallelujah</url>
+    </scm>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencyManagement>
+       <dependencies>
+           <dependency>
+               <groupId>org.springframework</groupId>
+               <artifactId>spring-core</artifactId>
+               <version>2.5.6.SEC03</version>
+           </dependency>
+           <dependency>
+               <groupId>org.springframework</groupId>
+               <artifactId>spring-beans</artifactId>
+               <version>2.5.6.SEC03</version>
+           </dependency>
+           <dependency>
+               <groupId>org.springframework</groupId>
+               <artifactId>spring-web</artifactId>
+               <version>2.5.6.SEC03</version>
+           </dependency>
+           <dependency>
+               <groupId>org.springframework</groupId>
+               <artifactId>spring-aop</artifactId>
+               <version>2.5.6.SEC03</version>
+           </dependency>
+           <dependency>
+               <groupId>org.springframework</groupId>
+               <artifactId>spring-context</artifactId>
+               <version>2.5.6.SEC03</version>
+           </dependency>
+           <dependency>
+               <groupId>log4j</groupId>
+               <artifactId>log4j</artifactId>
+               <version>1.2.16</version>
+           </dependency>
+           <dependency>
+               <groupId>junit</groupId>
+               <artifactId>junit</artifactId>
+               <version>4.11</version>
+           </dependency>
+           <dependency>
+               <groupId>com.sun.jersey.jersey-test-framework</groupId>
+               <artifactId>jersey-test-framework-core</artifactId>
+               <version>1.19</version>
+               <exclusions>
+                   <exclusion>
+                       <groupId>org.glassfish</groupId>
+                       <artifactId>javax.servlet</artifactId>
+                   </exclusion>
+                   <exclusion>
+                       <groupId>junit</groupId>
+                       <artifactId>junit</artifactId>
+                   </exclusion>
+               </exclusions>
+           </dependency>
+           <dependency>
+               <groupId>com.google.guava</groupId>
+               <artifactId>guava</artifactId>
+               <version>11.0.2-atlassian-01</version>
+           </dependency>
+       </dependencies>
+    </dependencyManagement>
+
+    <properties>
+        <jersey.version>1.19</jersey.version>
+        <spring.version>2.5.6.SEC03</spring.version>
+        <log4j.version>1.2.16</log4j.version>
+        <junit.version>4.11</junit.version>
+    </properties>
+</project>

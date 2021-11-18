@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.atlassian.amps</groupId>
+        <artifactId>atlassian-amps-product-plugins</artifactId>
+        <version>6.3.21</version>
+    </parent>
+
+    <groupId>com.atlassian.maven.plugins</groupId>
+    <artifactId>maven-jira-plugin</artifactId>
+    <packaging>maven-plugin</packaging>
+
+    <name>Maven JIRA Plugin</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.atlassian.maven.archetypes</groupId>
+            <artifactId>jira-plugin-archetype</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>invoker</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-invoker-plugin</artifactId>
+                        <configuration>
+                            <scriptVariables>
+                                <artifactId>${invoker.artifactId}</artifactId>
+                                <product>${invoker.product}</product>
+                            </scriptVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            <properties>
+                <invoker.product>jira</invoker.product>
+                <product.version>${jira.version}</product.version>
+                <product.data.version>${jira.data.version}</product.data.version>
+                <product.database.type>no-database-type</product.database.type>
+            </properties>
+        </profile>
+    </profiles>
+</project>

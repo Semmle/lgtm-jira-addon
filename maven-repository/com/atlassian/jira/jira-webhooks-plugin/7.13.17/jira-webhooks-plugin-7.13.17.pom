@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.atlassian.jira</groupId>
+        <artifactId>jira-plugins</artifactId>
+        <version>7.13.17</version>
+    </parent>
+
+    <artifactId>jira-webhooks-plugin</artifactId>
+    <name>Atlassian Jira - Plugins - WebHooks Plugin</name>
+    <description>This plugin provides the ability to register Web Hooks for events in Jira</description>
+    <packaging>atlassian-plugin</packaging>
+
+    <dependencies>
+        <!-- Atlassian WebHooks -->
+        <dependency>
+            <groupId>com.atlassian.webhooks</groupId>
+            <artifactId>atlassian-webhooks-api</artifactId>
+            <version>${atlassian.webhooks.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- JIRA -->
+        <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-core</artifactId>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-rest-plugin</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Active objects -->
+        <dependency>
+            <groupId>com.atlassian.activeobjects</groupId>
+            <artifactId>activeobjects-plugin</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.plugins.rest</groupId>
+            <artifactId>atlassian-rest-common</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.templaterenderer</groupId>
+            <artifactId>atlassian-template-renderer-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-jaxrs</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- test classes -->
+        <dependency>
+            <groupId>com.atlassian.jira.tests</groupId>
+            <artifactId>jira-testkit-client</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.activeobjects</groupId>
+            <artifactId>activeobjects-test</artifactId>
+            <version>${activeobjects.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-tests</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*$*</exclude>
+                        <exclude>it/**</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.atlassian.maven.plugins</groupId>
+                <artifactId>maven-jira-plugin</artifactId>
+                <configuration>
+                    <extractDependencies>false</extractDependencies>
+                    <skipManifestValidation>true</skipManifestValidation>
+                    <productVersion>${project.version}</productVersion>
+                    <productDataVersion>${project.version}</productDataVersion>
+                    <instructions>
+                        <Atlassian-Plugin-Key>${atlassian.plugin.key}</Atlassian-Plugin-Key>
+                        <Bundle-SymbolicName>${atlassian.plugin.key}</Bundle-SymbolicName>
+                        <Import-Package>
+                            com.atlassian.jira.*,
+                            com.atlassian.jira.rest.*,
+                            com.atlassian.jira.issue.search.*,
+                            com.atlassian.jira.jql.parser.*,
+                            com.atlassian.jira.config.*,
+                            com.atlassian.jira.web.component.jql.*,
+                            com.atlassian.jira.security.roles.*,
+                            com.atlassian.jira.security.*,
+                            com.atlassian.activeobjects.*,
+                            com.atlassian.event.api.*,
+                            com.atlassian.sal.api.*,
+                            com.atlassian.templaterenderer.*,
+                            com.atlassian.webhooks.api.*,
+                            *;resolution:=optional
+                        </Import-Package>
+                        <DynamicImport-Package>
+                            com.atlassian.jira.plugin.webfragment.conditions
+                        </DynamicImport-Package>
+                        <Spring-Context>*</Spring-Context>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <properties>
+        <!-- Do not change plugin key. JIRA webhooks plugin was an independent plugin which was moved to the JIRA repository.
+        The same plugin key is required because the webhooks plugins stores data in ActiveObject -->
+        <atlassian.plugin.key>com.atlassian.jira.plugins.webhooks.jira-webhooks-plugin</atlassian.plugin.key>
+    </properties>
+
+</project>

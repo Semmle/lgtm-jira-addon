@@ -1,0 +1,6 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>mockobjects</groupId>
+  <artifactId>alt-jdk1.3</artifactId>
+  <version>0.07</version>
+</project>

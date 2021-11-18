@@ -1,0 +1,117 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>public-pom</artifactId>
+        <version>3.0.88</version>
+    </parent>
+
+    <groupId>com.atlassian.core</groupId>
+    <artifactId>atlassian-core-parent</artifactId>
+    <version>5.0.9</version>
+
+    <packaging>pom</packaging>
+
+    <name>Atlassian Core (Parent)</name>
+    <description>Atlassian Core parent project</description>
+    <url>http://docs.atlassian.com/${project.artifactId}/${project.version}</url>
+
+    <issueManagement>
+        <system>Jira</system>
+        <url>http://jira.atlassian.com/browse/CORE</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>Bamboo</system>
+        <url>https://engservices-bamboo.internal.atlassian.com/browse/CORE</url>
+    </ciManagement>
+
+    <scm>
+        <connection>scm:git:ssh://git@bitbucket.org/atlassian/atlassian-core.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.org/atlassian/atlassian-core.git</developerConnection>
+        <url>https://bitbucket.org/atlassian/atlassian-core</url>
+      <tag>atlassian-core-parent-5.0.9</tag>
+  </scm>
+
+    <modules>
+        <module>atlassian-core</module>
+        <module>atlassian-core-thumbnail</module>
+        <module>atlassian-core-user</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.3</version>
+                <executions>
+                    <execution>
+                        <id>copy-doclava-artifact</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.atlassian.devrel</groupId>
+                                    <artifactId>doclava-theme</artifactId>
+                                    <version>${doclava.theme.version}</version>
+                                    <outputDirectory>${doclava.theme.dir}</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.8.1-atlassian-3</version>
+                <configuration>
+                    <docletArtifact>
+                        <groupId>com.google.doclava</groupId>
+                        <artifactId>doclava</artifactId>
+                        <version>1.0.6-atlassian-3</version>
+                    </docletArtifact>
+                    <doclet>com.google.doclava.Doclava</doclet>
+                    <useStandardDocletOptions>false</useStandardDocletOptions>
+                    <bootclasspath>${sun.boot.class.path}</bootclasspath>
+                    <additionalparam>
+                        -federate JDK http://download.oracle.com/javase/6/docs/api/index.html?
+                        -federationxml JDK ${doclava.theme.dir}/openjdk-6.xml
+                        -hdf project.name "${project.name}"
+                        -d ${project.build.directory}/apidocs
+                        -templatedir ${doclava.theme.dir}
+                    </additionalparam>
+                    <maxmemory>1024m</maxmemory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <properties>
+        <jdkLevel>1.6</jdkLevel>
+        <doclava.theme.dir>${basedir}/target/doclava</doclava.theme.dir>
+        <doclava.theme.version>0.18</doclava.theme.version>
+
+        <!-- Integration Platform Dependencies:
+             https://extranet.atlassian.com/display/INTEGRATION/Integration+Platform+Releases -->
+        <guava.version>10.0.1</guava.version>
+        <!-- End of Platform Dependencies -->
+    </properties>
+
+</project>

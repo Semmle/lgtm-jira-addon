@@ -1,0 +1,19 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>jta</groupId>
+  <artifactId>jta</artifactId>
+  <version>1.0.1b</version>
+  <name>Java Transaction API</name>
+  <description>
+    The javax.transaction package. JTA specifies standard Java interfaces between a transaction manager and the parties involved in a distributed transaction system: the resource manager, the application server, and the transactional applications.
+  </description>
+  <url>http://java.sun.com/products/jta</url>
+  <distributionManagement>
+    <downloadUrl>http://download.java.net/maven/2/javax/transaction/jta</downloadUrl>
+    <relocation>
+      <groupId>javax.transaction</groupId>
+      <artifactId>jta</artifactId>
+      <version>1.0.1B</version>
+    </relocation>
+  </distributionManagement>
+</project>

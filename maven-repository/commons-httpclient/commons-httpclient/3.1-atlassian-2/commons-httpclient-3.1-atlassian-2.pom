@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>commons-httpclient</groupId>
+    <artifactId>commons-httpclient</artifactId>
+    <name>HttpClient</name>
+    <version>3.1-atlassian-2</version>
+    <description>The HttpClient  component supports the client-side of RFC 1945 (HTTP/1.0)  and RFC 2616 (HTTP/1.1) , several related specifications (RFC 2109 (Cookies) , RFC 2617 (HTTP Authentication) , etc.), and provides a framework by which new request types (methods) or HTTP extensions can be created easily.</description>
+    <url>http://jakarta.apache.org/httpcomponents/httpclient-3.x/</url>
+    <issueManagement>
+        <url>http://issues.apache.org/jira/browse/HTTPCLIENT</url>
+    </issueManagement>
+    <ciManagement>
+        <notifiers>
+            <notifier>
+                <configuration>
+                    <address>httpcomponents-dev@jakarta.apache.org</address>
+                </configuration>
+            </notifier>
+        </notifiers>
+    </ciManagement>
+    <inceptionYear>2001</inceptionYear>
+    <mailingLists>
+        <mailingList>
+            <name>HttpComponents Developer List</name>
+            <subscribe>httpcomponents-dev-subscribe@jakarta.apache.org</subscribe>
+            <unsubscribe>httpcomponents-dev-unsubscribe@jakarta.apache.org</unsubscribe>
+            <archive>http://mail-archives.apache.org/mod_mbox/jakarta-httpcomponents-dev/</archive>
+        </mailingList>
+        <mailingList>
+            <name>HttpClient User List</name>
+            <subscribe>httpclient-user-subscribe@jakarta.apache.org</subscribe>
+            <unsubscribe>httpclient-user-unsubscribe@jakarta.apache.org</unsubscribe>
+            <archive>http://mail-archives.apache.org/mod_mbox/jakarta-httpclient-user/</archive>
+        </mailingList>
+    </mailingLists>
+    <developers>
+        <developer>
+            <id>mbecke</id>
+            <name>Michael Becke</name>
+            <email>mbecke -at- apache.org</email>
+            <organization />
+            <roles>
+                <role>Release Prime</role>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>jsdever</id>
+            <name>Jeff Dever</name>
+            <email>jsdever -at- apache.org</email>
+            <organization>Independent consultant</organization>
+            <roles>
+                <role>2.0 Release Prime</role>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>dion</id>
+            <name>dIon Gillard</name>
+            <email>dion -at- apache.org</email>
+            <organization>Multitask Consulting</organization>
+            <roles>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>oglueck</id>
+            <name>Ortwin Glueck</name>
+            <email>oglueck -at- apache.org</email>
+            <url>http://www.odi.ch/</url>
+            <organization />
+            <roles>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>jericho</id>
+            <name>Sung-Gu</name>
+            <email>jericho -at- apache.org</email>
+            <organization />
+            <roles>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>olegk</id>
+            <name>Oleg Kalnichevski</name>
+            <email>olegk -at- apache.org</email>
+            <roles>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>sullis</id>
+            <name>Sean C. Sullivan</name>
+            <email>sullis -at- apache.org</email>
+            <organization>Independent consultant</organization>
+            <roles>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>adrian</id>
+            <name>Adrian Sutton</name>
+            <email>adrian.sutton -at- ephox.com</email>
+            <organization>Intencha</organization>
+            <roles>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>rwaldhoff</id>
+            <name>Rodney Waldhoff</name>
+            <email>rwaldhoff -at- apache</email>
+            <organization>Britannica</organization>
+            <roles>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
+    </developers>
+    <contributors>
+        <contributor>
+            <name>Armando Anton</name>
+            <email>armando.anton -at- newknow.com</email>
+        </contributor>
+        <contributor>
+            <name>Sebastian Bazley</name>
+            <email>sebb -at- apache.org</email>
+        </contributor>
+        <contributor>
+            <name>Ola Berg</name>
+            <email />
+        </contributor>
+        <contributor>
+            <name>Sam Berlin</name>
+            <email>sberlin -at- limepeer.com</email>
+        </contributor>
+        <contributor>
+            <name>Mike Bowler</name>
+            <email />
+        </contributor>
+        <contributor>
+            <name>Samit Jain</name>
+            <email>jain.samit -at- gmail.com</email>
+        </contributor>
+        <contributor>
+            <name>Eric Johnson</name>
+            <email>eric -at- tibco.com</email>
+        </contributor>
+        <contributor>
+            <name>Christian Kohlschuetter</name>
+            <email>ck -at- newsclub.de</email>
+        </contributor>
+        <contributor>
+            <name>Ryan Lubke</name>
+            <email>Ryan.Lubke -at- Sun.COM</email>
+        </contributor>
+        <contributor>
+            <name>Sam Maloney</name>
+            <email>sam.maloney -at- filogix.com</email>
+        </contributor>
+        <contributor>
+            <name>Rob Di Marco</name>
+            <email>rdimarco -at- hmsonline.com</email>
+        </contributor>
+        <contributor>
+            <name>Juergen Pill</name>
+            <email>Juergen.Pill -at- softwareag.com</email>
+        </contributor>
+        <contributor>
+            <name>Mohammad Rezaei</name>
+            <email>mohammad.rezaei -at- gs.com</email>
+        </contributor>
+        <contributor>
+            <name>Roland Weber</name>
+            <email>rolandw -at- apache.org</email>
+        </contributor>
+        <contributor>
+            <name>Laura Werner</name>
+            <email>laura -at- lwerner.org</email>
+        </contributor>
+        <contributor>
+            <name>Mikael Wilstrom</name>
+            <email>mikael.wikstrom -at- it.su.se</email>
+        </contributor>
+    </contributors>
+    <licenses>
+        <license>
+            <name>Apache License</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <scm>
+        <connection>scm:git:ssh://git@bitbucket.org/atlassian/apache-httpclient-3.x.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.org/atlassian/apache-httpclient-3.x.git</developerConnection>
+        <url>https://bitbucket.org/atlassian/apache-httpclient-3.x</url>
+    </scm>
+    <organization>
+        <name>Apache Software Foundation</name>
+        <url>http://jakarta.apache.org/</url>
+    </organization>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.2</version>
+                    <configuration>
+                        <target>${jdkLevel}</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.7</version>
+                <executions>
+                    <execution>
+                        <id>copy-license</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/META-INF</outputDirectory>
+                            <overwrite>true</overwrite>
+                            <resources>
+                                <resource>
+                                    <directory>${user.dir}</directory>
+                                    <includes>
+                                        <include>LICENSE.txt</include>
+                                        <include>NOTICE.txt</include>
+                                        <include>license.txt</include>
+                                        <include>notice.txt</include>
+                                    </includes>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.2</version>
+        </dependency>
+    </dependencies>
+    <distributionManagement>
+        <repository>
+            <id>atlassian-3rdparty</id>
+            <url>https://maven.atlassian.com/3rdparty</url>
+        </repository>
+        <snapshotRepository>
+            <id>atlassian-3rdparty-snapshot</id>
+            <url>https://maven.atlassian.com/3rdparty-snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
+    <properties>
+        <jdkLevel>1.6</jdkLevel>
+    </properties>
+
+
+</project>

@@ -1,0 +1,168 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>public-pom</artifactId>
+        <version>5.0.13</version>
+    </parent>
+
+    <groupId>com.atlassian.ofbiz</groupId>
+    <artifactId>entityengine-parent</artifactId>
+    <version>1.3.10</version>
+    <packaging>pom</packaging>
+
+    <name>Atlassian OFBiz Fork</name>
+    <url>http://maven.apache.org</url>
+
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <modules>
+        <module>share</module>
+        <module>entity</module>
+    </modules>
+
+    <scm>
+        <connection>scm:git:git@bitbucket.org:atlassian/entity-engine.git</connection>
+        <developerConnection>scm:git:git@bitbucket.org:atlassian/entity-engine.git</developerConnection>
+        <url>https://bitbucket.org/atlassian/entity-engine</url>
+        <tag>entityengine-parent-1.3.10</tag>
+    </scm>
+
+    <properties>
+        <jdkLevel>1.8</jdkLevel>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Core Dependencies -->
+        <atlassian-util-concurrent.version>2.6.2</atlassian-util-concurrent.version>
+        <commons-codec.version>1.9</commons-codec.version>
+        <commons-collections.version>3.2.1</commons-collections.version>
+        <commons-dbcp.version>2.1</commons-dbcp.version>
+        <guava.version>11.0.2</guava.version>
+        <jotm.version>1.4.3</jotm.version>
+        <jta.version>1.0.1</jta.version>
+        <log4j.version>1.2.15</log4j.version>
+        <tyrex.version>1.0.1</tyrex.version>
+        <xapool.version>1.5.0</xapool.version>
+        <xerces.version>2.4.0</xerces.version>
+
+        <!-- Test Dependencies -->
+        <hamcrest.version>1.3</hamcrest.version>
+        <hsql.version>2.3.4</hsql.version>
+        <junit.version>4.12</junit.version>
+        <mockito.version>1.10.19</mockito.version>
+        <utt.version>0.0.3</utt.version>
+        <javadoc.additional.params>-Xdoclint:none</javadoc.additional.params>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Core Dependencies -->
+            <dependency>
+                <groupId>com.atlassian.util.concurrent</groupId>
+                <artifactId>atlassian-util-concurrent</artifactId>
+                <version>${atlassian-util-concurrent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons-codec.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>${commons-collections.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-dbcp2</artifactId>
+                <version>${commons-dbcp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jotm</groupId>
+                <artifactId>jotm</artifactId>
+                <version>${jotm.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jta</groupId>
+                <artifactId>jta</artifactId>
+                <version>${jta.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>${servlet-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>tyrex</groupId>
+                <artifactId>tyrex</artifactId>
+                <version>${tyrex.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.experlog</groupId>
+                <artifactId>xapool</artifactId>
+                <version>${xapool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>xerces</groupId>
+                <artifactId>xercesImpl</artifactId>
+                <version>${xerces.version}</version>
+            </dependency>
+
+            <!-- Inter-module Dependencies -->
+            <dependency>
+                <groupId>com.atlassian.ofbiz</groupId>
+                <artifactId>entityengine-share</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- Test Dependencies -->
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-core</artifactId>
+                <version>${hamcrest.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-library</artifactId>
+                <version>${hamcrest.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hsqldb</groupId>
+                <artifactId>hsqldb</artifactId>
+                <version>${hsql.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.utt</groupId>
+                <artifactId>toolkit</artifactId>
+                <version>${utt.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>

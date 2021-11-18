@@ -1,0 +1,90 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.atlassian.platform.parentpom</groupId>
+    <artifactId>public-pom-3-artifactory</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0.1</version>
+    <description>This is a version of atlassian-public-pom:3.x.y that allows releasing to artifactory</description>
+
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>public-pom</artifactId>
+        <version>3.0.105</version>
+    </parent>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <extensions>false</extensions>
+            </plugin>
+            <plugin>
+                <groupId>com.atlassian.maven.plugins</groupId>
+                <artifactId>artifactory-staging-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.atlassian.maven.plugins</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>0.38</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.atlassian.maven.plugins</groupId>
+                    <artifactId>maven-atlassian-source-distribution-plugin</artifactId>
+                    <version>4.2.6</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.atlassian.maven.plugins</groupId>
+                    <artifactId>artifactory-staging-maven-plugin</artifactId>
+                    <version>1.0.3</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <skipStaging>false</skipStaging>
+                        <serverId>maven-atlassian-com</serverId>
+                        <stagingRepository>maven-staging-local</stagingRepository>
+                        <targetRepository>maven-public-local</targetRepository>
+                        <artifactoryUrl>https://packages.atlassian.com</artifactoryUrl>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>staging</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>staging</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <extensions>false</extensions>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <distributionManagement>
+        <repository>
+            <id>maven-atlassian-com</id>
+            <name>Atlassian Public Repository</name>
+            <url>https://packages.atlassian.com/maven/public</url>
+        </repository>
+        <snapshotRepository>
+            <id>maven-atlassian-com</id>
+            <name>Atlassian Public Snapshot Repository</name>
+            <url>https://packages.atlassian.com/maven/public-snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+  <scm>
+    <tag>java-platform-parent-poms-parent-1.0.1</tag>
+  </scm>
+</project>

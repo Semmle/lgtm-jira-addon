@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>closedsource-pom</artifactId>
+        <version>3.0.4</version>
+    </parent>
+  <groupId>com.atlassian.tenancy</groupId>
+  <artifactId>atlassian-tenancy</artifactId>
+  <version>1.4.0</version>
+  <packaging>pom</packaging>
+  <name>Atlassian Tenancy API</name>
+  <description>Tools for interacting with the tenancy lifecycle of an application</description>
+  <modules>
+    <module>atlassian-tenancy-api</module>
+    <module>atlassian-tenancy-compatibility-plugin</module>
+  </modules>
+
+    <scm>
+        <developerConnection>scm:git:git@bitbucket.org:atlassian/atlassian-tenancy.git</developerConnection>
+        <connection>scm:git:git@bitbucket.org:atlassian/atlassian-tenancy.git</connection>
+        <url>https://bitbucket.org/atlassian/atlassian-tenancy</url>
+      <tag>atlassian-tenancy-1.4.0</tag>
+  </scm>
+
+
+</project>

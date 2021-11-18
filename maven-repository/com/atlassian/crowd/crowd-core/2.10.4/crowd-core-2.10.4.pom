@@ -1,0 +1,169 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.atlassian.crowd</groupId>
+        <artifactId>atlassian-crowd-components</artifactId>
+        <version>2.10.4</version>
+    </parent>
+
+    <groupId>com.atlassian.crowd</groupId>
+    <artifactId>crowd-core</artifactId>
+    <packaging>jar</packaging>
+
+    <name>Atlassian Crowd Core</name>
+
+    <dependencies>
+
+        <!-- Crowd Module dependencies -->
+        <dependency>
+            <groupId>com.atlassian.crowd</groupId>
+            <artifactId>crowd-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.crowd</groupId>
+            <artifactId>crowd-integration-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.crowd</groupId>
+            <artifactId>crowd-ldap</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.crowd</groupId>
+            <artifactId>crowd-persistence</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.crowd</groupId>
+            <artifactId>crowd-persistence-file</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.crowd</groupId>
+            <artifactId>crowd-events</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.crowd</groupId>
+            <artifactId>crowd-password-encoders</artifactId>
+        </dependency>
+
+        <!-- Atlassian dependencies -->
+        <dependency>
+            <groupId>com.atlassian.security</groupId>
+            <artifactId>atlassian-secure-random</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.crowd</groupId>
+            <artifactId>crowd-core-tiny</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.event</groupId>
+            <artifactId>atlassian-event</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.beehive</groupId>
+            <artifactId>beehive-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.cache</groupId>
+            <artifactId>atlassian-cache-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.scheduler</groupId>
+            <artifactId>atlassian-scheduler-api</artifactId>
+        </dependency>
+
+        <!-- Other dependencies -->
+
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+
+        <!-- Start Test Dependencies -->
+
+        <dependency>
+            <groupId>com.atlassian.crowd</groupId>
+            <artifactId>crowd-test-utils</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.cache</groupId>
+            <artifactId>atlassian-cache-memory</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.stefanbirkner</groupId>
+            <artifactId>system-rules</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- End Test Dependencies -->
+
+    </dependencies>
+
+</project>

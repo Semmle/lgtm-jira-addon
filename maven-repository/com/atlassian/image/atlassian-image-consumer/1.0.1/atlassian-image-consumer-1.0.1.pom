@@ -1,0 +1,47 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>atlassian-public-pom</artifactId>
+        <version>29.6</version>
+    </parent>
+
+    <groupId>com.atlassian.image</groupId>
+    <artifactId>atlassian-image-consumer</artifactId>
+    <version>1.0.1</version>
+    <packaging>jar</packaging>
+
+    <name>atlassian-image-consumer</name>
+
+    <licenses>
+        <license>
+            <name>LGPL 2.1 License</name>
+            <url>http://www.gnu.org/licenses/lgpl-2.1.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git@bitbucket.org:atlassian/atlassian-image-consumer.git</connection>
+        <developerConnection>scm:git:git@bitbucket.org:atlassian/atlassian-image-consumer.git</developerConnection>
+        <url>scm:git:git@bitbucket.org:atlassian/atlassian-image-consumer.git</url>
+    </scm>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>${basedir}</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>LICENSE.txt</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+</project>

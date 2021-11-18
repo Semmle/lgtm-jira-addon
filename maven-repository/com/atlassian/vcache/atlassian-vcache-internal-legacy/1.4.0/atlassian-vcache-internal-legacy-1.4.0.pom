@@ -1,0 +1,69 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.atlassian.vcache</groupId>
+    <artifactId>atlassian-vcache</artifactId>
+    <version>1.4.0</version>
+  </parent>
+
+  <artifactId>atlassian-vcache-internal-legacy</artifactId>
+  <name>Atlassian VCache - Atlassian Cache Impl</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>atlassian-vcache-internal-core</artifactId>
+    </dependency>
+
+    <!-- Implementation dependencies -->
+    <dependency>
+      <groupId>com.atlassian.cache</groupId>
+      <artifactId>atlassian-cache-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>atlassian-vcache-internal-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.atlassian.cache</groupId>
+      <artifactId>atlassian-cache-memory</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.atlassian.cache</groupId>
+      <artifactId>atlassian-cache-ehcache</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.atlassian.fugue</groupId>
+      <artifactId>fugue</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-library</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+</project>

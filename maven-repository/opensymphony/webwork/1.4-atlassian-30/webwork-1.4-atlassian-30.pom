@@ -1,0 +1,137 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>atlassian-public-pom</artifactId>
+        <groupId>com.atlassian.pom</groupId>
+        <version>39</version>
+    </parent>
+
+    <name>Atlassian Vendor Patch of Webwork 1</name>
+    <groupId>opensymphony</groupId>
+    <artifactId>webwork</artifactId>
+    <version>1.4-atlassian-30</version>
+    <packaging>jar</packaging>
+
+    <scm>
+        <connection>scm:git:git@bitbucket.org:atlassian/webwork-1-4.git</connection>
+        <developerConnection>scm:git:git@bitbucket.org:atlassian/webwork-1-4.git</developerConnection>
+        <url>https://bitbucket.org/atlassian/webwork1.4</url>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>The OpenSymphony Software License, Version 1.1</name>
+            <url />
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>javacc-maven-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>javacc</id>
+                        <goals>
+                            <goal>javacc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>com.atlassian.html</groupId>
+            <artifactId>atlassian-html-encoder</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jsp-api</artifactId>
+            <version>2.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging-api</artifactId>
+            <version>1.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring</artifactId>
+            <version>2.5.6.SEC01</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>bsf</groupId>
+            <artifactId>bsf</artifactId>
+            <version>2.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>1.6.4-atlassian-4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>webwork</groupId>
+            <artifactId>pell-multipart-request</artifactId>
+            <version>1.31.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.meteware.httpunit</groupId>
+            <artifactId>httpunit</artifactId>
+            <version>1.5.4-atlassian-13</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.mockrunner</groupId>
+            <artifactId>mockrunner</artifactId>
+            <version>0.4.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>mockobjects</groupId>
+            <artifactId>mockobjects-core</artifactId>
+            <version>0.09</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom</artifactId>
+            <version>1.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.7.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

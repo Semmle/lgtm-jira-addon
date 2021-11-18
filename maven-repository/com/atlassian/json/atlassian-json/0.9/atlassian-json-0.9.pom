@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>atlassian-public-pom</artifactId>
+        <groupId>com.atlassian.pom</groupId>
+        <version>24</version>
+    </parent>
+
+    <groupId>com.atlassian.json</groupId>
+    <artifactId>atlassian-json</artifactId>
+    <version>0.9</version>
+    <packaging>pom</packaging>
+    <name>Streamy JSON interfaces and helpers</name>
+
+    <modules>
+        <module>atlassian-json-api</module>
+        <module>atlassian-json-jsonorg</module>
+    </modules>
+
+    <licenses>
+        <license>
+            <name>BSD</name>
+            <url>http://opensource.org/licenses/BSD-3-Clause</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.4.3</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.atlassian.json</groupId>
+                <artifactId>atlassian-json-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atlassian.annotations</groupId>
+                <artifactId>atlassian-annotations</artifactId>
+                <version>0.7</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.8.1</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <scm>
+        <connection>scm:git:git@bitbucket.org:atlassian/atlassian-json.git</connection>
+        <developerConnection>scm:git:git@bitbucket.org:atlassian/atlassian-json.git</developerConnection>
+    </scm>
+
+    <properties>
+        <jdkLevel>1.6</jdkLevel>
+    </properties>
+
+</project>
+

@@ -1,0 +1,72 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.atlassian.upm</groupId>
+        <artifactId>atlassian-universal-plugin-manager</artifactId>
+        <version>2.15</version>
+    </parent>
+    <name>Universal Plugin Manager - API</name>
+    <artifactId>upm-api</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.atlassian.sal</groupId>
+            <artifactId>sal-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.bundles</groupId>
+            <artifactId>google-collections</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.3</version>
+                <executions>
+                    <execution>
+                        <id>copy-doclava-artifact</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.atlassian.devrel</groupId>
+                                    <artifactId>doclava-theme</artifactId>
+                                    <version>${doclava.theme.version}</version>
+                                    <outputDirectory>${doclava.theme.dir}</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.8.1-atlassian-1</version>
+                <configuration>
+                    <docletArtifact>
+                        <groupId>com.google.doclava</groupId>
+                        <artifactId>doclava</artifactId>
+                        <version>1.0.6-atlassian-3</version>
+                    </docletArtifact>
+                    <doclet>com.google.doclava.Doclava</doclet>
+                    <useStandardDocletOptions>false</useStandardDocletOptions>
+                    <bootclasspath>${sun.boot.class.path}</bootclasspath>
+                    <additionalparam>
+                        -federate JDK http://download.oracle.com/javase/6/docs/api/index.html?
+                        -federationxml JDK ${doclava.theme.dir}/openjdk-6.xml
+                        -hdf project.name "${project.name}"
+                        -d ${project.build.directory}/apidocs
+                        -templatedir ${doclava.theme.dir}
+                    </additionalparam>
+                    <maxmemory>1024m</maxmemory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

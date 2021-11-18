@@ -1,0 +1,140 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <!--
+
+    This is not yet a proper mvn2 project but one day would would like to get there!
+
+    -->
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>httpunit</artifactId>
+    <groupId>com.meteware.httpunit</groupId>
+    <version>1.5.4-atlassian-12</version>
+    <name>httpunit 1.5.4 Atlassian patch</name>
+    <organization>
+        <name>Atlassian Vendor Patch of httpunit 1.5.4</name>
+    </organization>
+    <packaging>jar</packaging>
+    <description>
+        Atlassian Vendor Patch of httpunit 1.5.4
+    </description>
+    <url>http://httpunit.sourceforge.net/</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+
+                <configuration>
+                    <!-- Update the links reference in javadoc, PDM and clover plugins when this changes -->
+                    <source>1.5</source>
+                    <target>1.5</target>
+                    <excludes>
+                        <exclude>**/JTidyHTMLParser.java</exclude>
+                    </excludes>
+                    <testExcludes>
+                        <exclude>**/FileUploadTest.java</exclude>
+                    </testExcludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/ServletAccessTest.java</exclude>
+                        <exclude>**/WebDriverOldTestsTest.java</exclude>
+                    </excludes>
+                    <argLine>-Xmx512m -Xms128m</argLine>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <scm>
+        <connection>scm:svn:https://svn.atlassian.com/svn/public/atlassian/vendor/httpunit-1.5.4/tags/httpunit-1.5.4-atlassian-12</connection>
+        <developerConnection>scm:svn:https://svn.atlassian.com/svn/public/atlassian/vendor/httpunit-1.5.4/tags/httpunit-1.5.4-atlassian-12</developerConnection>
+        <url>https://svn.atlassian.com/svn/public/atlassian/vendor/httpunit-1.5.4/tags/httpunit-1.5.4-atlassian-12</url>
+    </scm>
+    <dependencies>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.3</version>
+        </dependency>
+        <dependency>
+          <groupId>nekohtml</groupId>
+          <artifactId>nekohtml</artifactId>
+          <version>0.8.1</version>
+        </dependency>
+        <dependency>
+           <groupId>rhino</groupId>
+           <artifactId>js</artifactId>
+           <version>1.5R4-RC3</version>
+       </dependency>
+        <dependency>
+          <groupId>xerces</groupId>
+          <artifactId>xerces</artifactId>
+          <version>2.3.0</version>
+        </dependency>
+        <dependency>
+          <groupId>xml-apis</groupId>
+          <artifactId>xml-apis</artifactId>
+          <version>1.0.b2</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>1.4</version>
+        </dependency>
+    </dependencies>
+    <distributionManagement>
+        <repository>
+            <id>atlassian-3rdparty</id>
+            <url>dav:https://maven.atlassian.com/3rdparty</url>
+            <name>3rd party repo</name>
+        </repository>
+
+        <snapshotRepository>
+            <id>atlassian-3rdparty-snapshot</id>
+            <url>dav:https://maven.atlassian.com/3rdparty-snapshot</url>
+            <name>3rd party snapshot repo</name>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+</project>

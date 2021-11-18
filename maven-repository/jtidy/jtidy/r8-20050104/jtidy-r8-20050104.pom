@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>jtidy</groupId>
+  <artifactId>jtidy</artifactId>
+  <version>r8-20050104</version>
+  <distributionManagement>
+    <status>deployed</status>
+  </distributionManagement>
+</project>

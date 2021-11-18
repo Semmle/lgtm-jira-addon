@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>commons-jrcs</groupId>
+  <artifactId>commons-jrcs</artifactId>
+  <version>diff-0.1.7</version>
+  <distributionManagement>
+    <status>deployed</status>
+  </distributionManagement>
+</project>

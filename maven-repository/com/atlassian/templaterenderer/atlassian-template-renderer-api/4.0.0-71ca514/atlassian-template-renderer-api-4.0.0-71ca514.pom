@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.atlassian.templaterenderer</groupId>
+        <artifactId>atlassian-template-renderer</artifactId>
+        <version>4.0.0-71ca514</version>
+    </parent>
+
+    <artifactId>atlassian-template-renderer-api</artifactId>
+    <packaging>atlassian-plugin</packaging>
+
+    <name>Atlassian Template Renderer API</name>
+
+    <properties>
+        <atlassian.plugin.key>com.atlassian.templaterenderer.api</atlassian.plugin.key>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.atlassian.annotations</groupId>
+            <artifactId>atlassian-annotations</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-plugins-osgi</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-plugins-webresource</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-plugins-webfragment</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.atlassian.maven.plugins</groupId>
+                <artifactId>maven-amps-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <productVersion>${refapp.version}</productVersion>
+                    <containerId>tomcat8x</containerId>
+                    <instructions>
+                        <Spring-Context>
+                            *
+                        </Spring-Context>
+                        <Import-Package>
+                            com.atlassian.plugin*;version="${plug.api.version}",
+                            org.slf4j.*,
+                            org.dom4j;version="[1.4, 2.0)",
+                            org.apache.commons.collections.*;version="[3.2, 4.0)",
+                            org.springframework*;version="2.5",
+                            *
+                        </Import-Package>
+                        <Export-Package>
+                            !com.atlassian.templaterenderer.plugins,
+                            com.atlassian.templaterenderer.*;version="${project.version}"
+                        </Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

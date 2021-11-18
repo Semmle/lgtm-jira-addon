@@ -1,0 +1,68 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>atlassian-closedsource-pom</artifactId>
+        <version>17</version>
+    </parent>
+
+    <groupId>com.atlassian.modzdetector</groupId>
+    <artifactId>modz-detector-parent</artifactId>
+    <version>0.2</version>
+    <packaging>pom</packaging>
+
+    <name>Atlassian Modz Detector</name>
+    <description>A tool for detecting modifications to deployed applications.</description>
+    <url>http://www.atlassian.com/</url>
+
+    <scm>
+        <connection>scm:svn:https://studio.atlassian.com/svn/MODZ/tags/modz-detector-parent-0.2</connection>
+        <developerConnection>scm:svn:https://studio.atlassian.com/svn/MODZ/tags/modz-detector-parent-0.2</developerConnection>
+        <url>https://studio.atlassian.com/source/browse/MODZ/tags/modz-detector-parent-0.2</url>
+    </scm>
+
+    <issueManagement>
+        <system>jira</system>
+        <url>https://studio.atlassian.com/browse/MODZ</url>
+    </issueManagement>
+
+    <modules>
+        <module>modz-detector</module>
+        <module>modz-detector-maven-plugin</module>
+    </modules>
+
+    <developers>
+        <developer>
+            <id>christo</id>
+            <name>Chris Mountford</name>
+            <email>chris@atlassian.com</email>
+            <url>http://confluence.atlassian.com/display/~chris@atlassian.com/Welcome</url>
+            <organization>Atlassian</organization>
+            <organizationUrl>http://www.atlassian.com</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>+10</timezone>
+        </developer>
+        <developer>
+            <id>sleberrigaud</id>
+            <name>Samuel Le Berrigaud</name>
+            <email>samuel@atlassian.com</email>
+            <url>http://confluence.atlassian.com/display/~sleberrigaud</url>
+            <organization>Atlassian</organization>
+            <organizationUrl>http://www.atlassian.com</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>+10</timezone>
+        </developer>
+    </developers>
+
+    <!--distributionManagement>
+        <site>
+            <id>atlassian-documentation</id>
+            <name>Atlassian Doc</name>
+            <url>dav:https://internal.docs.atlassian.com/modz-detector/${project.version}</url>
+        </site>
+    </distributionManagement-->
+</project>

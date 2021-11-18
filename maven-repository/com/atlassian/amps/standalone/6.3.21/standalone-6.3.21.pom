@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.atlassian.amps</groupId>
+        <artifactId>atlassian-amps-parent</artifactId>
+        <version>6.3.21</version>
+    </parent>
+
+    <artifactId>standalone</artifactId>
+    <packaging>pom</packaging>
+
+    <name>AMPS Standalone</name>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.atlassian.maven.plugins</groupId>
+                    <artifactId>maven-amps-plugin</artifactId>
+                    <version>6.3.21</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <products>
+                            <product>
+                                <id>refapp</id>
+                                <version>${refapp.version}</version>
+                                <output>${project.build.directory}/refapp-${refapp.version}.log</output>
+                            </product>
+                            <product>
+                                <id>confluence</id>
+                                <version>LATEST</version>
+                                <output>${project.build.directory}/confluence-LATEST.log</output>
+                            </product>
+                            <product>
+                                <id>jira</id>
+                                <version>LATEST</version>
+                                <output>${project.build.directory}/jira-LATEST.log</output>
+                            </product>
+                            <product>
+                                <id>stash</id>
+                                <version>LATEST</version>
+                                <output>${project.build.directory}/stash-LATEST.log</output>
+                            </product>
+                            <product>
+                                <id>bamboo</id>
+                                <version>LATEST</version>
+                                <output>${project.build.directory}/bamboo-LATEST.log</output>
+                            </product>
+                            <product>
+                                <id>bitbucket</id>
+                                <version>LATEST</version>
+                                <dataVersion>LATEST</dataVersion>
+                                <output>${project.build.directory}/bitbucket-LATEST.log</output>
+                            </product>
+                            <product>
+                                <id>fecru</id>
+                                <version>LATEST</version>
+                                <output>${project.build.directory}/fecru-LATEST.log</output>
+                            </product>
+                            <product>
+                                <id>crowd</id>
+                                <version>LATEST</version>
+                                <output>${project.build.directory}/crowd-LATEST.log</output>
+                            </product>
+                        </products>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

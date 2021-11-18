@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>public-pom</artifactId>
+        <version>3.0.90</version>
+    </parent>
+
+    <version>3.5.45</version>
+    <groupId>com.atlassian.plugins</groupId>
+    <artifactId>atlassian-plugins-webresource-parent</artifactId>
+    <name>Atlassian Plugins - Web Resources - Parent</name>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>atlassian-plugins-webresource-api</module>
+        <module>atlassian-plugins-webresource</module>
+        <module>atlassian-plugins-webresource-plugin</module>
+        <module>atlassian-plugins-webresource-rest</module>
+        <module>atlassian-plugins-webresource-spi</module>
+        <module>atlassian-plugins-webresource-compiler-gcc</module>
+        <module>refapp-integration-tests</module>
+    </modules>
+
+    <licenses>
+        <license>
+            <name>BSD</name>
+            <url>http://opensource.org/licenses/BSD-3-Clause</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <issueManagement>
+        <system>JIRA</system>
+        <url>https://ecosystem.atlassian.net/browse/PLUGWEB</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>Bamboo</system>
+        <url>https://ecosystem-bamboo.internal.atlassian.com/browse/PLUGWEBR</url>
+    </ciManagement>
+
+    <scm>
+        <connection>scm:git:git@bitbucket.org:atlassian/atlassian-plugins-webresource.git</connection>
+        <developerConnection>scm:git:git@bitbucket.org:atlassian/atlassian-plugins-webresource.git</developerConnection>
+        <url>https://bitbucket.org/atlassian/atlassian-plugins-webresource</url>
+        <tag>atlassian-plugins-webresource-3.5.45</tag>
+    </scm>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>2.3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.annotations</groupId>
+                <artifactId>atlassian-annotations</artifactId>
+                <version>0.7</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.plugins</groupId>
+                <artifactId>atlassian-plugins-core</artifactId>
+                <version>${atlassian.plugins.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.plugins</groupId>
+                <artifactId>atlassian-plugins-webresource-common</artifactId>
+                <version>${atlassian.plugins.version}</version>
+            </dependency>
+            <!-- Needs -webfragment for Conditions. Ideally, conditions should be
+                 moved into plugins core as they are not webfragment-specific -->
+            <dependency>
+                <groupId>com.atlassian.plugins</groupId>
+                <artifactId>atlassian-plugins-webfragment</artifactId>
+                <version>${webfragment.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.plugins</groupId>
+                <artifactId>atlassian-plugins-webfragment-api</artifactId>
+                <version>${webfragment.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.plugins</groupId>
+                <artifactId>atlassian-plugins-webresource-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atlassian.plugins</groupId>
+                <artifactId>atlassian-plugins-webresource</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atlassian.plugins</groupId>
+                <artifactId>atlassian-plugins-webresource-spi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atlassian.json</groupId>
+                <artifactId>atlassian-json-api</artifactId>
+                <version>${atlassian.json.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atlassian.html</groupId>
+                <artifactId>atlassian-html-encoder</artifactId>
+                <version>${atlassian.html.encoder.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>1.3</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.tuckey</groupId>
+                <artifactId>urlrewritefilter</artifactId>
+                <version>4.0.4</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>11.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>jsr305</artifactId>
+                <version>${jsr305.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atlassian.util.concurrent</groupId>
+                <artifactId>atlassian-util-concurrent</artifactId>
+                <version>2.4.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atlassian.plugins.rest</groupId>
+                <artifactId>atlassian-rest-common</artifactId>
+                <version>2.6.3.2</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atlassian.sourcemap</groupId>
+                <artifactId>sourcemap</artifactId>
+                <version>1.7.6</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atlassian.fugue</groupId>
+                <artifactId>fugue</artifactId>
+                <version>1.1</version>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- Test Dependencies -->
+        <dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-plugins-webresource-common</artifactId>
+            <version>${atlassian.plugins.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <version>1.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+            <version>1.3</version>
+            <scope>test</scope>
+        </dependency>
+        <!--<dependency>-->
+        <!--<groupId>org.slf4j</groupId>-->
+        <!--<artifactId>slf4j-api</artifactId>-->
+        <!--<version>${slf4j.version}</version>-->
+        <!--<scope>provided</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+        <!--<groupId>org.slf4j</groupId>-->
+        <!--<artifactId>slf4j-simple</artifactId>-->
+        <!--<version>${slf4j.version}</version>-->
+        <!--<scope>test</scope>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>1.9.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>jsr311-api</artifactId>
+            <version>1.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <configuration>
+                        <tagNameFormat>atlassian-plugins-webresource-@{project.version}</tagNameFormat>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.eirslett</groupId>
+                    <artifactId>frontend-maven-plugin</artifactId>
+                    <version>${frontend.maven.plugin.version}</version>
+                    <configuration>
+                        <yarnVersion>${yarn.version}</yarnVersion>
+                        <nodeVersion>${node.version}</nodeVersion>
+                        <installDirectory>${node.path}</installDirectory>
+                        <npmInheritsProxyConfigFromMaven>true</npmInheritsProxyConfigFromMaven>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.11</version>
+                <configuration>
+                    <systemProperties>
+                        <property>
+                            <name>project.version</name>
+                            <value>${project.version}</value>
+                        </property>
+                    </systemProperties>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>01-install-binaries</id>
+                        <goals>
+                            <goal>install-node-and-yarn</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                        <inherited>false</inherited>
+                    </execution>
+                    <execution>
+                        <id>02-install-deps</id>
+                        <goals>
+                            <goal>yarn</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>${frontend.install.cmd}</arguments>
+                        </configuration>
+                        <phase>initialize</phase>
+                        <inherited>false</inherited>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <reporting>
+        <plugins>
+        <plugin>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <reportSets>
+                <reportSet>
+                    <id>default</id>
+                    <reports>
+                        <report>aggregate</report>
+                    </reports>
+                </reportSet>
+            </reportSets>
+        </plugin>
+        </plugins>
+    </reporting>
+
+    <properties>
+        <jdkLevel>1.8</jdkLevel>
+        <atlassian.plugins.version>3.0.23</atlassian.plugins.version>
+        <atlassian.event.version>2.2.0</atlassian.event.version>
+        <webfragment.version>3.0.7</webfragment.version>
+        <amps.version>5.1.7</amps.version>
+        <jira.version>5.2</jira.version>
+        <confluence.version>4.3</confluence.version>
+        <fecru.version>2.8.1-20120829051639</fecru.version>
+        <bamboo.version>4.2.1</bamboo.version>
+        <refapp.version>2.12.0</refapp.version>
+        <atlassian.json.version>0.11</atlassian.json.version>
+        <atlassian.html.encoder.version>1.4</atlassian.html.encoder.version>
+        <wrm.api.compat.version>3.0</wrm.api.compat.version>
+        <qunit.plugin.version>1.15</qunit.plugin.version>
+        <jsr305.version>3.0.0</jsr305.version>
+        <httpcomponents.version>4.4.1</httpcomponents.version>
+
+        <!-- front-end dependencies -->
+        <node.path>${project.build.directory}</node.path>
+        <node.version>v8.11.1</node.version>
+        <yarn.version>v1.6.0</yarn.version>
+        <frontend.install.cmd>install --frozen-lockfile --prefer-offline --mutex network</frontend.install.cmd>
+        <frontend.maven.plugin.version>1.6</frontend.maven.plugin.version>
+    </properties>
+</project>

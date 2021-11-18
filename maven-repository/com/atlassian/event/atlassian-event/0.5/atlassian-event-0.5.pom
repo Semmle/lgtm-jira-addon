@@ -1,0 +1,86 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <groupId>com.atlassian.event</groupId>
+    <artifactId>atlassian-event</artifactId>
+    
+    <packaging>jar</packaging>
+    <version>0.5</version>
+    
+    <!-- Parent Project Information -->
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>atlassian-public-pom</artifactId>
+        <version>5</version>
+    </parent>
+    
+    <!-- Project Information -->
+    <name>Atlassian Event</name>
+    <description>Atlassian eventing system for use with Spring projects</description>
+    <url>http://www.atlassian.com</url>
+    <inceptionYear>2006</inceptionYear>
+    
+    <!-- Build Environment Information -->
+    <issueManagement>
+        <system>jira</system>
+        <url>http://jira.atlassian.com</url>
+    </issueManagement>
+    <ciManagement>
+        <system>bamboo</system>
+        <url>https://bamboo.developer.atlassian.com/browse/ATLASSIANEVENT-TRUNK</url>
+    </ciManagement>
+    <scm>
+        <connection>scm:svn:https://svn.atlassian.com/svn/private/atlassian/atlassian-event/tags/atlassian-event-0.5</connection>
+        <developerConnection>scm:svn:https://svn.atlassian.com/svn/private/atlassian/atlassian-event/tags/atlassian-event-0.5</developerConnection>
+        <url>https://svn.atlassian.com/privateeye/viewrep/private/atlassian/atlassian-event/tags/atlassian-event-0.5</url>
+    </scm>
+    
+    <!-- Project Dependencies -->
+    <dependencies>
+        <!-- Atlassian dependencies -->
+        <!-- End Atlassian dependencies -->
+        
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>2.0.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>2.0.6</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>backport-util-concurrent</groupId>
+            <artifactId>backport-util-concurrent</artifactId>
+            <version>2.1</version>
+            <scope>compile</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.9</version>
+            <scope>compile</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>jmock</groupId>
+            <artifactId>jmock</artifactId>
+            <version>1.1.0</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.2</version>
+        </dependency>
+    </dependencies>
+</project>

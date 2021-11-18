@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>atlassian-public-pom</artifactId>
+        <version>42</version>
+    </parent>
+
+    <groupId>com.atlassian.botocss</groupId>
+    <artifactId>botocss-parent</artifactId>
+    <packaging>pom</packaging>
+    <version>6.4</version>
+
+    <name>Botocss parent</name>
+
+    <scm>
+        <connection>scm:git:git@bitbucket.org:atlassian/botocss.git</connection>
+        <developerConnection>scm:git:git@bitbucket.org:atlassian/botocss.git</developerConnection>
+        <url>https://bitbucket.org/atlassian/botocss</url>
+      <tag>botocss-parent-6.4</tag>
+  </scm>
+
+    <modules>
+        <module>botocss-core</module>
+        <module>botocss</module>
+    </modules>
+
+    <properties>
+        <jdkLevel>1.8</jdkLevel>
+        <source.encoding>UTF-8</source.encoding>
+    </properties>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.atlassian.maven.plugins</groupId>
+                    <artifactId>maven-dependency-tracker-plugin</artifactId>
+                    <version>1.0.rc2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>1.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.10.3</version>
+                    <configuration>
+                        <additionalparam>-Xdoclint:none</additionalparam>
+                        <maxmemory>1024m</maxmemory>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>aggregate</id>
+                            <goals>
+                                <goal>aggregate</goal>
+                            </goals>
+                            <configuration>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <extensions> 
+            <extension> 
+                <!-- enable DAV deployment -->
+                <groupId>org.apache.maven.wagon</groupId> 
+                <artifactId>wagon-webdav-jackrabbit</artifactId> 
+                <version>1.0-beta-7</version> 
+            </extension> 
+        </extensions> 
+    </build>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.5.10</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jsoup</groupId>
+                <artifactId>jsoup</artifactId>
+                <version>1.8.3</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>14.0.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.sf.cssbox</groupId>
+                <artifactId>jstyleparser</artifactId>
+                <version>1.16-atlassian-1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>ch.qos.logback</groupId>
+                        <artifactId>logback-classic</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>1.5.10</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>1.2.16</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.11</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-library</artifactId>
+                <version>1.3</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.4</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <distributionManagement>
+        <repository>
+            <id>atlassian-public</id>
+            <name>Atlassian Public Repository</name>
+            <url>https://maven.atlassian.com/public</url>
+        </repository>
+        <snapshotRepository>
+            <id>atlassian-public-snapshot</id>
+            <name>Atlassian Public Snapshot Repository</name>
+            <url>https://maven.atlassian.com/public-snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+</project>

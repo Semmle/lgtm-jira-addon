@@ -1,0 +1,88 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.atlassian.gadgets</groupId>
+        <artifactId>atlassian-gadgets</artifactId>
+        <version>4.2.35</version>
+    </parent>
+    <artifactId>atlassian-gadgets-api</artifactId>
+    <name>Atlassian Gadgets API</name>
+    <description>Public Atlassian Gadgets API</description>
+    <packaging>atlassian-plugin</packaging>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.atlassian.maven.plugins</groupId>
+                <artifactId>maven-refapp-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Import-Package>
+                            !sun.misc*,
+                            *
+                        </Import-Package>
+                        <Export-Package>
+                            com.atlassian.gadgets;version="${project.version}",
+                            com.atlassian.gadgets.dashboard;version="${project.version}",
+                            com.atlassian.gadgets.dashboard.view;version="${project.version}",
+                            com.atlassian.gadgets.directory;version="${project.version}",
+                            com.atlassian.gadgets.plugins;version="${project.version}",
+                            com.atlassian.gadgets.spec;version="${project.version}",
+                            com.atlassian.gadgets.view;version="${project.version}",
+                            com.atlassian.gadgets.opensocial;version="${project.version}",
+                            com.atlassian.gadgets.opensocial.model;version="${project.version}",
+                            com.atlassian.gadgets.event;version="${project.version}",
+                            com.atlassian.gadgets.feed;version="${project.version}"
+                        </Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-plugins-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-plugins-webfragment</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!--
+          - The JSR-305 and JCIP annotations use the runtime retention policy, so host apps will need them available
+          - on the classpath with this API JAR
+          -->
+        <dependency>
+            <groupId>net.sourceforge.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.jcip</groupId>
+            <artifactId>jcip-annotations</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
+
+</project>

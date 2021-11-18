@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.atlassian.plugins</groupId>
+        <artifactId>atlassian-plugins-parent</artifactId>
+        <version>4.5.1</version>
+    </parent>
+
+    <artifactId>atlassian-plugins-schema</artifactId>
+    <name>Atlassian Plugins Schema</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-plugins-osgi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.security</groupId>
+            <artifactId>atlassian-secure-xml</artifactId>
+            <version>3.1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.plugins.test</groupId>
+            <artifactId>atlassian-plugins-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

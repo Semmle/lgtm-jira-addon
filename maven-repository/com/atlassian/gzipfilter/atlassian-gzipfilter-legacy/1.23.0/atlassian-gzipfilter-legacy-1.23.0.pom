@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <artifactId>public-pom</artifactId>
+    <groupId>com.atlassian.pom</groupId>
+    <version>3.0.90</version>
+    <relativePath>../../pom.xml/pom.xml</relativePath>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.atlassian.gzipfilter</groupId>
+  <artifactId>atlassian-gzipfilter-legacy</artifactId>
+  <name>Atlassian Gzip Filter Legacy</name>
+  <version>1.23.0</version>
+  <description>A package to provide upgrade path from atlassian-gzipfilter 1.x to &gt;=2.0
+
+        contains commons-lang and urlrewrite packages under
+        com.atlassian.gzipfilter</description>
+  <url>http://docs.atlassian.com/${project.artifactId}/${project.version}</url>
+  <issueManagement>
+    <system>Jira</system>
+    <url>http://jira.atlassian.com/browse/GZIPFILTER</url>
+  </issueManagement>
+  <scm>
+    <connection>scm:git:git@bitbucket.org:atlassian/atlassian-gzipfilter-legacy.git</connection>
+    <developerConnection>scm:git:git@bitbucket.org:atlassian/atlassian-gzipfilter-legacy.git</developerConnection>
+    <tag>atlassian-gzipfilter-legacy-1.23.0</tag>
+    <url>https://bitbucket.org/atlassian/atlassian-gzipfilter-legacy</url>
+  </scm>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>2.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
+          <relocations>
+            <relocation>
+              <pattern>org.apache.commons.lang</pattern>
+              <shadedPattern>com.atlassian.gzipfilter.org.apache.commons.lang</shadedPattern>
+            </relocation>
+            <relocation>
+              <pattern>org.tuckey.web</pattern>
+              <shadedPattern>com.atlassian.gzipfilter.org.tuckey.web</shadedPattern>
+            </relocation>
+          </relocations>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+

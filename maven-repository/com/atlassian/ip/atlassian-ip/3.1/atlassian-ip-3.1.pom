@@ -1,0 +1,49 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>atlassian-public-pom</artifactId>
+        <version>29.4</version>
+    </parent>
+
+    <groupId>com.atlassian.ip</groupId>
+    <artifactId>atlassian-ip</artifactId>
+    <version>3.1</version>
+
+    <name>Atlassian IP</name>
+    <url>http://docs.atlassian.com/${project.artifactId}/${project.version}</url>
+
+    <scm>
+        <connection>scm:git:git@bitbucket.org:atlassian/atlassian-ip.git</connection>
+        <developerConnection>scm:git:git@bitbucket.org:atlassian/atlassian-ip.git</developerConnection>
+        <url>https://bitbucket.org/atlassian/atlassian-ip</url>
+    </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.8.5</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <issueManagement>
+        <url>https://studio.atlassian.com/browse/IP</url>
+    </issueManagement>
+
+    <distributionManagement>
+        <site>
+            <id>atlassian-documentation</id>
+            <url>dav:https://docs.atlassian.com/${project.artifactId}/${project.version}</url>
+        </site>
+    </distributionManagement>
+
+</project>

@@ -275,7 +275,7 @@
 		</pluginManagement>
 	</build>
 	<properties>
-		<jira.version>7.12.0</jira.version>
+		<jira.version>7.13.17</jira.version>
 		<amps.version>6.3.21</amps.version>
 		<plugin.testrunner.version>1.2.3</plugin.testrunner.version>
 		<atlassian.spring.scanner.version>1.2.13</atlassian.spring.scanner.version>
@@ -290,6 +290,10 @@
 	</properties>
 	<repositories>
 		<repository>
+			<id>maven-repository</id>
+			<url>file:///${project.basedir}/maven-repository</url>
+		</repository>
+		<repository>
 			<id>central</id>
 			<name>Central Repository</name>
 			<url>https://repo1.maven.org/maven2/</url>
@@ -298,7 +302,7 @@
 		<repository>
 			<id>springio-libs-release</id>
 			<name>Spring Lib Release Repository</name>
-			<url>https://repo.spring.io/libs-release/</url>
+			<url>https://repo.spring.io/releases/</url>
 			<layout>default</layout>
 		</repository>
                 <repository>
@@ -314,17 +318,30 @@
 			<layout>default</layout>
 		</repository>
 		<repository>
+			<id>maven-atlassian-external</id>
+			<name>Atlassian Repository</name>
+			<url>https://packages.atlassian.com/mvn/maven-atlassian-external/</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
 			<id>atlassian-packages-public</id>
 			<name>Atlassian Packages Repository</name>
 			<url>https://packages.atlassian.com/maven-public/</url>
 			<layout>default</layout>
 		</repository>
-		<repository>
-			<id>maven-repository</id>
-			<url>file:///${project.basedir}/maven-repository</url>
-		</repository>
 	</repositories>
 	<pluginRepositories>
+		<pluginRepository>
+			<id>maven-repository</id>
+			<url>file:///${project.basedir}/maven-repository</url>
+			<layout>default</layout>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
 		<pluginRepository>
 			<id>central</id>
 			<name>Central Repository</name>
@@ -338,9 +355,9 @@
 			</snapshots>
 		</pluginRepository>
 		<pluginRepository>
-			<id>springio-plugins-release</id>
-			<name>Spring Plugins Repository</name>
-			<url>https://repo.spring.io/plugins-release/</url>
+			<id>maven-atlassian-external</id>
+			<name>Atlassian Repository</name>
+			<url>https://packages.atlassian.com/mvn/maven-atlassian-external/</url>
 			<layout>default</layout>
 			<releases>
 				<enabled>true</enabled>

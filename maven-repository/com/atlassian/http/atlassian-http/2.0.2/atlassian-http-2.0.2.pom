@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <artifactId>public-pom</artifactId>
+        <groupId>com.atlassian.pom</groupId>
+        <version>5.0.11</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.atlassian.http</groupId>
+    <artifactId>atlassian-http</artifactId>
+    <name>Atlassian Http</name>
+    <version>2.0.2</version>
+    <description>
+        This project contains utility classes for manipulation of http concepts, such as
+        cookies, MIME types, and browser agent sniffing.
+    </description>
+    <url>https://bitbucket.org/atlassian/atlassian-http</url>
+    <issueManagement>
+        <system>BitBucket Issues</system>
+        <url>https://bitbucket.org/atlassian/atlassian-http/issues</url>
+    </issueManagement>
+    <developers>
+        <developer>
+            <name>Joe Xie</name>
+            <email>jxie@atlassian.com</email>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:ssh://git@bitbucket.org/atlassian/atlassian-http.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.org/atlassian/atlassian-http.git</developerConnection>
+        <url>https://bitbucket.org/atlassian/atlassian-http</url>
+        <tag>atlassian-http-2.0.2</tag>
+  </scm>
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <distribution>repo</distribution>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.4.0</version>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <instructions>
+                        <Export-Package>
+                            com.atlassian.http.mime.*;version="${project.version}"
+                        </Export-Package>
+                        <Import-Package>
+                            com.google.common.*
+                        </Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>2.3.3</version>
+            </plugin>
+        </plugins>
+    </reporting>
+    <dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>18.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.5</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>1.9.5</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <properties>
+        <jdkLevel>1.6</jdkLevel>
+    </properties>
+</project>

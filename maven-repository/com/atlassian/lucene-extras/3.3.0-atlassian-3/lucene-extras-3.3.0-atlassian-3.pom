@@ -1,0 +1,61 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>atlassian-public-pom</artifactId>
+        <version>29.16</version>
+    </parent>
+    <groupId>com.atlassian</groupId>
+     <artifactId>lucene-extras</artifactId>
+     <version>3.3.0-atlassian-3</version>
+     <packaging>jar</packaging>
+
+     <name>lucene-extras</name>
+     <description>
+         Contains improvements to the target Lucene version that have been ported back from more recent
+         versions of Apache Lucene and miscellaneous improvements made by Atlassian.
+     </description>
+     <url>https://bitbucket.org/atlassian/lucene-extras</url>
+
+    <scm>
+      <connection>scm:git:ssh://git@bitbucket.org/atlassian/lucene-extras.git</connection>
+      <developerConnection>scm:git:ssh://git@bitbucket.org/atlassian/lucene-extras.git</developerConnection>
+      <url>https://bitbucket.org/atlassian/lucene-extras</url>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>${lucene.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-analyzers</artifactId>
+            <version>${lucene.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <lucene.version>3.3.0</lucene.version>
+    </properties>
+</project>

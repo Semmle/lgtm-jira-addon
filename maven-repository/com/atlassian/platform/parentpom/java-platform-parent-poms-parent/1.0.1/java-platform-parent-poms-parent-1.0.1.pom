@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.atlassian.platform.parentpom</groupId>
+    <artifactId>java-platform-parent-poms-parent</artifactId>
+    <version>1.0.1</version>
+    <description>Supplementary POMs for the Java Platform</description>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>public-pom</artifactId>
+        <version>5.0.7</version>
+    </parent>
+
+    <modules>
+        <module>public-pom-3-artifactory</module>
+    </modules>
+
+    <scm>
+        <connection>scm:git:ssh://git@stash.atlassian.com:7997/sjp/java-platform-parent-poms.git</connection>
+        <developerConnection>scm:git:ssh://git@stash.atlassian.com:7997/sjp/java-platform-parent-poms.git</developerConnection>
+        <url>https://stash.atlassian.com/projects/SJP/repos/java-platform-parent-poms</url>
+        <tag>java-platform-parent-poms-parent-1.0.1</tag>
+    </scm>
+</project>

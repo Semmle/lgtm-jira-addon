@@ -1,0 +1,107 @@
+   <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.atlassian.crowd</groupId>
+        <artifactId>atlassian-crowd-components</artifactId>
+        <version>2.10.4</version>
+    </parent>
+
+    <groupId>com.atlassian.crowd</groupId>
+    <artifactId>crowd-api</artifactId>
+
+    <name>Atlassian Crowd Core API</name>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.atlassian.crowd</groupId>
+            <artifactId>crowd-integration-api</artifactId>
+        </dependency>
+
+         <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+       <build>
+           <plugins>
+               <plugin>
+                   <groupId>org.codehaus.mojo</groupId>
+                   <artifactId>clirr-maven-plugin</artifactId>
+                   <executions>
+                       <execution>
+                           <id>clirr-check</id>
+                           <phase>verify</phase>
+                           <goals>
+                               <goal>check</goal>
+                           </goals>
+                       </execution>
+                   </executions>
+                   <configuration>
+                       <ignored>
+                           <!-- Method Added to Interface -->
+                           <difference>
+                               <className>**/*</className>
+                               <method>*</method>
+                               <differenceType>7012</differenceType>
+                           </difference>
+
+                           <!-- Removed in 2.9 as a part of CWD-4474 -->
+                           <difference>
+                               <className>com/atlassian/crowd/manager/application/ApplicationService</className>
+                               <method>java.util.List searchUsersAllowingDuplicateNames(com.atlassian.crowd.model.application.Application, com.atlassian.crowd.search.query.entity.EntityQuery)</method>
+                               <differenceType>7002</differenceType>
+                           </difference>
+
+                           <!-- Removed in 2.9 as a part of CWD-3436 -->
+                           <difference>
+                               <className>com/atlassian/crowd/manager/cache/*</className>
+                               <differenceType>8001</differenceType>
+                           </difference>
+                       </ignored>
+                   </configuration>
+               </plugin>
+           </plugins>
+       </build>
+</project>

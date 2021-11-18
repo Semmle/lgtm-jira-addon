@@ -1,0 +1,341 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.atlassian.refapp</groupId>
+        <artifactId>atlassian-refapp-parent</artifactId>
+        <version>3.0.3</version>
+    </parent>
+    <artifactId>platform-ctk-plugin</artifactId>
+    <name>Platform Compatibility Testing Kit Plugin</name>
+    <packaging>atlassian-plugin</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.atlassian.sal</groupId>
+            <artifactId>sal-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.sal</groupId>
+            <artifactId>sal-spi</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.httpclient</groupId>
+            <artifactId>atlassian-httpclient-api</artifactId>
+            <version>${webclient.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-plugins-osgi</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-plugins-webresource</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.functest</groupId>
+            <artifactId>functest-plugin</artifactId>
+            <version>${fp.libversion}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.oauth</groupId>
+            <artifactId>atlassian-oauth-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.oauth</groupId>
+            <artifactId>atlassian-oauth-service-provider-spi</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.oauth.core</groupId>
+            <artifactId>oauth</artifactId>
+            <version>20090617</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.oauth.core</groupId>
+            <artifactId>oauth-httpclient4</artifactId>
+            <version>20090617</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.plugins.rest</groupId>
+            <artifactId>atlassian-rest-module</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.seraph</groupId>
+            <artifactId>atlassian-seraph</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.fugue</groupId>
+            <artifactId>fugue</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.refapp</groupId>
+            <artifactId>atlassian-refapp-scheduler-plugin</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.atlassian.scheduler</groupId>
+            <artifactId>atlassian-scheduler-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.atlassian.scheduler</groupId>
+            <artifactId>atlassian-scheduler-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.atlassian.scheduler</groupId>
+            <artifactId>atlassian-scheduler-quartz1</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>rome</groupId>
+            <artifactId>rome</artifactId>
+            <version>${rome.libversion}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.objenesis</groupId>
+            <artifactId>objenesis</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jetty</artifactId>
+            <version>6.1.25</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.mortbay.jetty</groupId>
+                    <artifactId>servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- This gives us mock requests/responses -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>3.2.5.RELEASE</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.gemini</groupId>
+            <artifactId>org.eclipse.gemini.blueprint.core</artifactId>
+            <version>1.0.2.RELEASE</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.twdata.pkgscanner</groupId>
+            <artifactId>package-scanner</artifactId>
+            <version>0.9.4</version>
+        </dependency>
+
+        <!-- just to make sure this gets built after refapp -->
+        <dependency>
+            <groupId>com.atlassian.refapp</groupId>
+            <artifactId>atlassian-refapp</artifactId>
+            <type>war</type>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+            <scope>runtime</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.webhooks</groupId>
+            <artifactId>atlassian-webhooks-provider-spi</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources/com/atlassian/refapp/ctk/version</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>platformversions.xml</include>
+                </includes>
+                <targetPath>com/atlassian/refapp/ctk/version</targetPath>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>com.atlassian.maven.plugins</groupId>
+                <artifactId>maven-amps-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <!--<jvmArgs>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8123</jvmArgs>-->
+                    <!--<jvmDebugSuspend>true</jvmDebugSuspend>-->
+                    <!--<jvmDebugPort>7323</jvmDebugPort>-->
+                    <containerId>${tomcat.version}</containerId>
+                    <log4jProperties>src/test/resources/log4j.properties</log4jProperties>
+                    <systemPropertyVariables>
+                        <xvfb.enable>false</xvfb.enable>
+                        <plugin.resource.directories>${basedir}/target/classes</plugin.resource.directories>
+                        <webdriver.browser>htmlunit</webdriver.browser>
+                        <platform.ctk.test.admin.username>admin</platform.ctk.test.admin.username>
+                        <platform.ctk.test.admin.password>admin</platform.ctk.test.admin.password>
+                        <platform.ctk.test.admin.fullname>A. D. Ministrator (Sysadmin)</platform.ctk.test.admin.fullname>
+                        <platform.ctk.test.validlicense>
+                            AAACVA0ODAoPeNqdVk1vozAQvfMrkPZMBE20h0pI2ya0i5qv3dBLb4ZMEq/ARLbJbv79gsHlywbRU
+                            xR/zJt5783gb8ElM18gNB3bdJzHuf04/256h8B8sB3HCFESpulsjSMgDLx/V0zvK8TB3c9/GgegN
+                            6D+yn1eLDaWvdjZ1sfh4816dfa/jIimf4+zJQXEcUrEnSKiZT9Yjp3vZhEOY5gtU8JRxLcoAdcnH
+                            M5UnDcDQInxB1MksYP7FcSpIE/O375WAPldfAOX0wzqoHtEOQEqjndLOOIivvu+XfsbP/BWxgmzC
+                            9xHMinBdvSMCGZi3X3iMWIMI1LjejcUZ+VuO6ENwnlEgkjU5VCit1IWdWvAxJ4+XpSSU5uUYkHHY
+                            cXNNktCoLvTs/i7TiMUP52BcOZaThlADyjy0crcAFfdWwGLKL6KEqtj5iml5j5GPP9NzGXwZnJgH
+                            JNzzaY6oMCaGLAQtStaxUlfS+HncZMMaCP2B8yp8XgF6uWRYxfXqNYRbuwHktaYRWlSsjBknaY3x
+                            IIU/50BLQUv08xodEEMupJWGesUL+0wIWHZACMWnSZsQcLo6NGwJBPS+GKIW7UxZcAm88rG+w1Jy
+                            qHReZ9DUltKodQw6mBr9rQXZeikb9WonaPD6Wjo6/BRe1EoOcX/krNeKJnByOwc8b3ye/OlBCc5W
+                            nbdBKDqiq6e7jTtNZ7k6wsjVT/OKkxFK4zIMv5OaM3VUkrFpO2fUg96xVSUjwsNoZ13xKThp+7Dw
+                            Zo/Hw4jc3oohnIK5bqSxndgkvwi7S6h/wEUMrYWMCwCFFBwk1DQL0qqxQbV15RZa/W8ESB7AhQ3b
+                            E9VSUvHT1S7vDj6p4zb0Oabdw==X02rr
+                        </platform.ctk.test.validlicense>
+                        <platform.ctk.test.search.term>refapp</platform.ctk.test.search.term>
+                        <platform.ctk.test.search.matches>http://foo.com,http://bar.com</platform.ctk.test.search.matches>
+                        <atlassian.darkfeature.foo>true</atlassian.darkfeature.foo>
+                        <atlassian.darkfeature.bar>false</atlassian.darkfeature.bar>
+                    </systemPropertyVariables>
+                    <enableFastdev>false</enableFastdev>
+                    <pluginArtifacts>
+                        <pluginArtifact>
+                            <groupId>com.atlassian.functest</groupId>
+                            <artifactId>functest-plugin</artifactId>
+                            <version>${fp.libversion}</version>
+                        </pluginArtifact>
+                    </pluginArtifacts>
+                    <instructions>
+                        // PLUGDEV-132 : org.eclipse.gemini.blueprint should be added by plugin transformation
+                        <Import-Package>
+                            com.atlassian.event,
+                            com.atlassian.oauth,
+                            com.atlassian.oauth.util,
+                            com.atlassian.oauth.serviceprovider,
+                            com.atlassian.functest.junit,
+                            com.atlassian.functest.api,
+                            org.apache.commons.io*;version="[1.4,3.0)",
+                            org.junit*,
+                            org.eclipse.gemini.blueprint,
+                            com.sun.jersey.client*,
+                            *;resolution:=optional
+                        </Import-Package>
+                        <Export-Package>
+                            org.apache.xml.utils.*
+                        </Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>net.sf.alchim</groupId>
+                <artifactId>yuicompressor-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>it/**/*</exclude>
+                        <exclude>**/*Abstract*</exclude>
+                        <exclude>**/*Mock*</exclude>
+                        <exclude>**/*$*</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

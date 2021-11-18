@@ -1,0 +1,16 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Thu Nov 18 12:01:33 CET 2021
+https\://packages.atlassian.com/maven-public/.lastUpdated=1637233293114
+https\://repo1.maven.org/maven2/.lastUpdated=1637233264180
+file\:////home/arthur/Devel/github/lgtm-jira-addon/maven-repository/.error=
+https\://packages.atlassian.com/mvn/maven-atlassian-external/.error=
+https\://repository.mulesoft.org/nexus/content/repositories/public/.lastUpdated=1637233291599
+https\://maven.atlassian.com/3rdparty/.error=
+https\://repo.spring.io/releases/.error=
+https\://repo.spring.io/releases/.lastUpdated=1637233264875
+file\:////home/arthur/Devel/github/lgtm-jira-addon/maven-repository/.lastUpdated=1637233264167
+https\://maven.atlassian.com/3rdparty/.lastUpdated=1637233292332
+https\://packages.atlassian.com/mvn/maven-atlassian-external/.lastUpdated=1637233292831
+https\://repository.mulesoft.org/nexus/content/repositories/public/.error=
+https\://repo1.maven.org/maven2/.error=
+https\://packages.atlassian.com/maven-public/.error=

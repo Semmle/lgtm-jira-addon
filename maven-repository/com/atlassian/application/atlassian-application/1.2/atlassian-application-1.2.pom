@@ -1,0 +1,319 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>public-pom</artifactId>
+        <version>3.0.2</version>
+    </parent>
+    
+    <groupId>com.atlassian.application</groupId>
+    <artifactId>atlassian-application</artifactId>
+    <version>1.2</version>
+    <packaging>pom</packaging>
+    
+    <name>Atlassian Application</name>
+    <url>http://docs.atlassian.com/${project.artifactId}/${project.version}</url>
+    <description>Library for dealing with applications embedded (e.g. Service DESK) in our products (e.g. JIRA).</description>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Internal -->
+            <dependency>
+                <groupId>com.atlassian.application</groupId>
+                <artifactId>atlassian-application-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- External -->
+            <dependency>
+                <groupId>com.atlassian.plugins</groupId>
+                <artifactId>atlassian-plugins-core</artifactId>
+                <version>${plugins.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atlassian.plugins</groupId>
+                <artifactId>atlassian-plugins-osgi</artifactId>
+                <version>${plugins.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atlassian.sal</groupId>
+                <artifactId>sal-api</artifactId>
+                <version>${sal.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>${joda-time.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>jsr305</artifactId>
+                <version>${jsr305.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atlassian.fugue</groupId>
+                <artifactId>fugue</artifactId>
+                <version>${fuge.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atlassian.annotations</groupId>
+                <artifactId>atlassian-annotations</artifactId>
+                <version>${atlassian.annotations}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atlassian.event</groupId>
+                <artifactId>atlassian-event</artifactId>
+                <version>2.3.0</version>
+            </dependency>
+
+            <!-- Tests -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-core</artifactId>
+                <version>${hamcrest.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-library</artifactId>
+                <version>${hamcrest.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <licenses>
+        <license>
+            <name>Atlassian 3.0 End User License Agreement</name>
+            <url>http://www.atlassian.com/end-user-agreement/</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <!--<issueManagement>-->
+        <!--<system>Jira</system>-->
+        <!--<url>http://jira.atlassian.com/browse/JRA</url>-->
+    <!--</issueManagement>-->
+
+    <scm>
+        <connection>scm:git:ssh://git@bitbucket.org/atlassian/atlassian-application.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.org/atlassian/atlassian-application.git</developerConnection>
+        <url>https://bitbucket.org/atlassian/atlassian-application</url>
+      <tag>atlassian-application-1.2</tag>
+  </scm>
+
+    <modules>
+        <module>atlassian-application-api</module>
+        <module>atlassian-application-host</module>
+    </modules>
+
+    <!--<distributionManagement>-->
+        <!--<site>-->
+            <!--<id>atlassian-documentation</id>-->
+            <!--<url>scpexe://docs-app.internal.atlassian.com/var/www/domains/docs.atlassian.com/${project.artifactId}/${project.version}/</url>-->
+        <!--</site>-->
+    <!--</distributionManagement>-->
+
+    <ciManagement>
+        <system>Bamboo</system>
+        <url>https://extranet-bamboo.internal.atlassian.com/browse/APP</url>
+    </ciManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>findbugs-maven-plugin</artifactId>
+                    <version>3.0.0</version>
+                    <configuration>
+                        <effort>Default</effort>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>2.12.1</version>
+                    <configuration>
+                        <logViolationsToConsole>true</logViolationsToConsole>
+                        <configLocation>checkstyle.xml</configLocation>
+                        <logViolationsToConsole>true</logViolationsToConsole>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-scm-plugin</artifactId>
+                    <version>1.9.1</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.5</version>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-scm-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>ban-conflicting-dependencies</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <rules>
+                                <!--We only do guava from now on -->
+                                <bannedDependencies>
+                                    <searchTransitive>true</searchTransitive>
+                                    <message>
+                                        Make sure google-collections is not accidentally included as transitive
+                                        dependency. Use guava instead
+                                    </message>
+                                    <excludes>
+                                        <exclude>com.google.collections:google-collections</exclude>
+                                    </excludes>
+                                </bannedDependencies>
+                                <bannedDependencies>
+                                    <searchTransitive>true</searchTransitive>
+                                    <message>
+                                        Make sure old versions of junit, hamcrest-all and mockito-all are
+                                        not accidentally included as transitive dependency. Use junit 4.11+,
+                                        hamcrest-core, hamcrest-library or mockito-core instead
+                                    </message>
+                                    <excludes>
+                                        <exclude>junit:junit</exclude>
+                                        <exclude>org.mockito:mockito-all</exclude>
+                                        <exclude>org.hamcrest:hamcrest-all</exclude>
+                                    </excludes>
+                                    <includes>
+                                        <!--Starting with 4.11 JUnit is good boy -->
+                                        <include>junit:junit:4.11</include>
+                                    </includes>
+                                </bannedDependencies>
+
+                                <bannedDependencies>
+                                    <searchTransitive>true</searchTransitive>
+                                    <message>
+                                        Make sure no junit-dep is on the classpath, we only accept junit:junit 4.11+
+                                    </message>
+                                    <excludes>
+                                        <exclude>junit:junit-dep</exclude>
+                                    </excludes>
+                                </bannedDependencies>
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jdkLevel>1.6</jdkLevel> <!-- Configures the maven-compiler-plugin in the Parent POM -->
+
+        <!-- External Versions -->
+        <sal.version>3.0.0-m06</sal.version>
+        <guava.version>10.0.1</guava.version>
+        <jsr305.version>1.3.9</jsr305.version>
+        <fuge.version>1.1</fuge.version>
+        <joda-time.version>2.3</joda-time.version>
+        <atlassian.annotations>0.14</atlassian.annotations>
+        <plugins.version>2.13.2</plugins.version>
+        <commons-lang3.version>3.1</commons-lang3.version>
+        <slf4j.version>1.6.6</slf4j.version>
+
+        <!-- Test dependencies -->
+        <hamcrest.version>1.3</hamcrest.version>
+        <junit.version>4.11</junit.version>
+        <mockito.version>1.9.5</mockito.version>
+    </properties>
+</project>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.atlassian.crowd</groupId>
+        <artifactId>atlassian-crowd</artifactId>
+        <version>2.10.4</version>
+    </parent>
+
+    <artifactId>atlassian-crowd-components</artifactId>
+
+    <name>Atlassian Crowd Components</name>
+    <description>Atlassian Crowd Modules and Webapps.</description>
+    <packaging>pom</packaging>
+    <modules>
+        <module>crowd-api</module>
+        <module>crowd-core</module>
+        <module>crowd-core-tiny</module>
+        <module>crowd-bundled-plugins</module>
+        <module>crowd-ldap</module>
+        <module>crowd-remote</module>
+        <module>crowd-persistence</module>
+        <module>crowd-persistence-file</module>
+        <module>crowd-persistence-hibernate4</module>
+        <module>crowd-events</module>
+        <module>crowd-web-app</module>
+        <module>crowd-server</module>
+        <module>crowd-demo-app</module>
+        <module>crowd-language</module>
+        <module>crowd-openid-client</module>
+        <module>crowd-openid-server</module>
+        <module>crowd-openid-spray-core</module>
+        <module>crowd-openid-spray-acceptance-test</module>
+        <module>crowd-integration-api</module>
+        <module>crowd-integration-client-soap</module>
+        <module>crowd-integration</module>
+        <module>crowd-decorator</module>
+        <module>crowd-password-encoders</module>
+        <module>crowd-acceptance-test</module>
+        <module>crowd-selenium-test</module>
+        <module>crowd-apacheds-server</module>
+        <module>crowd-rest</module>
+        <module>embedded-crowd</module>
+        <module>crowd-sal</module>
+        <module>crowd-integration-client-rest</module>
+        <module>crowd-integration-client-common</module>
+        <module>crowd-server-common</module>
+        <module>crowd-sync-feedback</module>
+        <module>crowd-test-utils</module>
+        <module>crowd-xwork</module>
+        <module>crowd-trusted-apps</module>
+        <module>crowd-server-shared</module>
+        <module>crowd-server-api</module>
+        <module>crowd-query-language</module>
+        <module>crowd-analytics-plugin</module>
+  </modules>
+</project>

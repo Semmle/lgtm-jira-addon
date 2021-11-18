@@ -1,0 +1,26 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>com.atlassian.jira</groupId>
+        <artifactId>jira-project</artifactId>
+        <version>7.13.17</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>jira-functional-tests</artifactId>
+    <name>Atlassian JIRA - Testing - Func Tests Parent</name>
+    <packaging>pom</packaging>
+
+    <properties>
+        <!-- Licence build will ignore this module -->
+        <license.scope>test</license.scope>
+    </properties>
+
+    <modules>
+        <module>jira-func-tests</module>
+        <module>jira-func-tests-legacy</module>
+        <module>jira-webdriver-tests</module>
+        <module>jira-embedded-crowd-func-tests</module>
+        <module>jira-cache-check-tests</module>
+        <module>jira-johnson-tests</module>
+    </modules>
+
+</project>

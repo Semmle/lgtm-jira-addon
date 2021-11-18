@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>closedsource-pom</artifactId>
+        <version>3.0.40</version>
+    </parent>
+
+    <groupId>com.atlassian.adapter</groupId>
+    <artifactId>jackson</artifactId>
+    <version>1.0</version>
+
+    <scm>
+        <connection>scm:git:ssh://git@stash.atlassian.com:7997/adapt/jackson-adapter.git</connection>
+        <developerConnection>scm:git:ssh://git@stash.atlassian.com:7997/adapt/jackson-adapter.git</developerConnection>
+        <url>https://stash.atlassian.com/projects/ADAPT/repos/jackson-adapter</url>
+      <tag>jackson-1.0</tag>
+  </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>1.9.1</version>
+        </dependency>
+    </dependencies>
+
+</project>

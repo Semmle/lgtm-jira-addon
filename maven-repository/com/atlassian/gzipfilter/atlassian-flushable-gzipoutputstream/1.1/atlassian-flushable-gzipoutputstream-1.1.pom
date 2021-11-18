@@ -1,0 +1,58 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>atlassian-public-pom</artifactId>
+        <version>29.6</version>
+    </parent>
+
+    <groupId>com.atlassian.gzipfilter</groupId>
+    <artifactId>atlassian-flushable-gzipoutputstream</artifactId>
+    <version>1.1</version>
+    <packaging>jar</packaging>
+
+    <name>atlassian-flushable-gzipoutputstream</name>
+
+    <licenses>
+        <license>
+            <name>APL 2.0 License</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <scm>
+        <connection>scm:git:git@bitbucket.org:atlassian/atlassian-flushable-gzipoutputstream.git</connection>
+        <developerConnection>scm:git:git@bitbucket.org:atlassian/atlassian-flushable-gzipoutputstream.git
+        </developerConnection>
+        <url>scm:git:git@bitbucket.org:atlassian/atlassian-flushable-gzipoutputstream.git</url>
+    </scm>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>${basedir}</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>LICENSE.txt</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+</project>
+
