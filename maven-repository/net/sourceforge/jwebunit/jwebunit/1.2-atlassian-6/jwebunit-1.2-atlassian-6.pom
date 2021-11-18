@@ -1,0 +1,155 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>jwebunit</artifactId>
+    <groupId>net.sourceforge.jwebunit</groupId>
+    <version>1.2-atlassian-6</version>
+    <name>jwebunit 1.2 atlassian patch</name>
+    <organization>
+        <name>Atlassian Vendor Patch of jwebunit 1.2</name>
+    </organization>
+    <packaging>jar</packaging>
+    <description>
+        jWebUnit is a Java framework that facilitates creation of acceptance tests
+        for web applications. It evolved from a project where we were using
+        HttpUnit and JUnit to create acceptance tests. As the tests were being
+        written, they were continuously refactored to remove duplication and
+        other bad smells in the test code. jWebUnit is the result of these
+        refactorings.
+    </description>
+    <url>http://jwebunit.sourceforge.net</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <testExcludes>
+                        <exclude>**/CodeChecker.java</exclude>
+                        <exclude>**/*WebDriver*.java</exclude>
+                    </testExcludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.5</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/TestServer.java</exclude>
+                        <exclude>**/JWebUnitTest.java</exclude>
+                        <exclude>**/FramesAndWindowsTest.java</exclude>
+                    </excludes>
+                    <argLine>-Xmx512m -Xms128m</argLine>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <scm>
+        <connection>scm:svn:https://svn.atlassian.com/svn/public/atlassian/vendor/jwebunit-1.2/trunk</connection>
+        <developerConnection>scm:svn:https://svn.atlassian.com/svn/public/atlassian/vendor/jwebunit-1.2/trunk
+        </developerConnection>
+        <url>https://svn.atlassian.com/svn/public/atlassian/vendor/jwebunit-1.2/trunk</url>
+    </scm>
+    <dependencies>
+        <dependency>
+            <groupId>com.meteware.httpunit</groupId>
+            <artifactId>httpunit</artifactId>
+            <version>1.5.4-atlassian-12</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>nekohtml</groupId>
+            <artifactId>nekohtml</artifactId>
+            <version>0.8.1</version>
+        </dependency>
+        <dependency>
+            <groupId>rhino</groupId>
+            <artifactId>js</artifactId>
+            <version>1.5R4-RC3</version>
+        </dependency>
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xerces</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+            <version>1.0.b2</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>21.0</version>
+        </dependency>
+    </dependencies>
+    <distributionManagement>
+        <repository>
+            <id>atlassian-3rdparty</id>
+            <url>https://maven.atlassian.com/3rdparty</url>
+            <name>3rd party repo</name>
+        </repository>
+
+        <snapshotRepository>
+            <id>atlassian-3rdparty-snapshot</id>
+            <url>https://maven.atlassian.com/3rdparty-snapshot</url>
+            <name>3rd party snapshot repo</name>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+</project>

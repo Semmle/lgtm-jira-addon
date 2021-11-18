@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>atlassian-annotations-parent</artifactId>
+    <groupId>com.atlassian.annotations</groupId>
+    <version>0.14</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>atlassian-annotations</artifactId>
+  <name>Atlassian Annotations - Annotations</name>
+
+  <!--<profiles>-->
+    <!--<profile>-->
+      <!--<id>release</id>-->
+      <!--<build>-->
+        <!--<plugins>-->
+          <!--<plugin>-->
+            <!--<groupId>com.atlassian.maven.plugins</groupId>-->
+            <!--<artifactId>maven-simple-javadoc-plugin</artifactId>-->
+            <!--<version>0.4</version>-->
+            <!--<executions>-->
+              <!--<execution>-->
+                <!--<id>create-javadoc</id>-->
+                <!--<phase>package</phase>-->
+                <!--<goals>-->
+                  <!--<goal>package</goal>-->
+                <!--</goals>-->
+              <!--</execution>-->
+              <!--<execution>-->
+                <!--<id>deploy-javadoc</id>-->
+                <!--<phase>deploy</phase>-->
+                <!--<goals>-->
+                  <!--<goal>deploy</goal>-->
+                <!--</goals>-->
+              <!--</execution>-->
+            <!--</executions>-->
+            <!--<configuration>-->
+              <!--<destination>${project.artifactId}/${project.version}</destination>-->
+            <!--</configuration>-->
+          <!--</plugin>-->
+        <!--</plugins>-->
+      <!--</build>-->
+    <!--</profile>-->
+  <!--</profiles>-->
+</project>

@@ -1,0 +1,56 @@
+ <project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.googlecode.guava-osgi</groupId>
+  <artifactId>guava-osgi</artifactId>
+  <packaging>jar</packaging>
+  <name>Guava-OSGi</name>
+  <version>10.0.1</version>
+  <description>Repackaging of Google Guava libraries as OSGi bundle</description>
+  <url>http://code.google.com/p/guava-osgi/</url>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:svn:http://guava-osgi.googlecode.com/svn/trunk/</connection>
+    <developerConnection>scm:svn:https://guava-osgi.googlecode.com/svn/trunk/</developerConnection>
+    <url>http://guava-osgi.googlecode.com/svn/trunk/</url>
+  </scm>
+
+  <developers>
+    <developer>
+      <id>mikael.barbero</id>
+      <name>Mikaël Barbero</name>
+      <email>mikael.barbero@gmail.com</email>
+    </developer>
+  </developers>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent>
+
+</project>

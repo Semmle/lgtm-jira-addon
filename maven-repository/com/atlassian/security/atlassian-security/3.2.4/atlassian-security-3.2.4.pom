@@ -1,0 +1,112 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>closedsource-pom</artifactId>
+    <groupId>com.atlassian.pom</groupId>
+    <version>3.0.2</version>
+  </parent>
+
+  <groupId>com.atlassian.security</groupId>
+  <artifactId>atlassian-security</artifactId>
+  <version>3.2.4</version>
+
+  <name>Atlassian Security</name>
+  <description>Security tools for Atlassian applications.</description>
+  <url>http://docs.atlassian.com/${project.artifactId}/${project.version}</url>
+  <packaging>pom</packaging>
+
+  <properties>
+    <jdkLevel>1.6</jdkLevel>
+    <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
+    <hamcrest.version>1.2</hamcrest.version>
+  </properties>
+
+  <modules>
+    <module>atlassian-password-encoder</module>
+    <module>atlassian-secure-random</module>
+    <module>atlassian-cookie-tools</module>
+    <module>atlassian-secure-xml</module>
+    <module>atlassian-secure-utils</module>
+  </modules>
+
+  <scm>
+    <connection>scm:git:ssh://git@bitbucket.org/atlassian/atlassian-security.git</connection>
+    <developerConnection>scm:git:ssh://git@bitbucket.org/atlassian/atlassian-security.git</developerConnection>
+    <url>https://bitbucket.org/atlassian/atlassian-security</url>
+  </scm>
+
+
+  <issueManagement>
+    <system>JIRA</system>
+    <url>https://jira.atlassian.com/browse/SEC</url>
+  </issueManagement>
+
+  <distributionManagement>
+    <site>
+      <id>atlassian-documentation</id>
+      <url>scpexe://docs-app.internal.atlassian.com/var/www/domains/docs.atlassian.com/${project.artifactId}/${project.version}</url>
+    </site>
+  </distributionManagement>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>2.4</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-codec</groupId>
+        <artifactId>commons-codec</artifactId>
+        <version>1.8</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.5.8</version>
+      </dependency>
+
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit-dep</artifactId>
+        <version>4.10</version>
+        <scope>test</scope>
+        <exclusions>
+          <exclusion>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.hamcrest</groupId>
+        <artifactId>hamcrest-all</artifactId>
+        <version>${hamcrest.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>1.8.2</version>
+        <scope>test</scope>
+        <exclusions>
+          <exclusion>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
+        <version>1.5.8</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+</project>

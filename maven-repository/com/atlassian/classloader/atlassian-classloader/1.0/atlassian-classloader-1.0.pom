@@ -1,0 +1,70 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>atlassian-closedsource-pom</artifactId>
+        <version>38</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.atlassian.classloader</groupId>
+    <artifactId>atlassian-classloader</artifactId>
+    <packaging>jar</packaging>
+    <name>atlassian-classloader</name>
+    <version>1.0</version>
+    <description>A library for JVM ClassLoader manipulation and implementation.</description>
+
+    <licenses>
+        <license>
+            <name>Atlassian End User License</name>
+            <url>https://www.atlassian.com/end-user-agreement/</url>
+            <comments>Atlassian 3.0 End User License Agreement</comments>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:ssh://git@bitbucket.org/christo/atlassian-classloader.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.org/christo/atlassian-classloader.git</developerConnection>
+        <url>https://bitbucket.org/christo/atlassian-classloader</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>christo</id>
+            <name>Chris Mountford</name>
+            <email>chris@atlassian.com</email>
+            <url>http://confluence.atlassian.com/display/~chris@atlassian.com/Welcome</url>
+            <organization>Atlassian</organization>
+            <organizationUrl>http://www.atlassian.com</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>+10</timezone>
+        </developer>
+    </developers>
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

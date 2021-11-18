@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>base-pom</artifactId>
+        <version>5.0.25</version>
+        <relativePath>../base-pom</relativePath>
+    </parent>
+
+    <artifactId>closedsource-pom</artifactId>
+    <packaging>pom</packaging>
+
+    <name>Atlassian Closed Source POM</name>
+
+    <distributionManagement>
+        <repository>
+            <id>maven-atlassian-com</id>
+            <name>Atlassian Closed Source Repository</name>
+            <url>https://packages.atlassian.com/maven/closedsource</url>
+        </repository>
+        <snapshotRepository>
+            <id>maven-atlassian-com</id>
+            <name>Atlassian Closed Source Snapshot Repository</name>
+            <url>https://packages.atlassian.com/maven/closedsource-snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.atlassian.maven.plugins</groupId>
+                <artifactId>artifactory-staging-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <properties>
+        <artifactory.target.repo>maven-closedsource-local</artifactory.target.repo>
+    </properties>
+</project>

@@ -1,0 +1,104 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>atlassian-public-pom</artifactId>
+        <version>20</version>
+    </parent>
+
+    <groupId>com.atlassian.spring</groupId>
+    <artifactId>atlassian-spring</artifactId>
+    <version>1.1</version>
+    
+    <name>Atlassian Spring</name>
+    <description>Common Atlassian Spring Components</description>
+    <url>https://docs.atlassian.com/${project.artifactId}/${project.version}</url>
+    <inceptionYear>2006</inceptionYear>
+
+    <issueManagement>
+        <system>Jira</system>
+        <url>http://jira.atlassian.com/browse/SPRING</url>
+    </issueManagement>
+    <ciManagement>
+        <system>Bamboo</system>
+        <url>http://bamboo.developer.atlassian.com/browse/ATLASSIANSPRING-TRUNK</url>
+    </ciManagement>
+    <scm>
+        <connection>scm:svn:https://svn.atlassian.com/svn/private/atlassian/atlassian-spring/tags/atlassian-spring-1.1</connection>
+        <developerConnection>scm:svn:https://svn.atlassian.com/svn/private/atlassian/atlassian-spring/tags/atlassian-spring-1.1</developerConnection>
+        <url>https://svn.atlassian.com/privateeye/viewrep/private/atlassian/atlassian-spring/tags/atlassian-spring-1.1</url>
+    </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.atlassian.event</groupId>
+            <artifactId>atlassian-event</artifactId>
+            <version>0.5</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.profiling</groupId>
+            <artifactId>atlassian-profiling</artifactId>
+            <version>1.8</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>2.0.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>2.0.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>2.0.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-hibernate2</artifactId>
+            <version>2.0.6</version>
+        </dependency>
+        <!-- This is evil, but Spring seems to use it -->
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>hibernate</groupId>
+            <artifactId>hibernate</artifactId>
+            <version>2.1.8-atlassian</version>
+        </dependency>
+        <dependency>
+            <groupId>mockobjects</groupId>
+            <artifactId>mockobjects-core</artifactId>
+            <version>0.09</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    
+    <distributionManagement>
+        <site>
+            <id>atlassian-documentation</id>
+            <url>dav:https://docs.atlassian.com/${project.artifactId}/${project.version}</url>
+        </site>
+    </distributionManagement>
+</project>

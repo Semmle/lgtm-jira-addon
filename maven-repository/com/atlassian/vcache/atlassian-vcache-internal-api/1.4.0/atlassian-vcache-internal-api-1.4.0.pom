@@ -1,0 +1,59 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.atlassian.vcache</groupId>
+    <artifactId>atlassian-vcache</artifactId>
+    <version>1.4.0</version>
+  </parent>
+
+  <artifactId>atlassian-vcache-internal-api</artifactId>
+  <name>Atlassian VCache - Internal API</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.atlassian.vcache</groupId>
+      <artifactId>atlassian-vcache-api</artifactId>
+    </dependency>
+
+    <!-- Implementation dependencies -->
+    <dependency>
+      <groupId>com.atlassian.json</groupId>
+      <artifactId>atlassian-json-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- test scope -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-library</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.atlassian.maven.plugins</groupId>
+        <artifactId>api-compat-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>verify</id>
+            <phase>verify</phase>
+            <configuration>
+              <suppressionsFile>${basedir}/api-compat-suppressions.txt</suppressionsFile>
+            </configuration>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

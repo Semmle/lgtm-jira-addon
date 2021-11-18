@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>public-pom</artifactId>
+        <version>3.0.39</version>
+        <relativePath />
+    </parent>
+
+    <groupId>com.atlassian.plugins</groupId>
+    <artifactId>atlassian-plugins-osgi-testrunner-parent</artifactId>
+    <version>1.2.3</version>
+    <modules>
+        <module>atlassian-plugins-osgi-testrunner</module>
+        <module>atlassian-plugins-osgi-testrunner-bundle</module>
+    </modules>
+    <packaging>pom</packaging>
+    <name>Atlassian Plugins OSGi TestRunner Parent POM</name>
+
+    <scm>
+        <connection>scm:git:ssh://git@bitbucket.org/atlassian/atlassian-plugins-osgi-testrunner-parent.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.org/atlassian/atlassian-plugins-osgi-testrunner-parent.git</developerConnection>
+        <url>https://bitbucket.org/atlassian/atlassian-plugins-osgi-testrunner-parent</url>
+      <tag>atlassian-plugins-osgi-testrunner-parent-1.2.3</tag>
+  </scm>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <remoteTagging>true</remoteTagging>
+                    <arguments>-Prelease</arguments>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <updateBranchVersions>true</updateBranchVersions>
+                    <useReleaseProfile>true</useReleaseProfile>
+                    <preparationGoals>clean install</preparationGoals>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>com.springsource.org.junit</artifactId>
+                <version>${junit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.wink</groupId>
+                <artifactId>wink-client</artifactId>
+                <version>1.1.3-incubating</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>1.4</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>2.2.2-atlassian-1</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <properties>
+        <junit.version>4.10.0</junit.version>
+        <junit3.version>3.8.2</junit3.version>
+        <felix.version>3.0.2</felix.version>
+        <osgi.manifest.version>1.0.0</osgi.manifest.version>
+        <amps.version>5.0.4</amps.version>
+        <atlassian.upm.version>2.15</atlassian.upm.version>
+    </properties>
+</project>

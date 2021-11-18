@@ -1,0 +1,214 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>public-pom</artifactId>
+        <version>3.0.84</version>
+    </parent>
+    
+    <groupId>com.atlassian.cache</groupId>
+    <artifactId>atlassian-cache</artifactId>
+    <version>2.8.1</version>
+    <packaging>pom</packaging>
+    
+    <name>Atlassian Cache</name>
+    <url>http://docs.atlassian.com/${project.artifactId}/${project.version}</url>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Internal -->
+            <dependency>
+                <groupId>com.atlassian.cache</groupId>
+                <artifactId>atlassian-cache-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.cache</groupId>
+                <artifactId>atlassian-cache-common-impl</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.cache</groupId>
+                <artifactId>atlassian-cache-core-test</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.cache</groupId>
+                <artifactId>atlassian-cache-memory</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- External -->
+            <dependency>
+                <groupId>com.atlassian.util.concurrent</groupId>
+                <artifactId>atlassian-util-concurrent</artifactId>
+                <version>${atlassian-util-concurrent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.annotations</groupId>
+                <artifactId>atlassian-annotations</artifactId>
+                <version>${atlassian-annotations.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.bundles</groupId>
+                <artifactId>jsr305</artifactId>
+                <version>${jsr305.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.fugue</groupId>
+                <artifactId>fugue</artifactId>
+                <version>${fugue.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.hazelcast</groupId>
+                <artifactId>atlassian-hazelcast-extras-osgi</artifactId>
+                <version>${atl.hazelcast.extras.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.hazelcast</groupId>
+                <artifactId>hazelcast-test-util</artifactId>
+                <version>${atl.hazelcast.extras.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.plugins</groupId>
+                <artifactId>atlassian-plugins-osgi</artifactId>
+                <version>${atl.plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.sal</groupId>
+                <artifactId>sal-api</artifactId>
+                <version>${sal.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hazelcast</groupId>
+                <artifactId>hazelcast</artifactId>
+                <version>${hazelcast.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hazelcast</groupId>
+                <artifactId>hazelcast</artifactId>
+                <classifier>tests</classifier>
+                <version>${hazelcast.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.sf.ehcache</groupId>
+                <artifactId>ehcache</artifactId>
+                <version>${ehcache.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+            <!-- Test -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-core</artifactId>
+                <version>${hamcrest.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-library</artifactId>
+                <version>${hamcrest.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- I don't think we should need this, but without it IDEA keeps trying to switch to JDK 5 source level?! -->
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.1</version>
+                    <configuration>
+                        <maxmem>512m</maxmem>
+                        <source>${jdkLevel}</source>
+                        <target>${jdkLevel}</target>
+                        <compilerArgs>
+                            <arg>-Xmaxwarns</arg>
+                            <arg>100000</arg>
+                        </compilerArgs>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <issueManagement>
+        <system>Jira</system>
+        <url>http://jira.atlassian.com/browse/CACHE</url>
+    </issueManagement>
+
+    <scm>
+        <connection>scm:git:ssh://git@bitbucket.org/atlassian/atlassian-cache.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.org/atlassian/atlassian-cache.git</developerConnection>
+        <url>https://bitbucket.org/atlassian/atlassian-cache</url>
+      <tag>atlassian-cache-2.8.1</tag>
+  </scm>
+
+    <modules>
+        <module>atlassian-cache-api</module>
+        <module>atlassian-cache-common-impl</module>
+        <module>atlassian-cache-core-test</module>
+        <module>atlassian-cache-memory</module>
+        <module>atlassian-cache-ehcache</module>
+        <module>atlassian-cache-hazelcast</module>
+    </modules>
+
+    <!-- docs-app.internal.atlassian.com requires specific ssh key permissions that some people don't have -->
+    <!--<distributionManagement>-->
+        <!--<site>-->
+            <!--<id>atlassian-documentation</id>-->
+            <!--<url>scpexe://docs-app.internal.atlassian.com/var/www/domains/docs.atlassian.com/${project.artifactId}/${project.version}/</url>-->
+        <!--</site>-->
+    <!--</distributionManagement>-->
+
+    <ciManagement>
+        <system>Bamboo</system>
+        <url>https://extranet-bamboo.internal.atlassian.com/browse/CACHE</url>
+    </ciManagement>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Direct dependencies -->
+        <atl.hazelcast.extras.version>1.0.5</atl.hazelcast.extras.version>
+        <ehcache.version>2.7.5</ehcache.version>
+        <guava.version>18.0</guava.version>
+        <fugue.version>2.2.0</fugue.version>
+        <hazelcast.version>3.4.2</hazelcast.version>
+        <jsr305.version>1.1</jsr305.version>
+        <slf4j.version>1.7.6</slf4j.version>
+        <atlassian-annotations.version>0.7</atlassian-annotations.version>
+        <atlassian-util-concurrent.version>0.0.12</atlassian-util-concurrent.version>
+        <sal.version>2.7.0</sal.version>
+
+        <!-- Test dependencies -->
+        <atl.plugin.version>3.2.6</atl.plugin.version>
+        <hamcrest.version>1.3</hamcrest.version>
+        <junit.version>4.11</junit.version>
+        <mockito.version>1.9.5</mockito.version>
+    </properties>
+</project>

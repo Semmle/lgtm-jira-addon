@@ -1,0 +1,31 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.atlassian.cache</groupId>
+        <artifactId>atlassian-cache</artifactId>
+        <version>3.2.0</version>
+    </parent>
+
+    <artifactId>atlassian-cache-api</artifactId>
+    <name>Atlassian Cache - API</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.atlassian.util.concurrent</groupId>
+            <artifactId>atlassian-util-concurrent</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.annotations</groupId>
+            <artifactId>atlassian-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.bundles</groupId>
+            <artifactId>jsr305</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.instrumentation</groupId>
+            <artifactId>atlassian-instrumentation-core</artifactId>
+        </dependency>
+
+    </dependencies>
+</project>

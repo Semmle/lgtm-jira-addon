@@ -1,0 +1,53 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>public-pom</artifactId>
+        <version>4.0.8</version>
+    </parent>
+
+    <groupId>com.atlassian.web</groupId>
+    <artifactId>atlassian-servlet-api</artifactId>
+    <version>4.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>atlassian-servlet-api</name>
+
+    <scm>
+        <connection>scm:git:git@bitbucket.org:atlassian/atlassian-servlet-api.git</connection>
+        <developerConnection>scm:git:git@bitbucket.org:atlassian/atlassian-servlet-api.git</developerConnection>
+        <url>https://bitbucket.org/atlassian/atlassian-servlet-api</url>
+        <tag>atlassian-servlet-api-4.0.0</tag>
+    </scm>
+
+    <issueManagement>
+        <system>jira</system>
+        <url>https://extranet.atlassian.com/jira/browse/APDEX</url>
+    </issueManagement>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

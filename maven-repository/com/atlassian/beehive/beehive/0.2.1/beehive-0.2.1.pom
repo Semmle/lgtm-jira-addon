@@ -1,0 +1,163 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>closedsource-pom</artifactId>
+        <version>3.0.11</version>
+    </parent>
+    
+    <groupId>com.atlassian.beehive</groupId>
+    <artifactId>beehive</artifactId>
+    <version>0.2.1</version>
+    <packaging>pom</packaging>
+    
+    <name>Atlassian Beehive</name>
+    <description>Atlassian shared library providing utilities for clustering including cluster-wide locks</description>
+    <url>http://docs.atlassian.com/${project.artifactId}/${project.version}</url>
+
+    <developers>
+        <developer>
+            <name>Mark Lassau</name>
+            <email>mlassau@atlassian.com</email>
+            <timezone>+10</timezone>
+            <roles>
+                <role>Architect</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Andrew Swan</name>
+            <email>aswan@atlassian.com</email>
+            <timezone>+10</timezone>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <modules>
+        <module>beehive-api</module>
+        <module>beehive-core</module>
+        <module>beehive-core-tck</module>
+        <module>beehive-db</module>
+        <module>beehive-hazelcast</module>
+        <module>beehive-single-node</module>
+    </modules>
+
+    <scm>
+        <connection>scm:git:ssh://git@bitbucket.org/atlassian/beehive.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.org/atlassian/beehive.git</developerConnection>
+        <url>https://bitbucket.org/atlassian/beehive</url>
+      <tag>beehive-0.2.1</tag>
+  </scm>
+
+    <issueManagement>
+        <system>JIRA</system>
+        <url>https://ecosystem.atlassian.net/browse/BEE</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>Bamboo</system>
+        <url>https://extranet-bamboo.internal.atlassian.com/browse/BEE</url>
+    </ciManagement>
+
+    <distributionManagement>
+        <site>
+            <id>atlassian-documentation</id>
+            <url>scpexe://docs-app.internal.atlassian.com/var/www/domains/docs.atlassian.com/${project.artifactId}/${project.version}/</url>
+        </site>
+    </distributionManagement>
+
+    <properties>
+        <atlassian.scheduler.version>1.0</atlassian.scheduler.version>
+        <atlassian-annotations.version>0.8.1</atlassian-annotations.version>
+        <atlassian-util-concurrent.version>0.0.12</atlassian-util-concurrent.version>
+        <guava.version>11.0.2</guava.version>
+        <sal.version>2.7.0</sal.version>
+        <slf4j.version>1.7.5</slf4j.version>
+        <!-- Test -->
+        <hamcrest.version>1.3</hamcrest.version>
+        <junit.version>4.11</junit.version>
+        <mockito.version>1.9.0</mockito.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Externals -->
+            <dependency>
+                <groupId>com.atlassian.scheduler</groupId>
+                <artifactId>atlassian-scheduler-api</artifactId>
+                <version>${atlassian.scheduler.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.annotations</groupId>
+                <artifactId>atlassian-annotations</artifactId>
+                <version>${atlassian-annotations.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.bundles</groupId>
+                <artifactId>jsr305</artifactId>
+                <version>1.1</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.sal</groupId>
+                <artifactId>sal-api</artifactId>
+                <version>${sal.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.util.concurrent</groupId>
+                <artifactId>atlassian-util-concurrent</artifactId>
+                <version>${atlassian-util-concurrent.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- Testing -->
+            <dependency>
+                <groupId>com.atlassian.beehive</groupId>
+                <artifactId>beehive-core-tck</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-core</artifactId>
+                <version>${hamcrest.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-library</artifactId>
+                <version>${hamcrest.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>

@@ -1,0 +1,130 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>atlassian-public-pom</artifactId>
+        <version>20</version>
+    </parent>
+
+    <groupId>com.atlassian.event</groupId>
+    <artifactId>atlassian-event</artifactId>
+    <version>2.0.0.beta1</version>
+
+    <name>Atlassian Event</name>
+    <description>Atlassian eventing system for use with Spring projects</description>
+    <url>https://docs.atlassian.com/${project.artifactId}/${project.version}</url>
+    <inceptionYear>2006</inceptionYear>
+
+    <issueManagement>
+        <system>Jira</system>
+        <url>http://jira.atlassian.com/browse/EVENT</url>
+    </issueManagement>
+    <ciManagement>
+        <system>Bamboo</system>
+        <url>https://bamboo.developer.atlassian.com/browse/ATLASSIANEVENT</url>
+    </ciManagement>
+
+    <scm>
+        <connection>scm:svn:https://svn.atlassian.com/svn/private/atlassian/atlassian-event/tags/atlassian-event-2.0.0.beta1</connection>
+        <developerConnection>scm:svn:https://svn.atlassian.com/svn/private/atlassian/atlassian-event/tags/atlassian-event-2.0.0.beta1</developerConnection>
+        <url>https://svn.atlassian.com/privateeye/viewrep/private/atlassian/atlassian-event/tags/atlassian-event-2.0.0.beta1</url>
+    </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google.collections</groupId>
+            <artifactId>google-collections</artifactId>
+            <version>1.0-rc3</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.5.8</version>
+        </dependency>
+
+        <!-- spring integration -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>2.0.8</version>
+            <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- to replace commons-logging coming from spring -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>1.5.8</version>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- test dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.7</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.8.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- this for the tests to run with an implementation of slf4j-api, this will > /dev/null all logs -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <version>1.5.8</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <properties>
+        <sl4j.version>1.5.8</sl4j.version>
+    </properties>
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.atlassian.maven.plugins</groupId>
+                        <artifactId>maven-simple-javadoc-plugin</artifactId>
+                        <version>0.4</version>
+                        <executions>
+                            <execution>
+                                <id>create-javadoc</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>package</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>deploy-javadoc</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                                <configuration>
+                                    <destination>${project.artifactId}/${project.version}</destination>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

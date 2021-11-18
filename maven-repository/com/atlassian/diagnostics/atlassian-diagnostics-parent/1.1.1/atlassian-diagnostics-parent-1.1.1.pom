@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>public-pom</artifactId>
+        <version>5.0.20</version>
+    </parent>
+
+    <groupId>com.atlassian.diagnostics</groupId>
+    <artifactId>atlassian-diagnostics-parent</artifactId>
+    <version>1.1.1</version>
+    <packaging>pom</packaging>
+
+    <name>Atlassian Diagnostics Project</name>
+    <description>Project for Atlassian Diagnostics</description>
+    <inceptionYear>2017</inceptionYear>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/</url>
+        </license>
+    </licenses>
+
+    <modules>
+        <module>api</module>
+        <module>core</module>
+        <module>core-test</module>
+        <module>platform</module>
+        <module>plugin</module>
+    </modules>
+
+    <issueManagement>
+        <system>Jira</system>
+        <url>&gt;https://ecosystem.atlassian.net/browse/AD</url>
+    </issueManagement>
+    <scm>
+        <connection>scm:git:https://stash.atlassian.com/scm/server/atlassian-diagnostics.git</connection>
+        <developerConnection>scm:git:ssh://git@stash.atlassian.com:7997/server/atlassian-diagnostics.git</developerConnection>
+        <url>https://stash.atlassian.com/projects/server/repos/atlassian-diagnostics</url>
+        <tag>atlassian-diagnostics-1.1.1</tag>
+    </scm>
+
+    <properties>
+        <!-- Build Properties -->
+        <failOnMilestoneOrReleaseCandidateDeps>false</failOnMilestoneOrReleaseCandidateDeps>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Platform dependencies -->
+        <amps.version>6.3.7</amps.version>
+        <analytics.version>5.4.1</analytics.version>
+        <page.objects.version>2.4.0</page.objects.version>
+        <platform.version>3.5.2</platform.version>
+        <soy.version>4.5.0</soy.version>
+        <scheduler.version>1.7.0</scheduler.version>
+        <sal.version>3.2.0-abbce37</sal.version>
+        <webdriver.version>2.4.0</webdriver.version>
+
+        <!-- Platform 3rd Party -->
+        <commons.lang3.version>3.5</commons.lang3.version>
+        <functest-plugin.version>0.7.3</functest-plugin.version>
+        <refapp.version>3.4.0-c8ebc54</refapp.version>
+
+        <osgi.version>4.2.0</osgi.version>
+        <osgi.gemini.version>2.0.5.BUILD-atlassian-m002</osgi.gemini.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.atlassian.platform</groupId>
+                <artifactId>platform</artifactId>
+                <version>${platform.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.platform</groupId>
+                <artifactId>third-party</artifactId>
+                <version>${platform.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atlassian.diagnostics</groupId>
+                <artifactId>atlassian-diagnostics-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.diagnostics</groupId>
+                <artifactId>atlassian-diagnostics-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.diagnostics</groupId>
+                <artifactId>atlassian-diagnostics-core-test</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.diagnostics</groupId>
+                <artifactId>atlassian-diagnostics-page-objects</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.diagnostics</groupId>
+                <artifactId>atlassian-diagnostics-plugin</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.diagnostics</groupId>
+                <artifactId>atlassian-diagnostics-refapp-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.diagnostics</groupId>
+                <artifactId>atlassian-diagnostics-func-test-data</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atlassian.analytics</groupId>
+                <artifactId>analytics-api</artifactId>
+                <version>${analytics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian</groupId>
+                <artifactId>atlassian-localhost</artifactId>
+                <version>1.2.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.sal</groupId>
+                <artifactId>sal-api</artifactId>
+                <version>${sal.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.scheduler</groupId>
+                <artifactId>atlassian-scheduler-api</artifactId>
+                <version>${scheduler.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.soy</groupId>
+                <artifactId>soy-template-renderer-api</artifactId>
+                <version>${soy.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.interceptor</groupId>
+                <artifactId>javax.interceptor-api</artifactId>
+                <version>1.2</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.transaction</groupId>
+                <artifactId>javax.transaction-api</artifactId>
+                <version>1.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons.lang3.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>gemini-blueprint-core</artifactId>
+                <groupId>org.eclipse.gemini.blueprint</groupId>
+                <version>${osgi.gemini.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.compendium</artifactId>
+                <version>${osgi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.core</artifactId>
+                <version>${osgi.version}</version>
+            </dependency>
+
+            <!-- Test dependencies -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.12</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>2.7.9</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.atlassian.maven.plugins</groupId>
+                    <artifactId>maven-amps-plugin</artifactId>
+                    <version>${amps.version}</version>
+                    <extensions>true</extensions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <configuration>
+                        <tagNameFormat>atlassian-diagnostics-@{project.version}</tagNameFormat>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <configuration>
+                        <additionalparam>-Xdoclint:none</additionalparam>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>it</id>
+            <modules>
+                <module>func-test</module>
+            </modules>
+        </profile>
+    </profiles>
+</project>

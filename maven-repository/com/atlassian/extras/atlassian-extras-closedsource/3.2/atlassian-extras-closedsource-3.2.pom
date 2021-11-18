@@ -1,0 +1,26 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.atlassian.license</groupId>
+        <artifactId>atlassian-license</artifactId>
+        <version>3.2</version>
+    </parent>
+
+    <groupId>com.atlassian.extras</groupId>
+    <artifactId>atlassian-extras-closedsource</artifactId>
+    <packaging>pom</packaging>
+
+    <name>Atlassian Extras - Closed Source Modules</name>
+    <description>Closed source module of Atlassian Extras</description>
+
+    <modules>
+        <module>atlassian-extras-api</module>
+        <module>atlassian-extras-core</module>
+        <module>atlassian-extras-decoder-api</module>
+        <module>atlassian-extras-decoder</module>
+        <module>atlassian-extras-common</module>
+        <module>atlassian-extras-legacy</module>
+        <module>atlassian-extras-test</module>
+        <module>atlassian-extras</module>
+    </modules>
+</project>

@@ -1,0 +1,128 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>atlassian-public-pom</artifactId>
+        <groupId>com.atlassian.pom</groupId>
+        <version>15</version>
+    </parent>
+
+    <groupId>com.atlassian.plugins</groupId>
+    <artifactId>atlassian-plugins-parent</artifactId>
+    <version>2.1.0</version>
+    <packaging>pom</packaging>
+
+    <name>Atlassian Plugins - Parent POM</name>
+    <url>http://docs.atlassian.com/${project.artifactId}/${project.version}</url>
+
+    <licenses>
+        <license>
+            <name>BSD</name>
+            <url>LICENSE.txt</url>
+        </license>
+    </licenses>
+
+    <issueManagement>
+        <system>Jira</system>
+        <url>http://jira.atlassian.com/secure/BrowseProject.jspa?id=10610</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>Bamboo</system>
+        <url>https://bamboo.developer.atlassian.com/browse/ATLASSIANPLUGINS</url>
+    </ciManagement>
+
+    <scm>
+        <connection>scm:svn:https://svn.atlassian.com/svn/private/atlassian/plugins/tags/atlassian-plugins-parent-2.1.0</connection>
+        <developerConnection>scm:svn:https://svn.atlassian.com/svn/private/atlassian/plugins/tags/atlassian-plugins-parent-2.1.0</developerConnection>
+        <url>https://svn.atlassian.com/svn/private/atlassian/plugins/tags/atlassian-plugins-parent-2.1.0</url>
+    </scm>
+
+    <modules>
+        <module>atlassian-plugins-servlet</module>
+        <module>atlassian-plugins-osgi</module>
+        <module>atlassian-plugins-spring</module>
+        <module>atlassian-plugins-refimpl</module>
+        <module>atlassian-plugins-core</module>
+        <module>atlassian-plugins-webresource</module>
+        <module>atlassian-plugins-webfragment</module>
+        <module>atlassian-plugins-test-resources</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemProperties>
+                        <property>
+                            <name>project.version</name>
+                            <value>${project.version}</value>
+                        </property>
+                    </systemProperties>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>dom4j</groupId>
+                <artifactId>dom4j</artifactId>
+                <version>1.4</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>xml-apis</groupId>
+                        <artifactId>xml-apis</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jaxen</groupId>
+                        <artifactId>jaxen</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>saxpath</groupId>
+                        <artifactId>saxpath</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>msv</groupId>
+                        <artifactId>msv</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>relaxngDatatype</groupId>
+                        <artifactId>relaxngDatatype</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>isorelax</groupId>
+                        <artifactId>isorelax</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>mockobjects</groupId>
+            <artifactId>mockobjects-core</artifactId>
+            <version>0.09</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <properties>
+        <jdkLevel>1.5</jdkLevel>
+    </properties>
+
+    <distributionManagement>
+        <site>
+            <id>atlassian-documentation</id>
+            <url>dav:https://docs.atlassian.com/${project.artifactId}/${project.version}</url>
+        </site>
+    </distributionManagement>
+</project>

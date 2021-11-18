@@ -1,0 +1,152 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.atlassian.sal</groupId>
+    <artifactId>sal-parent</artifactId>
+    <version>2.2.0-beta1</version>
+
+    <name>Shared Access Layer POM</name>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>atlassian-public-pom</artifactId>
+        <version>24</version>
+    </parent>
+
+    <properties>
+        <plugins.version>2.5.0.rc1</plugins.version>
+        <jdkLevel>1.5</jdkLevel>
+        <bamboo.version>2.5-studio-m1</bamboo.version>
+    </properties>
+
+    <modules>
+        <module>sal-api</module>
+        <module>sal-spi</module>
+        <module>sal-test-resources</module>
+        <module>sal-core</module>
+        <module>sal-spring</module>
+        <module>sal-trusted-apps-plugin-support</module>
+        <module>sal-bamboo-plugin</module>
+        <module>sal-ctk-plugin</module>
+    </modules>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>atlassian-plugin.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>atlassian-plugin.xml</exclude>
+                </excludes>
+            </resource>
+        </resources>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>maven-bundle-plugin</artifactId>
+                    <version>1.4.1</version>
+                </plugin>
+                <plugin>
+                    <!-- Deploy to the maven1 repo, necessary as maven1 can't resolve snapshots -->
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-one-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>m1-deploy</id>
+                            <configuration>
+                                <remoteRepositoryId>atlassian-m1-repository</remoteRepositoryId>
+                                <remoteRepositoryUrl>dav:https://maven.atlassian.com/maven1</remoteRepositoryUrl>
+                            </configuration>
+                            <goals>
+                                <goal>deploy-maven-one-repository</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>m1-install</id>
+                            <goals>
+                                <goal>install-maven-one-repository</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+    <profiles>
+        <profile>
+            <id>maven-one</id>
+            <activation>
+                <property>
+                    <name>m1</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-one-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>install-maven-one-repository</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.atlassian.user</groupId>
+                <artifactId>atlassian-user</artifactId>
+                <version>2.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.seraph</groupId>
+                <artifactId>atlassian-seraph</artifactId>
+                <version>0.38</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>1.7</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <scm>
+        <connection>scm:svn:https://studio.atlassian.com/svn/SAL/tags/sal-parent-2.2.0-beta1</connection>
+        <developerConnection>scm:svn:https://studio.atlassian.com/svn/SAL/tags/sal-parent-2.2.0-beta1</developerConnection>
+        <url>https://studio.atlassian.com/svn/SAL/tags/sal-parent-2.2.0-beta1</url>
+    </scm>
+
+  <distributionManagement>
+    <site>
+	<id>atlassian-documentation</id>
+	<url>dav:https://docs.atlassian.com/sal/${project.version}</url>
+    </site>
+  </distributionManagement>
+
+</project>

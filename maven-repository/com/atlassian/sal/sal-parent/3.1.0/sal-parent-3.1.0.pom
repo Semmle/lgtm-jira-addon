@@ -1,0 +1,203 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.atlassian.sal</groupId>
+    <artifactId>sal-parent</artifactId>
+    <version>3.1.0</version>
+
+    <name>Shared Application Access Layer POM</name>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>com.atlassian.pom</groupId>
+        <artifactId>public-pom</artifactId>
+        <version>4.0.24</version>
+    </parent>
+
+    <properties>
+        <platform.version>3.0.0-m086</platform.version>
+
+        <fp.version>0.2-alpha1</fp.version>
+        <amps.version>5.1.6</amps.version>
+        <seraph.version>2.6.2</seraph.version>
+        <scheduler.version>1.3</scheduler.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <atlassian.beehive.version>0.1.3</atlassian.beehive.version>
+        <atlassian.security.version>3.2.4</atlassian.security.version>
+        <asm.version>5.0.3</asm.version>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <!-- first two from parent pom, last one because of JDK-8031625 -->
+        <javadoc.additional.params>-Xdoclint:all -Xdoclint:-missing -Xdoclint:-reference</javadoc.additional.params>
+    </properties>
+
+    <licenses>
+        <license>
+            <name>BSD License</name>
+            <url>http://opensource.org/licenses/BSD-3-Clause</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <modules>
+        <module>sal-api</module>
+        <module>sal-spi</module>
+        <module>sal-test-resources</module>
+        <module>sal-core</module>
+        <module>sal-spring</module>
+        <module>sal-trust-api</module>
+        <module>sal-trusted-apps-plugin-support</module>
+    </modules>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>atlassian-plugin.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>atlassian-plugin.xml</exclude>
+                </excludes>
+            </resource>
+        </resources>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.atlassian.maven.plugins</groupId>
+                    <artifactId>maven-amps-plugin</artifactId>
+                    <version>${amps.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+    </build>
+
+    <dependencyManagement>
+        <dependencies>
+
+            <dependency>
+                <groupId>com.atlassian.platform</groupId>
+                <artifactId>platform</artifactId>
+                <version>${platform.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atlassian.platform</groupId>
+                <artifactId>third-party</artifactId>
+                <version>${platform.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Project Dependencies -->
+            <dependency>
+                <groupId>com.atlassian.sal</groupId>
+                <artifactId>sal-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.sal</groupId>
+                <artifactId>sal-spi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.sal</groupId>
+                <artifactId>sal-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- SAL Trusted Apps -->
+            <dependency>
+                <groupId>com.atlassian.sal</groupId>
+                <artifactId>sal-trust-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atlassian.user</groupId>
+                <artifactId>atlassian-user</artifactId>
+                <version>2.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.seraph</groupId>
+                <artifactId>atlassian-seraph</artifactId>
+                <version>${seraph.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>mockobjects</groupId>
+                <artifactId>mockobjects-core</artifactId>
+                <version>0.09</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.security</groupId>
+                <artifactId>atlassian-secure-random</artifactId>
+                <version>${atlassian.security.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.security</groupId>
+                <artifactId>atlassian-secure-utils</artifactId>
+                <version>${atlassian.security.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>2.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.scheduler</groupId>
+                <artifactId>atlassian-scheduler-api</artifactId>
+                <version>${scheduler.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.easymock</groupId>
+                <artifactId>easymock</artifactId>
+                <version>2.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.easymock</groupId>
+                <artifactId>easymockclassextension</artifactId>
+                <version>2.3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.beehive</groupId>
+                <artifactId>beehive-api</artifactId>
+                <version>${atlassian.beehive.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>${asm.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <issueManagement>
+        <system>Jira</system>
+        <url>https://ecosystem.atlassian.net/browse/SAL</url>
+    </issueManagement>
+    <ciManagement>
+        <system>Bamboo</system>
+        <url>https://ecosystem-bamboo.internal.atlassian.com/browse/SAL</url>
+    </ciManagement>
+    <scm>
+        <connection>scm:git:git@bitbucket.org:atlassian/atlassian-sal.git</connection>
+        <developerConnection>scm:git:git@bitbucket.org:atlassian/atlassian-sal.git</developerConnection>
+        <url>https://bitbucket.org/atlassian/atlassian-sal</url>
+      <tag>sal-parent-3.1.0</tag>
+  </scm>
+
+    <distributionManagement>
+        <site>
+            <id>atlassian-documentation</id>
+            <url>scpexe://docs-app.internal.atlassian.com/var/www/domains/docs.atlassian.com/${project.artifactId}/${project.version}</url>
+        </site>
+    </distributionManagement>
+</project>

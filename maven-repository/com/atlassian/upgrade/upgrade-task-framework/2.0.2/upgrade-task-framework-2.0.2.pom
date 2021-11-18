@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.atlassian.pom</groupId>
+    <artifactId>closedsource-pom</artifactId>
+    <version>4.0.17</version>
+  </parent>
+
+  <groupId>com.atlassian.upgrade</groupId>
+  <artifactId>upgrade-task-framework</artifactId>
+  <version>2.0.2</version>
+  <packaging>pom</packaging>
+
+  <name>upgrade-task-framework</name>
+
+  <modules>
+    <module>upgrade-task-framework-api</module>
+    <module>upgrade-task-framework-core</module>
+  </modules>
+
+  <ciManagement>
+    <system>Bamboo</system>
+    <url>https://ecosystem-bamboo.internal.atlassian.com/browse/UTF</url>
+  </ciManagement>
+
+  <scm>
+    <connection>scm:git:ssh://git@bitbucket.org/atlassian/upgrade-task-framework.git</connection>
+    <developerConnection>scm:git:ssh://git@bitbucket.org/atlassian/upgrade-task-framework.git</developerConnection>
+    <url>https://bitbucket.org/atlassian/upgrade-task-framework</url>
+    <tag>upgrade-task-framework-2.0.2</tag>
+  </scm>
+
+  <properties>
+    <atlassian.platform.version>3.2.15</atlassian.platform.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.atlassian.platform</groupId>
+        <artifactId>platform</artifactId>
+        <version>${atlassian.platform.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.atlassian.platform</groupId>
+        <artifactId>third-party</artifactId>
+        <version>${atlassian.platform.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+    </dependencies>
+  </dependencyManagement>
+
+</project>
